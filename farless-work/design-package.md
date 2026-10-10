@@ -30,7 +30,7 @@ Hero text over the footage: the film is bright (warm white plaster), so hero ban
 
 ## 4. The band map
 
-Concept (revised after owner feedback): a centered, locked-off shot. Sparkling water pours from the Farless spout straight down the center line into a tall glass of ice, lemon and lime, filling it from empty to full as the visitor scrolls. Hero height about 400vh. Ranges are starting points, validated by the flick test.
+Concept (current, the owner's own footage): in a warm, backlit kitchen a hand reaches in, pushes and turns the Farless handle, and sparkling water pours into a glass of ice and lime while she smiles. One continuous 8-second shot. Hero height about 540vh. Ranges are starting points, validated by the flick test (passed).
 
 | Band | Range (starting point) | Footage moment | Copy (verbatim) | Entrance |
 |---|---|---|---|---|
@@ -38,7 +38,7 @@ Concept (revised after owner feedback): a centered, locked-off shot. Sparkling w
 | 2 | 0.34 to 0.64 | The stream runs full, the glass fills, ice lifts, citrus wheels rise | Left: "Boiling. Filtered." / Right: "Sparkling. Hot. Cold." | Drift-down, word by word, echoing the pour |
 | 3 (settle) | 0.70 to 1.00 | At rest: the glass full and fizzing, the stream falling softly into it | Upper left: "Far less on your counter." / Upper right: "No kettle. No bottles. No soda machine. Just one tap." / button "Buy Farless" | Word-by-word rise into a staged settle |
 
-Layout: the pour owns the center lane and is never covered. Text lives in the open plaster wall on both sides, using the two-sided scrim variant (one scrim per column, center lane untouched). The faucet column sits left of center, so the left text column stays in the outer left third.
+Layout: the footage fills its frame edge to edge (faucet left, person right), so the film sits in a framed panel on the right (60vw, rounded, soft shadow) and the band copy lives in a column on the canvas to its left. Nothing covers her face or the pour. Palette warmed toward the footage: canvas #EFE8DF, panel #F8F3EC, text #26211D, secondary #5B524A, accent mineral blue #24505C.
 
 ## 5. The static-hero copy block
 

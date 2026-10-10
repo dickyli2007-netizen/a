@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Farless | Five waters. One tap.</title>
 <meta name="description" content="Farless is one quiet kitchen tap for boiling, filtered, sparkling, hot and cold water. Far less on your counter.">
-<meta name="theme-color" content="#ECE8E2">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23ECE8E2'/%3E%3Cpath d='M22 54V26a12 12 0 0 1 24 0v8' fill='none' stroke='%231F2427' stroke-width='5' stroke-linecap='round'/%3E%3Ccircle cx='46' cy='44' r='3.5' fill='%2324505C'/%3E%3C/svg%3E">
+<meta name="theme-color" content="#EFE8DF">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23EFE8DF'/%3E%3Cpath d='M22 54V26a12 12 0 0 1 24 0v8' fill='none' stroke='%2326211D' stroke-width='5' stroke-linecap='round'/%3E%3Ccircle cx='46' cy='44' r='3.5' fill='%2324505C'/%3E%3C/svg%3E">
 <!-- DEPLOY STEP: patch og:url and og:image with the live absolute URL before zipping -->
 <meta property="og:title" content="Farless | Five waters. One tap.">
 <meta property="og:description" content="Boiling, filtered, sparkling, hot and cold water from one quiet tap.">
@@ -18,21 +18,20 @@
 <link href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400;500&family=Hanken+Grotesk:wght@400;500&family=IBM+Plex+Mono:wght@400&display=swap" rel="stylesheet">
 <style>
 :root{
-  --canvas:#ECE8E2;
-  --panel:#F6F3EE;
+  --canvas:#EFE8DF;
+  --panel:#F8F3EC;
   --accent:#24505C;
   --accent-hover:#1B3F49;
   --accent-muted:#9FB7BC;
-  --text-secondary:#50565B;
-  --text-primary:#1F2427;
-  --line:#8E9498;
-  --on-accent:#F6F3EE;
+  --text-secondary:#5B524A;
+  --text-primary:#26211D;
+  --line:#9A8F85;
+  --on-accent:#F8F3EC;
   --ease-out:cubic-bezier(.22,.61,.36,1);
   --ease-soft:cubic-bezier(.45,0,.2,1);
   --display:"Familjen Grotesk",system-ui,sans-serif;
   --body:"Hanken Grotesk",system-ui,sans-serif;
   --mono:"IBM Plex Mono",ui-monospace,monospace;
-  --halo:0 0 1px rgba(246,243,238,.95),0 2px 14px rgba(246,243,238,.85),0 8px 44px rgba(246,243,238,.75);
 }
 *,*::before,*::after{box-sizing:border-box}
 html{overflow-x:hidden;overflow-x:clip;scroll-behavior:smooth}
@@ -68,23 +67,25 @@ nav.top ul a:hover{color:var(--text-primary)}
 @media (pointer:coarse){.btn{min-height:44px;display:inline-flex;align-items:center;justify-content:center}}
 @media (max-width:860px){nav.top ul{display:none}}
 
-/* ---------- hero: scrub ---------- */
-.hero{position:relative;height:520vh}
+/* ---------- hero: scrub ----------
+   The footage fills its frame edge to edge (faucet left, person right), so the film sits
+   in a framed panel on the right and the words live on the canvas beside it. */
+.hero{position:relative;height:540vh;--filmw:min(60vw,calc((100vh - 170px)*16/9))}
 .stage{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden;background:var(--canvas)}
+.film{position:absolute;right:max(4vw,24px);top:calc(50% + 28px);transform:translateY(-50%);width:var(--filmw);aspect-ratio:16/9;max-width:100%;border-radius:24px;overflow:hidden;background:var(--panel);box-shadow:0 30px 80px -40px rgba(38,33,29,.45)}
 .poster,.poster-end{position:absolute;inset:0;background-size:cover;background-position:50% 50%}
 .poster-end{opacity:var(--pe,0)}
 #hero{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .8s var(--ease-out);will-change:transform;transform:translateZ(0)}
 .video-ready #hero{opacity:1}
-.scrim{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse 120% 95% at 50% 45%,rgba(246,243,238,0) 45%,rgba(246,243,238,.38) 100%)}
-.band{position:absolute;inset:0;pointer-events:none;opacity:0;text-shadow:var(--halo)}
-.band .col{position:absolute;top:var(--y,38%)}
-.band .col.l{left:max(5vw,24px);max-width:min(21vw,340px)}
-.band .col.r{left:63vw;max-width:min(31vw,470px)}
-.band .col::before{content:"";position:absolute;inset:-60% -40%;z-index:-1;pointer-events:none;opacity:calc(.25 + .75*var(--k,1));background:radial-gradient(ellipse 50% 50% at 50% 50%,rgba(246,243,238,var(--sa,.62)) 0%,rgba(246,243,238,calc(var(--sa,.62)*.6)) 46%,rgba(246,243,238,0) 76%)}
+.band{position:absolute;inset:0;pointer-events:none;opacity:0}
+.band .col{position:absolute;top:calc(50% + 28px);transform:translateY(-50%);left:max(5vw,24px);width:calc(100vw - var(--filmw) - max(4vw,24px) - max(5vw,24px) - 4vw)}
 .band .btn{pointer-events:auto}
-.hx{font-size:clamp(2.8rem,5.6vw,5.8rem)}
-.hl{font-size:clamp(1.5rem,2.4vw,2.3rem);font-family:var(--display);font-weight:400;letter-spacing:-.015em;line-height:1.15}
-.hs{font-size:clamp(1rem,1.25vw,1.2rem);color:var(--text-secondary);margin-top:18px;max-width:34ch}
+.hx{font-size:clamp(2.6rem,5.2vw,5.6rem)}
+.hl{font-size:clamp(1.4rem,2.1vw,2.2rem);font-family:var(--display);font-weight:400;letter-spacing:-.015em;line-height:1.18}
+.band .hl + .hl{margin-top:.25em}
+.band .hx + .hl{margin-top:18px;color:var(--text-secondary)}
+.hs{font-size:clamp(1rem,1.2vw,1.15rem);color:var(--text-secondary);margin-top:18px;max-width:34ch}
+.hero-note{position:absolute;left:max(5vw,24px);bottom:30px;opacity:calc(1 - var(--k3,0))}
 /* band 1: blur-to-sharp (two copies, static blur, opacity only) */
 .bts{position:relative;display:block}
 .bts .soft{position:absolute;inset:0;filter:blur(10px);opacity:calc(1 - var(--k,0))}
@@ -95,19 +96,19 @@ nav.top ul a:hover{color:var(--text-primary)}
 .rise .w{display:inline-block;--kc:clamp(0,(var(--k,0) - var(--th,0))*3,1);opacity:var(--kc);transform:translateY(calc((1 - var(--kc))*22px))}
 .settle .hs{opacity:clamp(0,(var(--k,0) - .66)*4,1);transform:translateY(calc((1 - clamp(0,(var(--k,0) - .66)*4,1))*10px))}
 .settle .cta-row{margin-top:26px;opacity:clamp(0,(var(--k,0) - .78)*5,1)}
-.ring{position:absolute;left:50%;bottom:28px;width:44px;height:44px;margin-left:-22px;color:var(--text-primary);opacity:.55;transition:opacity .6s var(--ease-out)}
+.ring{position:absolute;left:50%;bottom:18px;width:40px;height:40px;margin-left:-20px;color:#F8F3EC;opacity:.85;transition:opacity .6s var(--ease-out)}
 .ring circle{transition:stroke-dashoffset .12s linear}
 .video-ready .ring{opacity:0}
-.cue{position:absolute;left:50%;bottom:30px;width:28px;height:28px;margin-left:-14px;color:var(--text-primary);opacity:.55;animation:cue 2.6s var(--ease-soft) -.6s infinite}
+.cue{position:absolute;left:50%;bottom:18px;width:28px;height:28px;margin-left:-14px;color:#F8F3EC;opacity:.85;animation:cue 2.6s var(--ease-soft) -.6s infinite}
 @keyframes cue{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
-@media (max-height:560px){.ring,.cue{display:none}}
+@media (max-height:560px){.ring,.cue,.hero-note{display:none}}
 
 /* ---------- static hero (the five gates) ---------- */
 .static-hero{display:none}
 @media (max-width: 720px), (orientation: portrait) and (max-width: 1024px), (orientation: portrait) and (pointer: coarse), (orientation: landscape) and (pointer: coarse) and (max-height: 560px), (prefers-reduced-motion: reduce){
   .hero{display:none}
   .static-hero{display:grid;grid-template-columns:1fr;gap:28px;padding:112px 16px 40px;max-width:1100px;margin:0 auto}
-  .static-hero .sh-img{aspect-ratio:4/5;border-radius:22px;background:url('assets/hero-ending.jpg') 51% 50%/cover no-repeat}
+  .static-hero .sh-img{aspect-ratio:4/5;border-radius:22px;background:url('assets/hero-ending.jpg') 14% 50%/cover no-repeat}
   .static-hero .hx{font-size:clamp(2.4rem,9vw,4.4rem)}
 }
 @media (orientation: landscape) and (pointer: coarse) and (max-height: 560px){
@@ -191,13 +192,12 @@ section.sec{position:relative;padding:clamp(96px,14vh,160px) 16px;}
 .dial-done .dw:last-child{color:var(--accent)}
 @media (max-width:860px){.safety .wrap{grid-template-columns:1fr}}
 
-/* design: full-bleed image with an overlapping card */
-.design{padding-left:0;padding-right:0}
-.design figure{margin:0;position:relative;overflow:hidden;height:clamp(420px,82vh,820px)}
-.design figure img{width:100%;height:100%;object-fit:cover;object-position:51% 50%;animation:breath 22s var(--ease-soft) -5s infinite alternate}
-@keyframes breath{from{transform:scale(1)}to{transform:scale(1.045)}}
-.design .card-over{position:relative;margin:-120px auto 0;width:min(1180px,calc(100% - 32px))}
-.design .card-over > div{background:var(--panel);border-radius:26px;padding:clamp(28px,4vw,52px);max-width:560px;margin-left:auto;border:1px solid rgba(142,148,152,.25)}
+/* design: text bottom-left, tall close-up right */
+.design .wrap{display:grid;grid-template-columns:1fr minmax(0,1.05fr);gap:clamp(32px,6vw,96px);align-items:end}
+.design figure{margin:0;position:relative;overflow:hidden;border-radius:26px;aspect-ratio:880/1080;max-width:100%}
+.design figure img{width:100%;height:100%;object-fit:cover;animation:breath 22s var(--ease-soft) -5s infinite alternate}
+@keyframes breath{from{transform:scale(1)}to{transform:scale(1.04)}}
+@media (max-width:860px){.design .wrap{grid-template-columns:1fr}.design figure{order:-1}}
 
 /* questions */
 .faq .wrap{display:grid;grid-template-columns:1fr 1.6fr;gap:48px}
@@ -263,36 +263,38 @@ body.paused *, body.paused *::before, body.paused *::after{animation-play-state:
 <header>
   <section class="hero" id="top" aria-label="Farless introduction">
     <div class="stage" id="stage">
-      <div class="poster" aria-hidden="true"></div>
-      <div class="poster-end" aria-hidden="true"></div>
-      <video id="hero" preload="none" muted playsinline aria-hidden="true" tabindex="-1"></video>
-      <div class="scrim" aria-hidden="true"></div>
+      <div class="film">
+        <div class="poster" aria-hidden="true"></div>
+        <div class="poster-end" aria-hidden="true"></div>
+        <video id="hero" preload="none" muted playsinline aria-hidden="true" tabindex="-1"></video>
+        <svg class="ring" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="20" fill="none" stroke="currentColor" stroke-opacity=".3" stroke-width="2"/><circle cx="24" cy="24" r="20" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="126" style="stroke-dashoffset:var(--ld,126)" transform="rotate(-90 24 24)"/></svg>
+      </div>
 
       <div class="band b1" data-a="0" data-b="0.30">
-        <div class="col l" style="--y:34%">
+        <div class="col">
           <h1 class="hx"><span class="sr">Farless. Five waters. One tap.</span>
             <span class="bts" aria-hidden="true"><span class="soft">Farless.</span><span class="sharp">Farless.</span></span>
           </h1>
-        </div>
-        <div class="col r" style="--y:40%">
           <p class="hl bts" aria-hidden="true"><span class="soft">Five waters. One tap.</span><span class="sharp">Five waters. One tap.</span></p>
         </div>
       </div>
 
       <div class="band b2" data-a="0.36" data-b="0.64">
-        <div class="col l" style="--y:36%"><p class="hl dd split">Boiling. Filtered.</p></div>
-        <div class="col r" style="--y:42%"><p class="hl dd split">Sparkling. Hot. Cold.</p></div>
+        <div class="col">
+          <p class="hl dd split" style="font-size:clamp(1.8rem,2.9vw,3.1rem)">Boiling. Filtered.</p>
+          <p class="hl dd split" style="font-size:clamp(1.8rem,2.9vw,3.1rem)">Sparkling. Hot. Cold.</p>
+        </div>
       </div>
 
       <div class="band b3 settle" data-a="0.70" data-b="1">
-        <div class="col r" style="--y:28%;--sa:.7">
-          <h2 class="hx rise split" style="font-size:clamp(2.4rem,4.2vw,4.4rem)">Far less on your counter.</h2>
+        <div class="col">
+          <h2 class="hx rise split" style="font-size:clamp(2.2rem,3.6vw,3.9rem)">Far less on your counter.</h2>
           <p class="hs">No kettle. No bottles. No soda machine. Just one tap.</p>
           <div class="cta-row"><a class="btn" href="#buy">Buy Farless</a></div>
         </div>
       </div>
 
-      <svg class="ring" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="20" fill="none" stroke="currentColor" stroke-opacity=".2" stroke-width="2"/><circle cx="24" cy="24" r="20" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="126" style="stroke-dashoffset:var(--ld,126)" transform="rotate(-90 24 24)"/></svg>
+      <p class="mono hero-note" aria-hidden="true">Scroll to pour</p>
     </div>
   </section>
 
@@ -302,7 +304,7 @@ body.paused *, body.paused *::before, body.paused *::after{animation-play-state:
       <p class="hs">Boiling, filtered, sparkling, hot and cold water. All from one quiet tap.</p>
       <div style="margin-top:26px"><a class="btn" href="#buy">Buy Farless</a></div>
     </div>
-    <div class="sh-img" role="img" aria-label="Sparkling water with ice, lemon and lime pouring from a Farless tap into a tall glass"></div>
+    <div class="sh-img" role="img" aria-label="Sparkling water pouring from a Farless tap into a glass with ice and lime"></div>
   </section>
 </header>
 
@@ -382,13 +384,13 @@ body.paused *, body.paused *::before, body.paused *::after{animation-play-state:
   </section>
 
   <section class="sec design" id="design" aria-labelledby="design-h">
-    <figure><img src="assets/hero-ending.jpg" alt="A Farless tap pouring sparkling water into a glass of ice, lemon and lime" loading="lazy" width="1912" height="1080"></figure>
-    <div class="card-over" data-in>
-      <div>
+    <div class="wrap">
+      <div data-in>
         <span class="mono kicker part">Design</span>
         <h2 class="h2 part" id="design-h">Made to be looked at.</h2>
         <p class="lede part">Brushed steel and one clean arc. Nothing to hide, and nothing to add.</p>
       </div>
+      <figure><img src="assets/design-faucet.jpg" alt="A hand turning the Farless handle as sparkling water starts to pour" loading="lazy" width="880" height="1080"></figure>
     </div>
   </section>
 
@@ -438,7 +440,7 @@ body.paused *, body.paused *::before, body.paused *::after{animation-play-state:
   // VP9 WebM is a third of the size; browsers without it get the H.264 MP4
   const canWebm = document.createElement('video').canPlayType('video/webm; codecs="vp9"') === 'probably';
   const VIDEO_URL = canWebm ? 'assets/hero-scrub.webm' : 'assets/hero-scrub.mp4';
-  const VIDEO_BYTES = canWebm ? 1401547 : 4216085;   // real byte sizes: the fallback when Content-Length is missing
+  const VIDEO_BYTES = canWebm ? 1644195 : 3186482;   // real byte sizes: the fallback when Content-Length is missing
   const VIDEO_TYPE = canWebm ? 'video/webm' : 'video/mp4';
   const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
   const smoothstep = (p, e0, e1) => { const t = clamp((p - e0) / (e1 - e0), 0, 1); return t * t * (3 - 2 * t); };
@@ -471,7 +473,7 @@ body.paused *, body.paused *::before, body.paused *::after{animation-play-state:
   const bands = [...document.querySelectorAll('.band')].map(el => ({
     el, a: +el.dataset.a, b: +el.dataset.b, ramp: el.dataset.ramp ? +el.dataset.ramp : 0, op: -1, k: -1
   }));
-  let target = 0, shown = 0, rafId = null, lastTick = 0, heroOnScreen = true, loadK = 0, videoFailed = false, lastPe = -1;
+  let target = 0, shown = 0, rafId = null, lastTick = 0, heroOnScreen = true, loadK = 0, videoFailed = false, lastPe = -1, lastK3 = -1;
 
   function heroProgress(){
     const rect = hero.getBoundingClientRect();
@@ -492,6 +494,8 @@ body.paused *, body.paused *::before, body.paused *::after{animation-play-state:
       if (Math.abs(op - band.op) > 0.004 || (op === 0 || op === 1) && op !== band.op){ band.op = op; band.el.style.opacity = op.toFixed(3); }
       if (Math.abs(k - band.k) > 0.008 || (k === 0 || k === 1) && k !== band.k){ band.k = k; band.el.style.setProperty('--k', k.toFixed(3)); }
     });
+    const k3 = smoothstep(p, 0.02, 0.12);
+    if (Math.abs(k3 - lastK3) > 0.01 || (k3 === 1 && lastK3 !== 1) || (k3 === 0 && lastK3 !== 0)){ lastK3 = k3; stage.style.setProperty('--k3', k3.toFixed(3)); }
     if (videoFailed){
       const pe = smoothstep(p, 0.4, 0.85);
       if (Math.abs(pe - lastPe) > 0.004){ lastPe = pe; stage.style.setProperty('--pe', pe.toFixed(3)); }
