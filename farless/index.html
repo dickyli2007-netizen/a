@@ -1,0 +1,694 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Farless | Five waters. One tap.</title>
+<meta name="description" content="Farless is one quiet kitchen tap for boiling, filtered, sparkling, hot and cold water. Far less on your counter.">
+<meta name="theme-color" content="#ECE8E2">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23ECE8E2'/%3E%3Cpath d='M22 54V26a12 12 0 0 1 24 0v8' fill='none' stroke='%231F2427' stroke-width='5' stroke-linecap='round'/%3E%3Ccircle cx='46' cy='44' r='3.5' fill='%2324505C'/%3E%3C/svg%3E">
+<!-- DEPLOY STEP: patch og:url and og:image with the live absolute URL before zipping -->
+<meta property="og:title" content="Farless | Five waters. One tap.">
+<meta property="og:description" content="Boiling, filtered, sparkling, hot and cold water from one quiet tap.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://example.com/">
+<meta property="og:image" content="https://example.com/assets/hero-ending.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400;500&family=Hanken+Grotesk:wght@400;500&family=IBM+Plex+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --canvas:#ECE8E2;
+  --panel:#F6F3EE;
+  --accent:#24505C;
+  --accent-hover:#1B3F49;
+  --accent-muted:#9FB7BC;
+  --text-secondary:#50565B;
+  --text-primary:#1F2427;
+  --line:#8E9498;
+  --on-accent:#F6F3EE;
+  --ease-out:cubic-bezier(.22,.61,.36,1);
+  --ease-soft:cubic-bezier(.45,0,.2,1);
+  --display:"Familjen Grotesk",system-ui,sans-serif;
+  --body:"Hanken Grotesk",system-ui,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,monospace;
+  --halo:0 0 1px rgba(246,243,238,.95),0 2px 14px rgba(246,243,238,.85),0 8px 44px rgba(246,243,238,.75);
+}
+*,*::before,*::after{box-sizing:border-box}
+html{overflow-x:hidden;overflow-x:clip;scroll-behavior:smooth}
+body{margin:0;overflow-x:hidden;overflow-x:clip;background:var(--canvas);color:var(--text-primary);font:400 1.0625rem/1.6 var(--body);-webkit-font-smoothing:antialiased;animation:pagein .9s var(--ease-out) both}
+@keyframes pagein{from{opacity:0}to{opacity:1}}
+img{max-width:100%;display:block}
+a{color:inherit}
+h1,h2,h3{font-family:var(--display);font-weight:500;letter-spacing:-.02em;line-height:1.04;margin:0}
+p{margin:0}
+.sr{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.skip{position:absolute;left:16px;top:-60px;z-index:100;background:var(--accent);color:var(--on-accent);padding:10px 16px;border-radius:999px;text-decoration:none;transition:top .3s var(--ease-out)}
+.skip:focus{top:16px}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:6px}
+.mono{font-family:var(--mono);font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:var(--text-secondary)}
+
+/* ---------- one environment: fixed background layer ---------- */
+.env{position:fixed;inset:-20%;z-index:-1;pointer-events:none;background:
+  radial-gradient(40% 35% at 30% 30%,rgba(255,253,248,.75),rgba(255,253,248,0) 70%),
+  radial-gradient(35% 30% at 72% 68%,rgba(159,183,188,.22),rgba(159,183,188,0) 70%);
+  animation:drift 72s var(--ease-soft) -18s infinite alternate}
+@keyframes drift{0%{transform:translate3d(-3%,-2%,0) rotate(0deg)}100%{transform:translate3d(3%,2%,0) rotate(6deg)}}
+
+/* ---------- nav ---------- */
+nav.top{position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:50;width:min(1180px,calc(100% - 32px));display:flex;align-items:center;justify-content:space-between;gap:16px;padding:10px 10px 10px 18px;border-radius:999px;background:rgba(246,243,238,.62);backdrop-filter:blur(14px) saturate(1.2);-webkit-backdrop-filter:blur(14px) saturate(1.2);border:1px solid rgba(142,148,152,.28)}
+.brand{display:inline-flex;align-items:center;gap:10px;text-decoration:none;font:500 1.2rem/1 var(--display);letter-spacing:-.01em}
+.brand svg{width:22px;height:22px}
+nav.top ul{display:flex;gap:26px;list-style:none;margin:0;padding:0}
+nav.top ul a{text-decoration:none;font-size:.95rem;color:var(--text-secondary);transition:color .35s var(--ease-out)}
+nav.top ul a:hover{color:var(--text-primary)}
+.btn{display:inline-block;text-decoration:none;font:500 .98rem/1 var(--body);background:var(--accent);color:var(--on-accent);padding:14px 22px;border-radius:999px;transition:background-color .35s var(--ease-out),transform .35s var(--ease-out);text-shadow:none}
+.btn:hover{background:var(--accent-hover);transform:translateY(-1px)}
+.btn.small{padding:11px 18px;font-size:.92rem}
+@media (pointer:coarse){.btn{min-height:44px;display:inline-flex;align-items:center;justify-content:center}}
+@media (max-width:860px){nav.top ul{display:none}}
+
+/* ---------- hero: scrub ---------- */
+.hero{position:relative;height:520vh}
+.stage{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden;background:var(--canvas)}
+.poster,.poster-end{position:absolute;inset:0;background-size:cover;background-position:50% 50%}
+.poster-end{opacity:var(--pe,0)}
+#hero{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .8s var(--ease-out);will-change:transform;transform:translateZ(0)}
+.video-ready #hero{opacity:1}
+.scrim{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse 120% 95% at 50% 45%,rgba(246,243,238,0) 45%,rgba(246,243,238,.38) 100%)}
+.band{position:absolute;inset:0;pointer-events:none;opacity:0;text-shadow:var(--halo)}
+.band .col{position:absolute;top:var(--y,38%)}
+.band .col.l{left:max(5vw,24px);max-width:min(21vw,340px)}
+.band .col.r{left:63vw;max-width:min(31vw,470px)}
+.band .col::before{content:"";position:absolute;inset:-60% -40%;z-index:-1;pointer-events:none;opacity:calc(.25 + .75*var(--k,1));background:radial-gradient(ellipse 50% 50% at 50% 50%,rgba(246,243,238,var(--sa,.62)) 0%,rgba(246,243,238,calc(var(--sa,.62)*.6)) 46%,rgba(246,243,238,0) 76%)}
+.band .btn{pointer-events:auto}
+.hx{font-size:clamp(2.8rem,5.6vw,5.8rem)}
+.hl{font-size:clamp(1.5rem,2.4vw,2.3rem);font-family:var(--display);font-weight:400;letter-spacing:-.015em;line-height:1.15}
+.hs{font-size:clamp(1rem,1.25vw,1.2rem);color:var(--text-secondary);margin-top:18px;max-width:34ch}
+/* band 1: blur-to-sharp (two copies, static blur, opacity only) */
+.bts{position:relative;display:block}
+.bts .soft{position:absolute;inset:0;filter:blur(10px);opacity:calc(1 - var(--k,0))}
+.bts .sharp{display:block;opacity:var(--k,0)}
+/* band 2: drift-down per word */
+.dd .w{display:inline-block;--kc:clamp(0,(var(--k,0) - var(--th,0))*2.8,1);opacity:var(--kc);transform:translateY(calc((1 - var(--kc))*-24px))}
+/* band 3: word rise into a staged settle */
+.rise .w{display:inline-block;--kc:clamp(0,(var(--k,0) - var(--th,0))*3,1);opacity:var(--kc);transform:translateY(calc((1 - var(--kc))*22px))}
+.settle .hs{opacity:clamp(0,(var(--k,0) - .66)*4,1);transform:translateY(calc((1 - clamp(0,(var(--k,0) - .66)*4,1))*10px))}
+.settle .cta-row{margin-top:26px;opacity:clamp(0,(var(--k,0) - .78)*5,1)}
+.ring{position:absolute;left:50%;bottom:28px;width:44px;height:44px;margin-left:-22px;color:var(--text-primary);opacity:.55;transition:opacity .6s var(--ease-out)}
+.ring circle{transition:stroke-dashoffset .12s linear}
+.video-ready .ring{opacity:0}
+.cue{position:absolute;left:50%;bottom:30px;width:28px;height:28px;margin-left:-14px;color:var(--text-primary);opacity:.55;animation:cue 2.6s var(--ease-soft) -.6s infinite}
+@keyframes cue{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
+@media (max-height:560px){.ring,.cue{display:none}}
+
+/* ---------- static hero (the five gates) ---------- */
+.static-hero{display:none}
+@media (max-width: 720px), (orientation: portrait) and (max-width: 1024px), (orientation: portrait) and (pointer: coarse), (orientation: landscape) and (pointer: coarse) and (max-height: 560px), (prefers-reduced-motion: reduce){
+  .hero{display:none}
+  .static-hero{display:grid;grid-template-columns:1fr;gap:28px;padding:112px 16px 40px;max-width:1100px;margin:0 auto}
+  .static-hero .sh-img{aspect-ratio:4/5;border-radius:22px;background:url('assets/hero-ending.jpg') 51% 50%/cover no-repeat}
+  .static-hero .hx{font-size:clamp(2.4rem,9vw,4.4rem)}
+}
+@media (orientation: landscape) and (pointer: coarse) and (max-height: 560px){
+  .static-hero{grid-template-columns:1fr 1fr;align-items:center;padding-top:88px}
+  .static-hero .sh-img{aspect-ratio:4/3}
+}
+
+/* ---------- sections ---------- */
+main{display:block}
+section.sec{position:relative;padding:clamp(96px,14vh,160px) 16px;}
+.wrap{width:min(1180px,100%);margin:0 auto}
+.kicker{display:block;margin-bottom:18px}
+.h2{font-size:clamp(2.2rem,4.4vw,4rem)}
+.lede{color:var(--text-secondary);font-size:clamp(1.05rem,1.3vw,1.2rem);max-width:46ch;margin-top:18px}
+
+/* entrances */
+[data-in] .part{opacity:0;transform:translateY(18px);transition:opacity .9s var(--ease-out),transform .9s var(--ease-out)}
+[data-in].in .part{opacity:1;transform:none}
+[data-in].in .part:nth-child(2){transition-delay:.09s}
+[data-in].in .part:nth-child(3){transition-delay:.18s}
+[data-in].in .part:nth-child(4){transition-delay:.27s}
+[data-in].in .part:nth-child(5){transition-delay:.36s}
+[data-in].in.settled .part,[data-in].in.settled .part:nth-child(2),[data-in].in.settled .part:nth-child(3),[data-in].in.settled .part:nth-child(4),[data-in].in.settled .part:nth-child(5){transition-delay:0s}
+
+/* signature: the arc seam */
+.seam{height:clamp(120px,18vh,200px);display:flex;justify-content:center;align-items:center}
+.seam svg{width:min(560px,80vw);height:100%;overflow:visible}
+.seam path{fill:none;stroke:var(--line);stroke-width:1.2;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:calc(1 - var(--d,0));vector-effect:non-scaling-stroke}
+.seam circle{fill:var(--accent);opacity:clamp(0,(var(--d,0) - .9)*10,1)}
+
+/* five waters */
+.waters .head{display:flex;justify-content:space-between;align-items:end;gap:32px;flex-wrap:wrap}
+.cards{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-top:56px;list-style:none;padding:0}
+.card{position:relative;overflow:hidden;background:var(--panel);border:1px solid rgba(142,148,152,.25);border-radius:22px;padding:26px 22px 28px;min-height:280px;display:flex;flex-direction:column;transition:transform .5s var(--ease-out),border-color .5s var(--ease-out)}
+.card:hover{transform:translateY(-4px);border-color:rgba(36,80,92,.35)}
+.card svg.ic{width:44px;height:44px;color:var(--text-primary);margin:18px 0 40px}
+.card h3{font-size:1.45rem}
+.card p{color:var(--text-secondary);font-size:.98rem;margin-top:8px}
+.bubbles{position:absolute;inset:0;pointer-events:none}
+.bubbles i{position:absolute;bottom:-12px;width:var(--s,6px);height:var(--s,6px);left:var(--x,50%);border-radius:50%;border:1px solid var(--accent-muted);opacity:0;animation:rise var(--t,9s) linear var(--dl,-2s) infinite}
+@keyframes rise{0%{transform:translateY(0);opacity:0}15%{opacity:.7}100%{transform:translateY(-320px);opacity:0}}
+@media (max-width:1100px){.cards{grid-template-columns:repeat(3,1fr)}}
+@media (max-width:720px){.cards{grid-template-columns:1fr 1fr}.card{min-height:220px}}
+@media (max-width:420px){.cards{grid-template-columns:1fr}}
+
+/* what leaves your counter */
+.leaves .wrap{display:grid;grid-template-columns:1fr 1.4fr;gap:48px;align-items:start}
+.gone{list-style:none;margin:0;padding:0}
+.gone li{position:relative;font:400 clamp(2rem,4.2vw,3.8rem)/1.18 var(--display);letter-spacing:-.02em;color:var(--text-secondary);width:max-content;max-width:100%}
+.gone li svg{position:absolute;left:-2%;top:52%;width:104%;height:14px;overflow:visible;pointer-events:none}
+.gone li path{fill:none;stroke:var(--accent);stroke-width:2;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:1;transition:stroke-dashoffset 1.1s var(--ease-out)}
+.gone.in li:nth-child(1) path{transition-delay:.35s}
+.gone.in li:nth-child(2) path{transition-delay:.55s}
+.gone.in li:nth-child(3) path{transition-delay:.75s}
+.gone.in li:nth-child(4) path{transition-delay:.95s}
+.gone.in li path{stroke-dashoffset:0}
+.calm{margin-top:40px;font:500 clamp(1.4rem,2.2vw,2rem)/1.2 var(--display);position:relative;width:max-content;max-width:100%}
+.calm::after{content:"";position:absolute;inset:-30% -20%;z-index:-1;background:radial-gradient(closest-side,rgba(255,253,248,.9),rgba(255,253,248,0));opacity:.4;animation:breathe 7s var(--ease-soft) -2s infinite alternate}
+@keyframes breathe{to{opacity:1}}
+@media (max-width:860px){.leaves .wrap{grid-template-columns:1fr}}
+
+/* safety: press and turn */
+.safety .wrap{display:grid;grid-template-columns:1fr 1fr;gap:clamp(32px,6vw,96px);align-items:center}
+.dial-wrap{--p:0;--push:clamp(0,var(--p)*5,1);position:relative;display:grid;place-items:center;aspect-ratio:1;max-width:440px;width:100%;margin:0 auto;border-radius:50%;background:radial-gradient(circle at 50% 45%,var(--panel),rgba(246,243,238,0) 70%)}
+.dial-wrap::before{content:"";position:absolute;inset:14%;border-radius:50%;box-shadow:0 0 60px rgba(36,80,92,.28);opacity:0;animation:glow 5s var(--ease-soft) -1.5s infinite alternate}
+@keyframes glow{to{opacity:.8}}
+.dial{all:unset;cursor:pointer;position:relative;width:58%;aspect-ratio:1;border-radius:50%;touch-action:none;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
+.dial:focus-visible{outline:2px solid var(--accent);outline-offset:8px}
+.dial .face{position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle at 35% 30%,#FFFFFF,#D9D7D2 55%,#B9BCBE 100%);box-shadow:inset 0 -6px 14px rgba(31,36,39,.18),0 calc(14px - 8px*var(--push)) calc(30px - 14px*var(--push)) rgba(31,36,39,.18);transform:scale(calc(1 - .045*var(--push))) rotate(calc(var(--p)*90deg))}
+.dial .notch{position:absolute;left:50%;top:9%;width:6px;height:18%;margin-left:-3px;border-radius:3px;background:var(--text-primary)}
+.dial-ticks{position:absolute;inset:6%;pointer-events:none}
+.dial-ticks circle{opacity:clamp(0,var(--p)*20,1);fill:none;stroke:var(--accent);stroke-width:2;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:calc(1 - var(--p));transform:rotate(-90deg);transform-origin:50% 50%}
+.dial-state{margin-top:22px;min-height:1.6em}
+.dial-state .hint{transition:opacity .4s var(--ease-out)}
+.dial-done .dw{opacity:0;transform:translateY(10px);transition:opacity .7s var(--ease-out),transform .7s var(--ease-out)}
+.done .dial-done .dw{opacity:1;transform:none}
+.done .dial-done .dw:nth-child(2){transition-delay:.18s}
+.done .dial-done .dw:nth-child(3){transition-delay:.36s}
+.done .dial-state .hint{opacity:0}
+.dial-done{display:flex;gap:.35em;font:500 clamp(1.6rem,2.6vw,2.3rem)/1.1 var(--display);margin-top:6px}
+.dial-done .dw:last-child{color:var(--accent)}
+@media (max-width:860px){.safety .wrap{grid-template-columns:1fr}}
+
+/* design: full-bleed image with an overlapping card */
+.design{padding-left:0;padding-right:0}
+.design figure{margin:0;position:relative;overflow:hidden;height:clamp(420px,82vh,820px)}
+.design figure img{width:100%;height:100%;object-fit:cover;object-position:51% 50%;animation:breath 22s var(--ease-soft) -5s infinite alternate}
+@keyframes breath{from{transform:scale(1)}to{transform:scale(1.045)}}
+.design .card-over{position:relative;margin:-120px auto 0;width:min(1180px,calc(100% - 32px))}
+.design .card-over > div{background:var(--panel);border-radius:26px;padding:clamp(28px,4vw,52px);max-width:560px;margin-left:auto;border:1px solid rgba(142,148,152,.25)}
+
+/* questions */
+.faq .wrap{display:grid;grid-template-columns:1fr 1.6fr;gap:48px}
+.faq .side{position:sticky;top:120px;align-self:start}
+.faq details{border-top:1px solid rgba(80,86,91,.35);padding:22px 0}
+.faq details:last-child{border-bottom:1px solid rgba(80,86,91,.35)}
+.faq summary{cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:baseline;gap:24px;font:500 clamp(1.15rem,1.6vw,1.4rem)/1.3 var(--display)}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary span.pm{flex:none;width:14px;height:14px;position:relative}
+.faq summary span.pm::before,.faq summary span.pm::after{content:"";position:absolute;left:0;top:6px;width:14px;height:1.5px;background:currentColor;transition:transform .45s var(--ease-out)}
+.faq summary span.pm::after{transform:rotate(90deg)}
+.faq details[open] summary span.pm::after{transform:rotate(0)}
+.faq details p{color:var(--text-secondary);margin-top:12px;max-width:52ch}
+.faq .drop{display:block;width:10px;height:10px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:var(--accent-muted);margin-top:28px;animation:fall 6s var(--ease-soft) -1s infinite}
+@keyframes fall{0%,60%{transform:translateY(0) rotate(-45deg);opacity:.9}90%{transform:translateY(46px) rotate(-45deg);opacity:0}100%{opacity:0}}
+@media (max-width:860px){.faq .wrap{grid-template-columns:1fr}.faq .side{position:static}}
+
+/* final call to action */
+.final{text-align:center;overflow:hidden}
+.final .h2{font-size:clamp(3rem,8vw,7.5rem)}
+.final .lede{margin:22px auto 0}
+.final .btn{margin-top:36px}
+
+footer{padding:40px 16px 56px;border-top:1px solid rgba(80,86,91,.25)}
+footer .wrap{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;align-items:baseline;color:var(--text-secondary);font-size:.92rem}
+footer ul{display:flex;gap:22px;list-style:none;margin:0;padding:0;flex-wrap:wrap}
+footer a{text-decoration:none}
+footer a:hover{color:var(--text-primary)}
+
+/* pause loops off-screen and on hidden tabs */
+.loop-off *, .loop-off *::before, .loop-off *::after{animation-play-state:paused!important}
+body.paused *, body.paused *::before, body.paused *::after{animation-play-state:paused!important}
+
+/* reduced motion: everything final, nothing moving */
+@media (prefers-reduced-motion: reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation:none!important;transition:none!important;transition-delay:0s!important}
+  [data-in] .part,.dial-done .dw{opacity:1!important;transform:none!important}
+  .gone li path{stroke-dashoffset:0!important}
+  .seam{--d:1!important}
+  .bubbles{display:none}
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<div class="env" aria-hidden="true"></div>
+
+<nav class="top" aria-label="Main">
+  <a class="brand" href="#top" aria-label="Farless home">
+    <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M22 54V26a12 12 0 0 1 24 0v8" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"/><circle cx="46" cy="44" r="3.5" fill="#24505C"/></svg>
+    Farless
+  </a>
+  <ul>
+    <li><a href="#waters">Five waters</a></li>
+    <li><a href="#safety">Safety</a></li>
+    <li><a href="#design">Design</a></li>
+    <li><a href="#questions">Questions</a></li>
+  </ul>
+  <a class="btn small" href="#buy">Buy</a>
+</nav>
+
+<header>
+  <section class="hero" id="top" aria-label="Farless introduction">
+    <div class="stage" id="stage">
+      <div class="poster" aria-hidden="true"></div>
+      <div class="poster-end" aria-hidden="true"></div>
+      <video id="hero" preload="none" muted playsinline aria-hidden="true" tabindex="-1"></video>
+      <div class="scrim" aria-hidden="true"></div>
+
+      <div class="band b1" data-a="0" data-b="0.30">
+        <div class="col l" style="--y:34%">
+          <h1 class="hx"><span class="sr">Farless. Five waters. One tap.</span>
+            <span class="bts" aria-hidden="true"><span class="soft">Farless.</span><span class="sharp">Farless.</span></span>
+          </h1>
+        </div>
+        <div class="col r" style="--y:40%">
+          <p class="hl bts" aria-hidden="true"><span class="soft">Five waters. One tap.</span><span class="sharp">Five waters. One tap.</span></p>
+        </div>
+      </div>
+
+      <div class="band b2" data-a="0.36" data-b="0.64">
+        <div class="col l" style="--y:36%"><p class="hl dd split">Boiling. Filtered.</p></div>
+        <div class="col r" style="--y:42%"><p class="hl dd split">Sparkling. Hot. Cold.</p></div>
+      </div>
+
+      <div class="band b3 settle" data-a="0.70" data-b="1">
+        <div class="col r" style="--y:28%;--sa:.7">
+          <h2 class="hx rise split" style="font-size:clamp(2.4rem,4.2vw,4.4rem)">Far less on your counter.</h2>
+          <p class="hs">No kettle. No bottles. No soda machine. Just one tap.</p>
+          <div class="cta-row"><a class="btn" href="#buy">Buy Farless</a></div>
+        </div>
+      </div>
+
+      <svg class="ring" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="20" fill="none" stroke="currentColor" stroke-opacity=".2" stroke-width="2"/><circle cx="24" cy="24" r="20" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="126" style="stroke-dashoffset:var(--ld,126)" transform="rotate(-90 24 24)"/></svg>
+    </div>
+  </section>
+
+  <section class="static-hero" aria-label="Farless introduction">
+    <div class="sh-copy">
+      <h1 class="hx">Far less on your counter.</h1>
+      <p class="hs">Boiling, filtered, sparkling, hot and cold water. All from one quiet tap.</p>
+      <div style="margin-top:26px"><a class="btn" href="#buy">Buy Farless</a></div>
+    </div>
+    <div class="sh-img" role="img" aria-label="Sparkling water with ice, lemon and lime pouring from a Farless tap into a tall glass"></div>
+  </section>
+</header>
+
+<main id="main" tabindex="-1">
+
+  <section class="sec waters" id="waters" aria-labelledby="waters-h">
+    <div class="wrap" data-in>
+      <div class="head">
+        <div>
+          <span class="mono kicker part">Five waters</span>
+          <h2 class="h2 part" id="waters-h">One tap does it all.</h2>
+        </div>
+        <p class="lede part">Every water your kitchen asks for, from one quiet tap.</p>
+      </div>
+      <ul class="cards">
+        <li class="card part"><span class="mono">01</span>
+          <svg class="ic" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M16 22c-3-4 3-6 0-10M24 22c-3-4 3-6 0-10M32 22c-3-4 3-6 0-10"/><path d="M10 28h28v4a10 10 0 0 1-10 10h-8a10 10 0 0 1-10-10z"/></svg>
+          <h3>Boiling</h3><p>Tea in the time it takes to reach for a cup.</p></li>
+        <li class="card part"><span class="mono">02</span>
+          <div class="bubbles" aria-hidden="true"><i style="--x:20%;--s:5px;--t:9s;--dl:-1s"></i><i style="--x:46%;--s:8px;--t:11s;--dl:-6s"></i><i style="--x:70%;--s:4px;--t:8s;--dl:-3s"></i><i style="--x:84%;--s:6px;--t:12s;--dl:-9s"></i></div>
+          <svg class="ic" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="18" cy="32" r="7"/><circle cx="31" cy="20" r="5"/><circle cx="22" cy="12" r="3"/><circle cx="35" cy="35" r="3"/></svg>
+          <h3>Sparkling</h3><p>Fresh bubbles every glass. No more flat bottles.</p></li>
+        <li class="card part"><span class="mono">03</span>
+          <svg class="ic" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M24 6c7 9 12 15 12 22a12 12 0 0 1-24 0c0-7 5-13 12-22z"/><path d="M18 26h12M19 31h10M21 36h6"/></svg>
+          <h3>Filtered</h3><p>Clean drinking water, straight from the tap.</p></li>
+        <li class="card part"><span class="mono">04</span>
+          <svg class="ic" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M24 6c7 9 12 15 12 22a12 12 0 0 1-24 0c0-7 5-13 12-22z"/><path d="M17 30c2.3-2 4.7-2 7 0s4.7 2 7 0"/></svg>
+          <h3>Hot</h3><p>For washing up and everyday cooking.</p></li>
+        <li class="card part"><span class="mono">05</span>
+          <svg class="ic" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M24 6c7 9 12 15 12 22a12 12 0 0 1-24 0c0-7 5-13 12-22z"/><path d="M24 22v14M18 26l12 6M30 26l-12 6"/></svg>
+          <h3>Cold</h3><p>Just water, the way it should be.</p></li>
+      </ul>
+    </div>
+  </section>
+
+  <div class="seam" aria-hidden="true"><svg viewBox="0 0 560 160" preserveAspectRatio="xMidYMid meet"><path pathLength="1" d="M20 150 C 20 60, 100 12, 200 12 C 300 12, 380 60, 380 110 L 380 130"/><circle cx="380" cy="146" r="4"/></svg></div>
+
+  <section class="sec leaves" aria-labelledby="leaves-h">
+    <div class="wrap">
+      <div data-in>
+        <span class="mono kicker part">What leaves your counter</span>
+        <h2 class="h2 part" id="leaves-h">One tap replaces</h2>
+      </div>
+      <div>
+        <ul class="gone" data-strike>
+          <li>The kettle.<svg viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M0 6 C 30 3, 70 8, 100 4"/></svg></li>
+          <li>The filter jug.<svg viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M0 5 C 35 8, 65 2, 100 6"/></svg></li>
+          <li>The soda machine.<svg viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M0 6 C 25 3, 75 7, 100 4"/></svg></li>
+          <li>The bottles.<svg viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M0 4 C 40 8, 60 3, 100 6"/></svg></li>
+        </ul>
+        <p class="calm">Fewer things. A calmer kitchen.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="seam" aria-hidden="true"><svg viewBox="0 0 560 160" preserveAspectRatio="xMidYMid meet"><path pathLength="1" d="M540 150 C 540 60, 460 12, 360 12 C 260 12, 180 60, 180 110 L 180 130"/><circle cx="180" cy="146" r="4"/></svg></div>
+
+  <section class="sec safety" id="safety" aria-labelledby="safety-h">
+    <div class="wrap">
+      <div class="dial-wrap" id="dialWrap">
+        <svg class="dial-ticks" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="46" pathLength="1"/></svg>
+        <button class="dial" id="dial" type="button" aria-describedby="dial-help">
+          <span class="sr">Press and hold to push and turn the boiling dial</span>
+          <span class="face" aria-hidden="true"><span class="notch"></span></span>
+        </button>
+      </div>
+      <div data-in>
+        <span class="mono kicker part">Safety</span>
+        <h2 class="h2 part" id="safety-h">Boiling only when you mean it.</h2>
+        <p class="lede part">Boiling water flows only when you push the dial and turn it at the same time. Small hands can't do it by accident.</p>
+        <div class="dial-state part">
+          <p class="mono hint" id="dial-help">Try it: press and hold the dial</p>
+          <p class="dial-done" aria-live="polite"><span class="dw">Push.</span><span class="dw">Turn.</span><span class="dw">Boiling.</span></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec design" id="design" aria-labelledby="design-h">
+    <figure><img src="assets/hero-ending.jpg" alt="A Farless tap pouring sparkling water into a glass of ice, lemon and lime" loading="lazy" width="1912" height="1080"></figure>
+    <div class="card-over" data-in>
+      <div>
+        <span class="mono kicker part">Design</span>
+        <h2 class="h2 part" id="design-h">Made to be looked at.</h2>
+        <p class="lede part">Brushed steel and one clean arc. Nothing to hide, and nothing to add.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec faq" id="questions" aria-labelledby="faq-h">
+    <div class="wrap">
+      <div class="side" data-in>
+        <span class="mono kicker part">Questions</span>
+        <h2 class="h2 part" id="faq-h">Good to know.</h2>
+        <span class="drop part" aria-hidden="true"></span>
+      </div>
+      <div>
+        <details><summary>Is it safe with children around?<span class="pm" aria-hidden="true"></span></summary><p>Yes. Boiling water needs a push and a turn at the same time, so it can't start by accident.</p></details>
+        <details><summary>What if something goes wrong?<span class="pm" aria-hidden="true"></span></summary><p>Every Farless comes with a 5-year warranty.</p></details>
+        <details><summary>Does it really replace the kettle?<span class="pm" aria-hidden="true"></span></summary><p>Yes. Boiling water is ready the moment you turn the dial. No waiting, no refilling.</p></details>
+        <details><summary>Will I run out of sparkling water bottles?<span class="pm" aria-hidden="true"></span></summary><p>There are no bottles to run out of. Sparkling water comes straight from the tap.</p></details>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec final" id="buy" aria-labelledby="buy-h">
+    <div class="bubbles" aria-hidden="true"><i style="--x:12%;--s:6px;--t:14s;--dl:-3s"></i><i style="--x:28%;--s:4px;--t:11s;--dl:-8s"></i><i style="--x:44%;--s:9px;--t:16s;--dl:-1s"></i><i style="--x:61%;--s:5px;--t:12s;--dl:-6s"></i><i style="--x:77%;--s:7px;--t:15s;--dl:-10s"></i><i style="--x:90%;--s:4px;--t:10s;--dl:-4s"></i></div>
+    <div class="wrap" data-in>
+      <h2 class="h2 part" id="buy-h">Make room.</h2>
+      <p class="lede part">Five waters. One tap. Far less on your counter.</p>
+      <!-- SHOP LINK: replace href with the Farless online shop URL -->
+      <a class="btn part" href="#buy" data-shop>Buy Farless</a>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© Farless</span>
+    <ul>
+      <li><a href="#waters">Five waters</a></li>
+      <li><a href="#safety">Safety</a></li>
+      <li><a href="#design">Design</a></li>
+      <li><a href="#questions">Questions</a></li>
+    </ul>
+  </div>
+</footer>
+
+<script>
+(() => {
+  'use strict';
+  // VP9 WebM is a third of the size; browsers without it get the H.264 MP4
+  const canWebm = document.createElement('video').canPlayType('video/webm; codecs="vp9"') === 'probably';
+  const VIDEO_URL = canWebm ? 'assets/hero-scrub.webm' : 'assets/hero-scrub.mp4';
+  const VIDEO_BYTES = canWebm ? 1401547 : 4216085;   // real byte sizes: the fallback when Content-Length is missing
+  const VIDEO_TYPE = canWebm ? 'video/webm' : 'video/mp4';
+  const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
+  const smoothstep = (p, e0, e1) => { const t = clamp((p - e0) / (e1 - e0), 0, 1); return t * t * (3 - 2 * t); };
+  function rng(seed){ let s = seed >>> 0; return () => (s = (s * 1664525 + 1013904223) >>> 0) / 4294967296; }
+
+  /* ---------- split words once ---------- */
+  const r = rng(7);
+  document.querySelectorAll('.split').forEach(el => {
+    const text = el.textContent.trim();
+    el.setAttribute('aria-label', text);
+    el.textContent = '';
+    const words = text.split(' ');
+    words.forEach((w, i) => {
+      const s = document.createElement('span');
+      s.className = 'w'; s.setAttribute('aria-hidden', 'true');
+      s.textContent = w;
+      s.style.setProperty('--th', (i / words.length * 0.5 + r() * 0.04).toFixed(3));
+      el.appendChild(s);
+      if (i < words.length - 1) el.appendChild(document.createTextNode(' '));
+    });
+  });
+
+  /* ---------- hero scrub ---------- */
+  const hero = document.querySelector('.hero');
+  const stage = document.getElementById('stage');
+  const video = document.getElementById('hero');
+  const ring = document.querySelector('.ring');
+  const posterLayer = document.querySelector('.poster');
+  const posterEnd = document.querySelector('.poster-end');
+  const bands = [...document.querySelectorAll('.band')].map(el => ({
+    el, a: +el.dataset.a, b: +el.dataset.b, ramp: el.dataset.ramp ? +el.dataset.ramp : 0, op: -1, k: -1
+  }));
+  let target = 0, shown = 0, rafId = null, lastTick = 0, heroOnScreen = true, loadK = 0, videoFailed = false, lastPe = -1;
+
+  function heroProgress(){
+    const rect = hero.getBoundingClientRect();
+    const range = hero.offsetHeight - innerHeight;
+    return range > 0 ? clamp(-rect.top / range, 0, 1) : 0;
+  }
+
+  function updateCaptions(p){
+    const last = bands.length - 1;
+    bands.forEach((band, i) => {
+      const { a, b } = band;
+      const f = Math.min(0.05, (b - a) / 3);
+      const inO = i === 0 ? 1 : smoothstep(p, a, a + f);
+      const outO = i === last ? 1 : 1 - smoothstep(p, b - f, b);
+      const op = (p < a && i !== 0) || (p > b && i !== last) ? 0 : inO * outO;
+      let k = clamp((p - a) / (band.ramp || Math.min(0.07, (b - a) * 0.35)), 0, 1);
+      if (i === 0) k = Math.max(k, loadK);
+      if (Math.abs(op - band.op) > 0.004 || (op === 0 || op === 1) && op !== band.op){ band.op = op; band.el.style.opacity = op.toFixed(3); }
+      if (Math.abs(k - band.k) > 0.008 || (k === 0 || k === 1) && k !== band.k){ band.k = k; band.el.style.setProperty('--k', k.toFixed(3)); }
+    });
+    if (videoFailed){
+      const pe = smoothstep(p, 0.4, 0.85);
+      if (Math.abs(pe - lastPe) > 0.004){ lastPe = pe; stage.style.setProperty('--pe', pe.toFixed(3)); }
+    }
+  }
+
+  let seekBusy = false, pendingTime = null;
+  function requestSeek(t){
+    if (!video.duration || videoFailed) return;
+    if (seekBusy){ pendingTime = t; return; }
+    seekBusy = true;
+    video.currentTime = t;
+  }
+  video.addEventListener('seeked', () => {
+    seekBusy = false;
+    if (pendingTime !== null){ const t = pendingTime; pendingTime = null; requestSeek(t); }
+  });
+  video.addEventListener('error', () => { seekBusy = false; pendingTime = null; failVideo(); });
+
+  function tick(now){
+    const dt = Math.min(100, now - (lastTick || now));
+    lastTick = now;
+    const k = 0.16;
+    shown += (target - shown) * (1 - Math.pow(1 - k, dt / 16.667));
+    if (Math.abs(target - shown) < 0.0005){ shown = target; rafId = null; lastTick = 0; }
+    else rafId = requestAnimationFrame(tick);
+    requestSeek(shown * (video.duration || 0) * 0.999);
+    updateCaptions(shown);
+  }
+  function onScroll(){
+    target = heroProgress();
+    if (rafId === null && heroOnScreen) rafId = requestAnimationFrame(tick);
+  }
+  new IntersectionObserver(es => { heroOnScreen = es[0].isIntersecting; if (heroOnScreen) onScroll(); }).observe(hero);
+
+  let heroInit = false;
+  function initHeroOnce(){
+    if (heroInit) return; heroInit = true;
+    posterLayer.style.backgroundImage = "url('assets/hero-poster.jpg')";
+    let started = false;
+    const startBlobFetch = () => { if (started) return; started = true; loadHeroBlob().catch(failVideo); };
+    const img = new Image();
+    img.onload = startBlobFetch; img.onerror = startBlobFetch;
+    img.src = 'assets/hero-poster.jpg';
+    setTimeout(startBlobFetch, 4000);
+  }
+  async function loadHeroBlob(){
+    const ctrl = new AbortController();
+    let watchdog = setTimeout(() => ctrl.abort(), 20000);
+    const res = await fetch(VIDEO_URL, { priority: 'low', signal: ctrl.signal });
+    if (!res.ok) throw new Error('video ' + res.status);
+    const total = Number(res.headers.get('Content-Length')) || VIDEO_BYTES;
+    const reader = res.body.getReader();
+    const chunks = []; let got = 0, lastRing = 0;
+    for (;;){
+      const { done, value } = await reader.read();
+      if (done) break;
+      clearTimeout(watchdog); watchdog = setTimeout(() => ctrl.abort(), 20000);
+      chunks.push(value); got += value.length;
+      const frac = Math.min(1, got / total), now = performance.now();
+      if (now - lastRing > 100 || frac === 1){ lastRing = now; ring.style.setProperty('--ld', Math.round(126 * (1 - frac))); }
+    }
+    clearTimeout(watchdog);
+    ring.style.setProperty('--ld', 0);
+    video.src = URL.createObjectURL(new Blob(chunks, { type: VIDEO_TYPE }));
+    video.load();
+    video.addEventListener('canplay', () => {
+      requestSeek(heroProgress() * video.duration * 0.999);
+      stage.classList.add('video-ready');
+    }, { once: true });
+  }
+  function makeCue(){
+    const ns = 'http://www.w3.org/2000/svg';
+    const s = document.createElementNS(ns, 'svg'); s.setAttribute('class', 'cue'); s.setAttribute('viewBox', '0 0 24 24'); s.setAttribute('aria-hidden', 'true');
+    const p = document.createElementNS(ns, 'path'); p.setAttribute('d', 'M5 9l7 7 7-7'); p.setAttribute('fill', 'none'); p.setAttribute('stroke', 'currentColor'); p.setAttribute('stroke-width', '1.6'); p.setAttribute('stroke-linecap', 'round');
+    s.appendChild(p); return s;
+  }
+  function failVideo(){
+    if (videoFailed) return;
+    videoFailed = true;
+    if (ring.isConnected) ring.replaceWith(makeCue());
+    stage.classList.add('video-failed');
+    video.style.display = 'none';
+    posterEnd.style.backgroundImage = "url('assets/hero-ending.jpg')";
+    lastPe = -1; updateCaptions(heroProgress());
+  }
+
+  function runLoadRamp(){
+    const t0 = performance.now();
+    const step = now => {
+      loadK = smoothstep(Math.min(1, (now - t0) / 1300), 0, 1);
+      bands[0].k = -1; updateCaptions(shown);
+      if (loadK < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  }
+
+  /* ---------- the five gates, live ---------- */
+  const GATES = [
+    '(max-width: 720px)',
+    '(orientation: portrait) and (max-width: 1024px)',
+    '(orientation: portrait) and (pointer: coarse)',
+    '(orientation: landscape) and (pointer: coarse) and (max-height: 560px)',
+    '(prefers-reduced-motion: reduce)'
+  ];
+  let scrubOn = false, rampDone = false;
+  function enableScrub(){
+    if (scrubOn) return; scrubOn = true;
+    initHeroOnce();
+    addEventListener('scroll', onScroll, { passive: true });
+    bands.forEach(b => { b.op = -1; b.k = -1; });
+    target = shown = heroProgress();
+    updateCaptions(shown);
+    if (!rampDone){ rampDone = true; runLoadRamp(); }
+    onScroll();
+  }
+  function disableScrub(){
+    if (!scrubOn) return; scrubOn = false;
+    removeEventListener('scroll', onScroll);
+    if (rafId !== null){ cancelAnimationFrame(rafId); rafId = null; }
+  }
+  function applyHeroMode(){ GATES.some(q => matchMedia(q).matches) ? disableScrub() : enableScrub(); }
+  const MQLS = GATES.map(q => matchMedia(q));
+  MQLS.forEach(m => m.addEventListener('change', applyHeroMode));
+  applyHeroMode();
+
+  /* ---------- entrances ---------- */
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)');
+  const io = new IntersectionObserver(es => es.forEach(e => {
+    if (!e.isIntersecting) return;
+    e.target.classList.add('in');
+    io.unobserve(e.target);
+    setTimeout(() => e.target.classList.add('settled'), 1400);
+  }), { rootMargin: '0px 0px -12% 0px' });
+  document.querySelectorAll('[data-in],[data-strike]').forEach(el => io.observe(el));
+
+  /* ---------- pause loops off-screen and on hidden tabs ---------- */
+  const loopIO = new IntersectionObserver(es => es.forEach(e => e.target.classList.toggle('loop-off', !e.isIntersecting)));
+  document.querySelectorAll('section.sec').forEach(el => loopIO.observe(el));
+  document.addEventListener('visibilitychange', () => document.body.classList.toggle('paused', document.hidden));
+
+  /* ---------- the arc seams, drawn by scroll ---------- */
+  const seams = [...document.querySelectorAll('.seam')].map(el => ({ el, d: -1, on: false }));
+  const seamIO = new IntersectionObserver(es => es.forEach(e => { const s = seams.find(x => x.el === e.target); s.on = e.isIntersecting; }), { rootMargin: '10% 0px' });
+  seams.forEach(s => seamIO.observe(s.el));
+  let seamRaf = null;
+  function drawSeams(){
+    seamRaf = null;
+    if (reduce.matches) return;
+    const vh = innerHeight;
+    seams.forEach(s => {
+      if (!s.on) return;
+      const rect = s.el.getBoundingClientRect();
+      const d = clamp((vh - rect.top) / (vh * 0.6 + rect.height), 0, 1);
+      if (Math.abs(d - s.d) > 0.004 || (d === 1 && s.d !== 1)){ s.d = d; s.el.style.setProperty('--d', d.toFixed(3)); }
+    });
+  }
+  addEventListener('scroll', () => { if (seamRaf === null) seamRaf = requestAnimationFrame(drawSeams); }, { passive: true });
+  drawSeams();
+
+  /* ---------- the one interactive moment: push and turn ---------- */
+  const dialWrap = document.getElementById('dialWrap');
+  const dial = document.getElementById('dial');
+  const safetyCopy = dialWrap.nextElementSibling;
+  let p = 0, holding = false, done = false, dRaf = null, dLast = 0;
+  function setP(v){ p = v; dialWrap.style.setProperty('--p', p.toFixed(3)); }
+  function finish(){
+    done = true; setP(1);
+    dialWrap.classList.add('done'); safetyCopy.classList.add('done');
+    dial.setAttribute('aria-pressed', 'true');
+  }
+  function dStep(now){
+    const dt = Math.min(100, now - (dLast || now)); dLast = now;
+    if (holding) setP(Math.min(1, p + dt / 1500));
+    else setP(Math.max(0, p - (dt / 900) * Math.max(0.25, p)));
+    if (p >= 1){ finish(); dRaf = null; dLast = 0; return; }
+    if (!holding && p <= 0){ dRaf = null; dLast = 0; return; }
+    dRaf = requestAnimationFrame(dStep);
+  }
+  function press(){ if (done) return; holding = true; if (dRaf === null) dRaf = requestAnimationFrame(dStep); }
+  function release(){ holding = false; }
+  dial.addEventListener('pointerdown', e => { e.preventDefault(); dial.setPointerCapture?.(e.pointerId); press(); });
+  ['pointerup', 'pointercancel', 'lostpointercapture'].forEach(t => dial.addEventListener(t, release));
+  dial.addEventListener('keydown', e => { if ((e.key === ' ' || e.key === 'Enter') && !e.repeat){ e.preventDefault(); press(); } });
+  dial.addEventListener('keyup', e => { if (e.key === ' ' || e.key === 'Enter') release(); });
+  dial.addEventListener('contextmenu', e => e.preventDefault());
+
+  /* ---------- reduced motion, live in both directions ---------- */
+  function pinToFinalStates(){
+    if (!done) finish();
+    seams.forEach(s => { s.d = 1; s.el.style.setProperty('--d', '1'); });
+    document.querySelectorAll('[data-in],[data-strike]').forEach(el => el.classList.add('in', 'settled'));
+  }
+  function unpinFinalStates(){ drawSeams(); }
+  if (reduce.matches) pinToFinalStates();
+  reduce.addEventListener('change', e => { if (e.matches) pinToFinalStates(); else { unpinFinalStates(); applyHeroMode(); } });
+})();
+</script>
+</body>
+</html>

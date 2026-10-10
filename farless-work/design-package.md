@@ -2,11 +2,11 @@
 
 ## 1. The brand premise
 
-One word: **less**. Farless puts boiling, filtered, sparkling, hot, and cold water into one quiet tap, so the kettle, the filter jug, the soda machine, and the bottles leave the counter. The whole site teaches and sells that one idea: a calmer kitchen with far less in it. The hero ends on a bare stone counter with one tap on it. The interactive moment enacts the push-and-turn safety dial. The closing line asks the visitor to make room.
+One word: **less**. Farless puts boiling, filtered, sparkling, hot, and cold water into one quiet tap, so the kettle, the filter jug, the soda machine, and the bottles leave the counter. The whole site teaches and sells that one idea: a calmer kitchen with far less in it. The hero pours one perfect glass of sparkling water, lemon and lime from the tap itself, no bottle in sight. The interactive moment enacts the push-and-turn safety dial. The closing line asks the visitor to make room.
 
 ## 2. The palette as CSS tokens
 
-Direction from the storyboard's world: honed limestone, brushed steel, soft north daylight, one deep mineral blue. Light and airy, in the spirit of Vipp and Gessi. Exact values get resampled from the approved footage after the video gate.
+Direction from the footage's world: warm white lime plaster, pale limestone, polished chrome, crisp morning light, with lemon and lime as the only color. One deep mineral blue for the buy button. Light and airy, in the spirit of Vipp and Gessi. Exact values get resampled from the approved footage after the video gate.
 
 ```css
 :root{
@@ -20,7 +20,7 @@ Direction from the storyboard's world: honed limestone, brushed steel, soft nort
 }
 ```
 
-Hero text over the footage: the film is light (morning daylight on stone), so hero bands likely run dark text over soft light mist scrims rather than light text over dark scrims. Decided against the real frames after the video gate, then audited at 3.5:1 worst pixel.
+Hero text over the footage: the film is bright (warm white plaster), so hero bands run dark text over soft light mist scrims rather than light text over dark scrims. Decided against the real frames after the video gate, then audited at 3.5:1 worst pixel.
 
 ## 3. The type trio
 
@@ -30,15 +30,15 @@ Hero text over the footage: the film is light (morning daylight on stone), so he
 
 ## 4. The band map
 
-Hero height about 400vh. Ranges are starting points, validated by the flick test.
+Concept (revised after owner feedback): a centered, locked-off shot. Sparkling water pours from the Farless spout straight down the center line into a tall glass of ice, lemon and lime, filling it from empty to full as the visitor scrolls. Hero height about 400vh. Ranges are starting points, validated by the flick test.
 
 | Band | Range (starting point) | Footage moment | Copy (verbatim) | Entrance |
 |---|---|---|---|---|
-| 1 | 0.00 to 0.30 | High and close on the spout's arc in soft morning light, a thin ribbon of steam curling from the tip | "Farless." / "Five waters. One tap." | Blur-to-sharp, echoing steam clearing (load ramp on band one) |
-| 2 | 0.34 to 0.64 | The camera glides down the steel body, the stone counter rising into view | "Boiling. Filtered. Sparkling. Hot. Cold." | Drift-down, word by word, echoing the descent |
-| 3 (settle) | 0.70 to 1.00 | At rest: the tap alone on a long bare stone counter, a glass of sparkling water beside it, fine bubbles rising | "Far less on your counter." / "No kettle. No bottles. No soda machine. Just one tap." / button "Buy Farless" | Word-by-word rise into a staged settle |
+| 1 | 0.00 to 0.30 | The first ribbon of sparkling water leaves the nozzle; the glass holds only ice and citrus | Left column: "Farless." / Right column: "Five waters. One tap." | Blur-to-sharp, echoing the first clear drop (load ramp on band one) |
+| 2 | 0.34 to 0.64 | The stream runs full, the glass fills, ice lifts, citrus wheels rise | Left: "Boiling. Filtered." / Right: "Sparkling. Hot. Cold." | Drift-down, word by word, echoing the pour |
+| 3 (settle) | 0.70 to 1.00 | At rest: the glass full and fizzing, the stream falling softly into it | Upper left: "Far less on your counter." / Upper right: "No kettle. No bottles. No soda machine. Just one tap." / button "Buy Farless" | Word-by-word rise into a staged settle |
 
-Layout: the tap lives right of center; captions live in the calm left third. The settle text sits upper left, clear of the spout.
+Layout: the pour owns the center lane and is never covered. Text lives in the open plaster wall on both sides, using the two-sided scrim variant (one scrim per column, center lane untouched). The faucet column sits left of center, so the left text column stays in the outer left third.
 
 ## 5. The static-hero copy block
 
