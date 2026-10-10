@@ -6,27 +6,26 @@ One word: **less**. Farless puts boiling, filtered, sparkling, hot, and cold wat
 
 ## 2. The palette as CSS tokens
 
-Direction from the footage's world: warm white lime plaster, pale limestone, polished chrome, crisp morning light, with lemon and lime as the only color. One deep mineral blue for the buy button. Light and airy, in the spirit of Vipp and Gessi. Exact values get resampled from the approved footage after the video gate.
+Dark warm edition, owner's brief: "a Gessi styled theme, minimal luxury, dark warm tones". Espresso darks sampled from the film's shadows, warm ivory type, brushed bronze in rare doses (the active point, the strike lines, the safety dial, the final buy button).
 
 ```css
 :root{
-  --canvas:#E9E7E3;        /* limestone mist, never pure white */
-  --panel:#F3F2EF;         /* raised stone */
-  --accent:#24505C;        /* deep mineral blue: the buy button and rare emphasis */
-  --accent-hover:#1B3F49;
-  --accent-muted:#9FB7BC;  /* borders, glows, bubbles */
-  --text-secondary:#5A6166;
-  --text-primary:#1F2427;
+  --canvas:#14100D;        /* espresso, never pure black */
+  --canvas-2:#1A1511;      /* alternate band for rhythm */
+  --panel:#221B16;
+  --hair:rgba(236,227,214,.14);
+  --text-primary:#ECE3D6;  /* warm ivory, 14.8:1 on canvas */
+  --text-secondary:#A69A8C;/* 6.9:1 on canvas */
+  --accent:#C4A57D;        /* brushed bronze, 8.1:1 on canvas */
+  --on-accent:#14100D;
 }
 ```
 
-Hero text over the footage: the film is bright (warm white plaster), so hero bands run dark text over soft light mist scrims rather than light text over dark scrims. Decided against the real frames after the video gate, then audited at 3.5:1 worst pixel.
+This is the "near-black with a warm accent" family the skill warns against as a default reach; it is used here because the owner asked for it, kept honest by sampling every tone from the footage and keeping the accent rare.
 
-## 3. The type trio
+## 3. The type
 
-- Display: **Familjen Grotesk** 400 and 500. Scandinavian grotesk with quiet character, from the Vipp world.
-- Body: **Hanken Grotesk** 400 and 500.
-- Mono (small labels, temperatures): **IBM Plex Mono** 400.
+One family, Jost (200, 300, 400), a light Italian-geometric sans in the spirit of Gessi's "design sans". Display at 200 with slight negative tracking, body at 300, and small spaced capitals (0.28em) as the house label in place of a mono. A deliberate deviation from the three-face default: one family carries the quiet, monolithic voice of the brand.
 
 ## 4. The band map
 
