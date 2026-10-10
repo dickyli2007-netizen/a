@@ -22,6 +22,10 @@
   --text-primary:#26211D;
   --line:#9A8F85;
   --on-accent:#F8F3EC;
+  --film-ink:#F8F3EC;
+  --film-shade:30,23,17;
+  --film-shadow:0 1px 2px rgba(20,15,10,.55),0 6px 28px rgba(20,15,10,.45);
+  --dot:#26211D;
   --ease-out:cubic-bezier(.22,.61,.36,1);
   --ease-soft:cubic-bezier(.45,0,.2,1);
   --display:"Familjen Grotesk",system-ui,sans-serif;
@@ -62,53 +66,81 @@ nav.top ul a:hover{color:var(--text-primary)}
 @media (pointer:coarse){.btn{min-height:44px;display:inline-flex;align-items:center;justify-content:center}}
 @media (max-width:860px){nav.top ul{display:none}}
 
-/* ---------- hero: scrub ----------
-   The footage fills its frame edge to edge (faucet left, person right), so the film sits
-   in a framed panel on the right and the words live on the canvas beside it. */
-.hero{position:relative;height:540vh;--filmw:min(60vw,calc((100vh - 170px)*16/9))}
-.stage{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden;background:var(--canvas)}
-.film{position:absolute;right:max(4vw,24px);top:calc(50% + 28px);transform:translateY(-50%);width:var(--filmw);aspect-ratio:16/9;max-width:100%;border-radius:24px;overflow:hidden;background:var(--panel);box-shadow:0 30px 80px -40px rgba(38,33,29,.45)}
-.poster,.poster-end{position:absolute;inset:0;background-size:cover;background-position:50% 50%}
-.poster-end{opacity:var(--pe,0)}
-#hero{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .8s var(--ease-out);will-change:transform;transform:translateZ(0)}
+/* ---------- hero: full screen, point to point ----------
+   The film fills the first screen. Each scroll gesture plays it on to the next point and
+   stops; the dots on the right show where you are. The words sit bottom-left over a soft
+   shade, clear of her face and the pour. */
+.hero{position:relative;height:100vh;height:100svh;min-height:520px;overflow:hidden;background:#2B231C}
+.stage{position:absolute;inset:0;overflow:hidden}
+.poster,.poster-end{position:absolute;inset:0;background-size:cover;background-position:20% 50%}
+.poster-end{opacity:var(--pe,0);transition:opacity 1s var(--ease-soft)}
+#hero{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:20% 50%;opacity:0;transition:opacity .8s var(--ease-out);will-change:transform;transform:translateZ(0)}
 .video-ready #hero{opacity:1}
-.band{position:absolute;inset:0;pointer-events:none;opacity:0}
-.band .col{position:absolute;top:calc(50% + 28px);transform:translateY(-50%);left:max(5vw,24px);width:calc(100vw - var(--filmw) - max(4vw,24px) - max(5vw,24px) - 4vw)}
-.band .btn{pointer-events:auto}
-.hx{font-size:clamp(2.6rem,5.2vw,5.6rem)}
-.hl{font-size:clamp(1.4rem,2.1vw,2.2rem);font-family:var(--display);font-weight:400;letter-spacing:-.015em;line-height:1.18}
-.band .hl + .hl{margin-top:.25em}
-.band .hx + .hl{margin-top:18px;color:var(--text-secondary)}
-.hs{font-size:clamp(1rem,1.2vw,1.15rem);color:var(--text-secondary);margin-top:18px;max-width:34ch}
-.hero-note{position:absolute;left:max(5vw,24px);bottom:30px;opacity:calc(1 - var(--k3,0))}
+.shade{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse 62% 60% at 0% 100%,rgba(var(--film-shade),.76) 0%,rgba(var(--film-shade),.48) 42%,rgba(var(--film-shade),0) 78%),linear-gradient(to top,rgba(var(--film-shade),.34),rgba(var(--film-shade),0) 34%)}
+.band{position:absolute;isolation:isolate;left:max(5vw,24px);bottom:clamp(56px,11vh,120px);width:min(27vw,420px);pointer-events:none;opacity:0;color:var(--film-ink);text-shadow:var(--film-shadow);transition:opacity .35s var(--ease-out)}
+.band.on{opacity:1;transition:opacity .7s var(--ease-out) .2s}
+.band::before{content:"";position:absolute;inset:-45% -38% -35% -30%;z-index:-1;pointer-events:none;background:radial-gradient(ellipse 62% 64% at 44% 46%,rgba(var(--film-shade),var(--sa,.72)) 0%,rgba(var(--film-shade),calc(var(--sa,.72)*.78)) 52%,rgba(var(--film-shade),0) 80%)}
+.band.settle{--sa:.8}
+.band.settle::before{inset:-35% -36% -30% -30%}
+.band .btn{text-shadow:none}
+.band.on .btn{pointer-events:auto}
+.hx{font-size:clamp(2.8rem,5.4vw,5.8rem)}
+.hl{font-size:clamp(1.5rem,2.5vw,2.7rem);font-family:var(--display);font-weight:400;letter-spacing:-.015em;line-height:1.15}
+.band .hx + .hl{margin-top:14px;color:rgba(248,243,236,.88)}
+.hs{font-size:clamp(1.05rem,1.3vw,1.25rem);margin-top:16px;max-width:34ch}
+.band .hs{color:rgba(248,243,236,.88)}
 /* band 1: blur-to-sharp (two copies, static blur, opacity only) */
 .bts{position:relative;display:block}
 .bts .soft{position:absolute;inset:0;filter:blur(10px);opacity:calc(1 - var(--k,0))}
 .bts .sharp{display:block;opacity:var(--k,0)}
-/* band 2: drift-down per word */
+/* drift-down per word, echoing the pour */
 .dd .w{display:inline-block;--kc:clamp(0,(var(--k,0) - var(--th,0))*2.8,1);opacity:var(--kc);transform:translateY(calc((1 - var(--kc))*-24px))}
-/* band 3: word rise into a staged settle */
+/* word rise into a staged settle */
 .rise .w{display:inline-block;--kc:clamp(0,(var(--k,0) - var(--th,0))*3,1);opacity:var(--kc);transform:translateY(calc((1 - var(--kc))*22px))}
 .settle .hs{opacity:clamp(0,(var(--k,0) - .66)*4,1);transform:translateY(calc((1 - clamp(0,(var(--k,0) - .66)*4,1))*10px))}
 .settle .cta-row{margin-top:26px;opacity:clamp(0,(var(--k,0) - .78)*5,1)}
-.ring{position:absolute;left:50%;bottom:18px;width:40px;height:40px;margin-left:-20px;color:#F8F3EC;opacity:.85;transition:opacity .6s var(--ease-out)}
+/* the point dots */
+.dots{position:absolute;right:max(2.2vw,14px);top:50%;transform:translateY(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;z-index:2}
+.dots button{all:unset;box-sizing:border-box;width:28px;height:28px;display:grid;place-items:center;cursor:pointer;border-radius:50%}
+.dots button::before{content:"";width:10px;height:10px;border-radius:50%;background:var(--dot);box-shadow:0 0 0 1.5px rgba(248,243,236,.7),0 2px 8px rgba(20,15,10,.25);opacity:var(--o,.35);transform:scale(var(--s,1));transition:transform .5s var(--ease-out),opacity .5s var(--ease-out)}
+.dots button[aria-current]::before{--s:1.6;--o:1}
+.dots button:hover::before{--o:.9}
+.dots button:focus-visible{outline:2px solid var(--film-ink);outline-offset:1px}
+@media (pointer:coarse){.dots{gap:0}.dots button{width:44px;height:44px}}
+/* scroll note with the loading ring */
+.hero-note{position:absolute;left:50%;bottom:22px;transform:translateX(-50%);display:flex;align-items:center;gap:10px;margin:0;padding:8px 14px 8px 10px;border-radius:999px;background:rgba(var(--film-shade),.38);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);color:var(--film-ink);font:400 .72rem/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;transition:opacity .5s var(--ease-out)}
+.stage:not([data-point="0"]) .hero-note{opacity:0}
+.hero-note svg{width:18px;height:18px}
 .ring circle{transition:stroke-dashoffset .12s linear}
-.video-ready .ring{opacity:0}
-.cue{position:absolute;left:50%;bottom:18px;width:28px;height:28px;margin-left:-14px;color:#F8F3EC;opacity:.85;animation:cue 2.6s var(--ease-soft) -.6s infinite}
-@keyframes cue{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
-@media (max-height:560px){.ring,.cue,.hero-note{display:none}}
+.hero-note .chev{display:none;animation:cue 2.6s var(--ease-soft) -.6s infinite}
+.video-ready .hero-note .ring,.video-failed .hero-note .ring{display:none}
+.video-ready .hero-note .chev,.video-failed .hero-note .chev{display:block}
+@keyframes cue{0%,100%{transform:translateY(-1px)}50%{transform:translateY(3px)}}
+@media (max-height:560px){.hero-note{display:none}}
 
 /* ---------- static hero (the five gates) ---------- */
 .static-hero{display:none}
 @media (max-width: 720px), (orientation: portrait) and (max-width: 1024px), (orientation: portrait) and (pointer: coarse), (orientation: landscape) and (pointer: coarse) and (max-height: 560px), (prefers-reduced-motion: reduce){
   .hero{display:none}
-  .static-hero{display:grid;grid-template-columns:1fr;gap:28px;padding:112px 16px 40px;max-width:1100px;margin:0 auto}
-  .static-hero .sh-img{aspect-ratio:4/5;border-radius:22px;background:url('assets/hero-ending.jpg') 14% 50%/cover no-repeat}
+  .static-hero{display:block;position:relative;height:100vh;height:100svh;min-height:520px;overflow:hidden;color:var(--film-ink);background:#2B231C url('assets/hero-ending.jpg') var(--shx,27%) 50%/cover no-repeat}
+  .static-hero::before{content:"";position:absolute;inset:0;background:linear-gradient(to top,rgba(var(--film-shade),.88) 0%,rgba(var(--film-shade),.6) 38%,rgba(var(--film-shade),0) 70%)}
+  .static-hero .sh-img{position:absolute;inset:0}
+  .static-hero .sh-copy{position:absolute;isolation:isolate;left:16px;right:16px;bottom:calc(36px + env(safe-area-inset-bottom, 0px));text-shadow:var(--film-shadow)}
+  .static-hero .sh-copy::before{content:"";position:absolute;inset:-30% -20% -20% -20%;z-index:-1;pointer-events:none;background:radial-gradient(ellipse 62% 62% at 40% 45%,rgba(var(--film-shade),.74) 0%,rgba(var(--film-shade),.56) 52%,rgba(var(--film-shade),0) 80%)}
   .static-hero .hx{font-size:clamp(2.4rem,9vw,4.4rem)}
+  .static-hero .hs{color:rgba(248,243,236,.88)}
+  .static-hero .btn{text-shadow:none}
+}
+@media (min-aspect-ratio: 4/3){
+  .static-hero{--shx:50%}
+  .static-hero .sh-copy{left:max(5vw,24px);right:auto;max-width:600px}
 }
 @media (orientation: landscape) and (pointer: coarse) and (max-height: 560px){
-  .static-hero{grid-template-columns:1fr 1fr;align-items:center;padding-top:88px}
-  .static-hero .sh-img{aspect-ratio:4/3}
+  .static-hero{min-height:0}
+  .static-hero .sh-copy{bottom:calc(20px + env(safe-area-inset-bottom, 0px));max-width:36vw}
+  .static-hero .hx{font-size:clamp(1.6rem,8.5vh,2.3rem)}
+  .static-hero .hs{font-size:.92rem;margin-top:10px}
+  .static-hero .sh-copy > div{margin-top:16px!important}
 }
 
 /* ---------- sections ---------- */
@@ -255,49 +287,49 @@ body.paused *, body.paused *::before, body.paused *::after{animation-play-state:
 
 <header>
   <section class="hero" id="top" aria-label="Farless introduction">
-    <div class="stage" id="stage">
-      <div class="film">
-        <div class="poster" aria-hidden="true"></div>
-        <div class="poster-end" aria-hidden="true"></div>
-        <video id="hero" preload="none" muted playsinline aria-hidden="true" tabindex="-1"></video>
-        <svg class="ring" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="20" fill="none" stroke="currentColor" stroke-opacity=".3" stroke-width="2"/><circle cx="24" cy="24" r="20" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="126" style="stroke-dashoffset:var(--ld,126)" transform="rotate(-90 24 24)"/></svg>
+    <div class="stage" id="stage" data-point="0">
+      <div class="poster" aria-hidden="true"></div>
+      <div class="poster-end" aria-hidden="true"></div>
+      <video id="hero" preload="none" muted playsinline aria-hidden="true" tabindex="-1"></video>
+      <div class="shade" aria-hidden="true"></div>
+
+      <div class="band" data-t="0">
+        <h1 class="hx"><span class="sr">Farless. Five waters. One tap.</span>
+          <span class="bts" aria-hidden="true"><span class="soft">Farless.</span><span class="sharp">Farless.</span></span>
+        </h1>
+        <p class="hl bts" aria-hidden="true"><span class="soft">Five waters. One tap.</span><span class="sharp">Five waters. One tap.</span></p>
+      </div>
+      <div class="band" data-t="2.8"><p class="hl dd split">Boiling. Filtered.</p></div>
+      <div class="band" data-t="4.6"><p class="hl dd split">Sparkling. Hot. Cold.</p></div>
+      <div class="band" data-t="6.4"><p class="hl dd split">No kettle. No bottles. No soda machine.</p></div>
+      <div class="band settle" data-t="end">
+        <h2 class="hx rise split" style="font-size:clamp(2rem,3.4vw,3.6rem)">Far less on your counter.</h2>
+        <p class="hs">Just one tap.</p>
+        <div class="cta-row"><a class="btn" href="#buy">Buy Farless</a></div>
       </div>
 
-      <div class="band b1" data-a="0" data-b="0.30">
-        <div class="col">
-          <h1 class="hx"><span class="sr">Farless. Five waters. One tap.</span>
-            <span class="bts" aria-hidden="true"><span class="soft">Farless.</span><span class="sharp">Farless.</span></span>
-          </h1>
-          <p class="hl bts" aria-hidden="true"><span class="soft">Five waters. One tap.</span><span class="sharp">Five waters. One tap.</span></p>
-        </div>
-      </div>
-
-      <div class="band b2" data-a="0.36" data-b="0.64">
-        <div class="col">
-          <p class="hl dd split" style="font-size:clamp(1.8rem,2.9vw,3.1rem)">Boiling. Filtered.</p>
-          <p class="hl dd split" style="font-size:clamp(1.8rem,2.9vw,3.1rem)">Sparkling. Hot. Cold.</p>
-        </div>
-      </div>
-
-      <div class="band b3 settle" data-a="0.70" data-b="1">
-        <div class="col">
-          <h2 class="hx rise split" style="font-size:clamp(2.2rem,3.6vw,3.9rem)">Far less on your counter.</h2>
-          <p class="hs">No kettle. No bottles. No soda machine. Just one tap.</p>
-          <div class="cta-row"><a class="btn" href="#buy">Buy Farless</a></div>
-        </div>
-      </div>
-
-      <p class="mono hero-note" aria-hidden="true">Scroll to pour</p>
+      <nav class="dots" aria-label="Film points">
+        <button type="button" aria-label="Point 1 of 5: Farless" aria-current="step"></button>
+        <button type="button" aria-label="Point 2 of 5: Boiling and filtered"></button>
+        <button type="button" aria-label="Point 3 of 5: Sparkling, hot and cold"></button>
+        <button type="button" aria-label="Point 4 of 5: No kettle, no bottles"></button>
+        <button type="button" aria-label="Point 5 of 5: Far less on your counter"></button>
+      </nav>
+      <p class="hero-note" aria-hidden="true">
+        <svg class="ring" viewBox="0 0 48 48"><circle cx="24" cy="24" r="20" fill="none" stroke="currentColor" stroke-opacity=".3" stroke-width="4"/><circle cx="24" cy="24" r="20" fill="none" stroke="currentColor" stroke-width="4" stroke-dasharray="126" style="stroke-dashoffset:var(--ld,126)" transform="rotate(-90 24 24)"/></svg>
+        <svg class="chev" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        <span>Scroll</span>
+      </p>
     </div>
   </section>
 
   <section class="static-hero" aria-label="Farless introduction">
+    <div class="sh-img" role="img" aria-label="Sparkling water pouring from a Farless tap into a glass with ice and lime"></div>
     <div class="sh-copy">
       <h1 class="hx">Far less on your counter.</h1>
       <p class="hs">Boiling, filtered, sparkling, hot and cold water. All from one quiet tap.</p>
       <div style="margin-top:26px"><a class="btn" href="#buy">Buy Farless</a></div>
     </div>
-    <div class="sh-img" role="img" aria-label="Sparkling water pouring from a Farless tap into a glass with ice and lime"></div>
   </section>
 </header>
 
@@ -456,43 +488,49 @@ body.paused *, body.paused *::before, body.paused *::after{animation-play-state:
     });
   });
 
-  /* ---------- hero scrub ---------- */
-  const hero = document.querySelector('.hero');
+  /* ---------- hero: point to point ---------- */
   const stage = document.getElementById('stage');
   const video = document.getElementById('hero');
-  const ring = document.querySelector('.ring');
+  const ring = document.querySelector('.hero-note .ring');
   const posterLayer = document.querySelector('.poster');
   const posterEnd = document.querySelector('.poster-end');
-  const bands = [...document.querySelectorAll('.band')].map(el => ({
-    el, a: +el.dataset.a, b: +el.dataset.b, ramp: el.dataset.ramp ? +el.dataset.ramp : 0, op: -1, k: -1
-  }));
-  let target = 0, shown = 0, rafId = null, lastTick = 0, heroOnScreen = true, loadK = 0, videoFailed = false, lastPe = -1, lastK3 = -1;
+  const bands = [...document.querySelectorAll('.band')].map(el => ({ el, t: el.dataset.t, raf: null }));
+  const dots = [...document.querySelectorAll('.dots button')];
+  const LAST = bands.length - 1;
+  const easeInOut = t => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+  let point = 0, videoReady = false, videoFailed = false, anim = null;
 
-  function heroProgress(){
-    const rect = hero.getBoundingClientRect();
-    const range = hero.offsetHeight - innerHeight;
-    return range > 0 ? clamp(-rect.top / range, 0, 1) : 0;
+  const timeOf = i => {
+    const d = video.duration || 8;
+    return Math.min(bands[i].t === 'end' ? d : +bands[i].t, d - 0.04);
+  };
+
+  // captions assemble on a time-based --k, the same entrance language as the rest of the page
+  function assemble(band){
+    cancelAnimationFrame(band.raf);
+    band.el.style.setProperty('--k', '0');
+    const t0 = performance.now() + 220;
+    const step = now => {
+      const k = smoothstep(Math.max(0, now - t0) / 1100, 0, 1);
+      band.el.style.setProperty('--k', k.toFixed(3));
+      if (k < 1) band.raf = requestAnimationFrame(step);
+    };
+    band.raf = requestAnimationFrame(step);
   }
 
-  function updateCaptions(p){
-    const last = bands.length - 1;
-    bands.forEach((band, i) => {
-      const { a, b } = band;
-      const f = Math.min(0.05, (b - a) / 3);
-      const inO = i === 0 ? 1 : smoothstep(p, a, a + f);
-      const outO = i === last ? 1 : 1 - smoothstep(p, b - f, b);
-      const op = (p < a && i !== 0) || (p > b && i !== last) ? 0 : inO * outO;
-      let k = clamp((p - a) / (band.ramp || Math.min(0.07, (b - a) * 0.35)), 0, 1);
-      if (i === 0) k = Math.max(k, loadK);
-      if (Math.abs(op - band.op) > 0.004 || (op === 0 || op === 1) && op !== band.op){ band.op = op; band.el.style.opacity = op.toFixed(3); }
-      if (Math.abs(k - band.k) > 0.008 || (k === 0 || k === 1) && k !== band.k){ band.k = k; band.el.style.setProperty('--k', k.toFixed(3)); }
+  function render(prev){
+    stage.dataset.point = point;
+    bands.forEach((b, i) => {
+      const on = i === point;
+      b.el.classList.toggle('on', on);
+      if (b.el.classList.contains('settle')) b.el.inert = !on;
+      if (on && i !== prev) assemble(b);
     });
-    const k3 = smoothstep(p, 0.02, 0.12);
-    if (Math.abs(k3 - lastK3) > 0.01 || (k3 === 1 && lastK3 !== 1) || (k3 === 0 && lastK3 !== 0)){ lastK3 = k3; stage.style.setProperty('--k3', k3.toFixed(3)); }
-    if (videoFailed){
-      const pe = smoothstep(p, 0.4, 0.85);
-      if (Math.abs(pe - lastPe) > 0.004){ lastPe = pe; stage.style.setProperty('--pe', pe.toFixed(3)); }
-    }
+    dots.forEach((d, i) => {
+      d.style.setProperty('--o', [1, 0.62, 0.46, 0.36, 0.3][Math.min(Math.abs(i - point), 4)]);
+      if (i === point) d.setAttribute('aria-current', 'step'); else d.removeAttribute('aria-current');
+    });
+    if (videoFailed) stage.style.setProperty('--pe', (point / LAST).toFixed(3));
   }
 
   let seekBusy = false, pendingTime = null;
@@ -508,21 +546,103 @@ body.paused *, body.paused *::before, body.paused *::after{animation-play-state:
   });
   video.addEventListener('error', () => { seekBusy = false; pendingTime = null; failVideo(); });
 
-  function tick(now){
-    const dt = Math.min(100, now - (lastTick || now));
-    lastTick = now;
-    const k = 0.16;
-    shown += (target - shown) * (1 - Math.pow(1 - k, dt / 16.667));
-    if (Math.abs(target - shown) < 0.0005){ shown = target; rafId = null; lastTick = 0; }
-    else rafId = requestAnimationFrame(tick);
-    requestSeek(shown * (video.duration || 0) * 0.999);
-    updateCaptions(shown);
+  function stopAnim(){
+    if (anim){ cancelAnimationFrame(anim.raf); anim = null; }
+    if (!video.paused) video.pause();
   }
-  function onScroll(){
-    target = heroProgress();
-    if (rafId === null && heroOnScreen) rafId = requestAnimationFrame(tick);
+  // forward: real playback, eased in and out with the playback rate; backward: eased seeks
+  function playTo(target){
+    stopAnim();
+    if (!videoReady) return;
+    const from = video.currentTime;
+    if (target <= from + 0.05){ seekTween(from, target); return; }
+    const a = anim = { raf: 0 };
+    let lastRate = 0;
+    const watch = () => {
+      if (anim !== a) return;
+      const ct = video.currentTime;
+      if (ct >= target - 0.03 || video.ended){
+        video.pause();
+        if (Math.abs(ct - target) > 0.06) requestSeek(target);
+        anim = null; return;
+      }
+      const p = clamp((ct - from) / (target - from), 0, 1);
+      const rate = clamp(0.55 + 1.25 * Math.sin(Math.PI * p), 0.5, 1.8);
+      if (Math.abs(rate - lastRate) > 0.05){ lastRate = rate; video.playbackRate = rate; }
+      a.raf = requestAnimationFrame(watch);
+    };
+    video.playbackRate = 0.6;
+    video.play().then(() => { if (anim === a) a.raf = requestAnimationFrame(watch); })
+      .catch(() => { if (anim === a){ anim = null; seekTween(from, target); } });
   }
-  new IntersectionObserver(es => { heroOnScreen = es[0].isIntersecting; if (heroOnScreen) onScroll(); }).observe(hero);
+  function seekTween(from, target){
+    const dur = clamp(Math.abs(target - from) / 2.4, 0.45, 1.6) * 1000;
+    const a = anim = { raf: 0 };
+    const t0 = performance.now();
+    const step = now => {
+      if (anim !== a) return;
+      const t = Math.min(1, (now - t0) / dur);
+      requestSeek(from + (target - from) * easeInOut(t));
+      if (t < 1) a.raf = requestAnimationFrame(step); else anim = null;
+    };
+    a.raf = requestAnimationFrame(step);
+  }
+
+  function goTo(i, instant){
+    i = clamp(i, 0, LAST);
+    if (i === point) return;
+    const prev = point;
+    point = i;
+    render(prev);
+    if (instant){ stopAnim(); requestSeek(timeOf(i)); }
+    else playTo(timeOf(i));
+  }
+
+  /* one scroll gesture moves one point; momentum in the same gesture never moves another */
+  const atTop = () => scrollY <= 1;
+  const canMove = dir => dir > 0 ? point < LAST : point > 0;
+  let lastWheel = 0, gTop = false, gUsed = false, acc = 0;
+  function onWheel(e){
+    if (e.ctrlKey) return;
+    const now = performance.now();
+    if (now - lastWheel > 220){ gTop = atTop(); gUsed = false; acc = 0; }
+    lastWheel = now;
+    if (!atTop()) return;
+    if (gUsed){ e.preventDefault(); return; }
+    const dy = e.deltaMode === 1 ? e.deltaY * 16 : e.deltaY;
+    const dir = Math.sign(dy);
+    if (!dir || !canMove(dir)) return;
+    e.preventDefault();
+    if (!gTop) return;
+    acc += dy;
+    if (Math.abs(acc) >= 18){ gUsed = true; goTo(point + dir); }
+  }
+  let ty = 0, tTop = false, tUsed = false;
+  function onTouchStart(e){ ty = e.touches[0].clientY; tTop = atTop(); tUsed = false; }
+  function onTouchMove(e){
+    if (!tTop || !atTop()) return;
+    if (tUsed){ e.preventDefault(); return; }
+    const dy = ty - e.touches[0].clientY;
+    const dir = Math.sign(dy);
+    if (!dir || !canMove(dir)) return;
+    e.preventDefault();
+    if (Math.abs(dy) > 36){ tUsed = true; goTo(point + dir); }
+  }
+  function onKey(e){
+    if (!atTop() || e.altKey || e.ctrlKey || e.metaKey) return;
+    const el = e.target;
+    if (el.closest && el.closest('input,textarea,select,[contenteditable]')) return;
+    if (e.key === ' ' && el.closest && el.closest('button,a,summary')) return;
+    let dir = 0;
+    if (e.key === 'ArrowDown' || e.key === 'PageDown' || (e.key === ' ' && !e.shiftKey)) dir = 1;
+    else if (e.key === 'ArrowUp' || e.key === 'PageUp' || (e.key === ' ' && e.shiftKey)) dir = -1;
+    if (!dir || !canMove(dir)) return;
+    e.preventDefault();
+    if (!e.repeat) goTo(point + dir);
+  }
+  // anyone who leaves the hero comes back to its resting point
+  function onScrollAway(){ if (scrollY > innerHeight * 0.6 && point !== LAST) goTo(LAST, true); }
+  dots.forEach((d, i) => d.addEventListener('click', () => goTo(i)));
 
   let heroInit = false;
   function initHeroOnce(){
@@ -556,34 +676,19 @@ body.paused *, body.paused *::before, body.paused *::after{animation-play-state:
     video.src = URL.createObjectURL(new Blob(chunks, { type: VIDEO_TYPE }));
     video.load();
     video.addEventListener('canplay', () => {
-      requestSeek(heroProgress() * video.duration * 0.999);
+      videoReady = true;
+      requestSeek(timeOf(point));
       stage.classList.add('video-ready');
     }, { once: true });
-  }
-  function makeCue(){
-    const ns = 'http://www.w3.org/2000/svg';
-    const s = document.createElementNS(ns, 'svg'); s.setAttribute('class', 'cue'); s.setAttribute('viewBox', '0 0 24 24'); s.setAttribute('aria-hidden', 'true');
-    const p = document.createElementNS(ns, 'path'); p.setAttribute('d', 'M5 9l7 7 7-7'); p.setAttribute('fill', 'none'); p.setAttribute('stroke', 'currentColor'); p.setAttribute('stroke-width', '1.6'); p.setAttribute('stroke-linecap', 'round');
-    s.appendChild(p); return s;
   }
   function failVideo(){
     if (videoFailed) return;
     videoFailed = true;
-    if (ring.isConnected) ring.replaceWith(makeCue());
+    stopAnim();
     stage.classList.add('video-failed');
     video.style.display = 'none';
     posterEnd.style.backgroundImage = "url('assets/hero-ending.jpg')";
-    lastPe = -1; updateCaptions(heroProgress());
-  }
-
-  function runLoadRamp(){
-    const t0 = performance.now();
-    const step = now => {
-      loadK = smoothstep(Math.min(1, (now - t0) / 1300), 0, 1);
-      bands[0].k = -1; updateCaptions(shown);
-      if (loadK < 1) requestAnimationFrame(step);
-    };
-    requestAnimationFrame(step);
+    render(point);
   }
 
   /* ---------- the five gates, live ---------- */
@@ -594,23 +699,29 @@ body.paused *, body.paused *::before, body.paused *::after{animation-play-state:
     '(orientation: landscape) and (pointer: coarse) and (max-height: 560px)',
     '(prefers-reduced-motion: reduce)'
   ];
-  let scrubOn = false, rampDone = false;
-  function enableScrub(){
-    if (scrubOn) return; scrubOn = true;
+  let stepperOn = false;
+  function enableStepper(){
+    if (stepperOn) return; stepperOn = true;
     initHeroOnce();
-    addEventListener('scroll', onScroll, { passive: true });
-    bands.forEach(b => { b.op = -1; b.k = -1; });
-    target = shown = heroProgress();
-    updateCaptions(shown);
-    if (!rampDone){ rampDone = true; runLoadRamp(); }
-    onScroll();
+    addEventListener('wheel', onWheel, { passive: false });
+    addEventListener('touchstart', onTouchStart, { passive: true });
+    addEventListener('touchmove', onTouchMove, { passive: false });
+    addEventListener('keydown', onKey);
+    addEventListener('scroll', onScrollAway, { passive: true });
+    if (scrollY > innerHeight * 0.6) point = LAST;
+    render(-1);
+    if (videoReady) requestSeek(timeOf(point));
   }
-  function disableScrub(){
-    if (!scrubOn) return; scrubOn = false;
-    removeEventListener('scroll', onScroll);
-    if (rafId !== null){ cancelAnimationFrame(rafId); rafId = null; }
+  function disableStepper(){
+    if (!stepperOn) return; stepperOn = false;
+    removeEventListener('wheel', onWheel, { passive: false });
+    removeEventListener('touchstart', onTouchStart, { passive: true });
+    removeEventListener('touchmove', onTouchMove, { passive: false });
+    removeEventListener('keydown', onKey);
+    removeEventListener('scroll', onScrollAway, { passive: true });
+    stopAnim();
   }
-  function applyHeroMode(){ GATES.some(q => matchMedia(q).matches) ? disableScrub() : enableScrub(); }
+  function applyHeroMode(){ GATES.some(q => matchMedia(q).matches) ? disableStepper() : enableStepper(); }
   const MQLS = GATES.map(q => matchMedia(q));
   MQLS.forEach(m => m.addEventListener('change', applyHeroMode));
   applyHeroMode();

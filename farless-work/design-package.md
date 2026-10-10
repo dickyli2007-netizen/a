@@ -30,15 +30,19 @@ Hero text over the footage: the film is bright (warm white plaster), so hero ban
 
 ## 4. The band map
 
-Concept (current, the owner's own footage): in a warm, backlit kitchen a hand reaches in, pushes and turns the Farless handle, and sparkling water pours into a glass of ice and lime while she smiles. One continuous 8-second shot. Hero height about 540vh. Ranges are starting points, validated by the flick test (passed).
+Concept (current, the owner's own footage): in a warm, backlit kitchen a hand reaches in, pushes and turns the Farless handle, and sparkling water pours into a glass of ice and lime while she smiles. One continuous 8-second shot.
 
-| Band | Range (starting point) | Footage moment | Copy (verbatim) | Entrance |
+Interaction (owner's request): the film fills the whole first screen and moves point to point. One scroll gesture, swipe or arrow key plays the film on to the next point and stops; scrolling up steps back. A column of dots on the right edge marks the points (current one larger and darker) and each dot jumps to its point. After the last point the page scrolls on normally; returning to the top shows the last point.
+
+| Point | Film time | Footage moment | Copy (verbatim) | Entrance |
 |---|---|---|---|---|
-| 1 | 0.00 to 0.30 | The first ribbon of sparkling water leaves the nozzle; the glass holds only ice and citrus | Left column: "Farless." / Right column: "Five waters. One tap." | Blur-to-sharp, echoing the first clear drop (load ramp on band one) |
-| 2 | 0.34 to 0.64 | The stream runs full, the glass fills, ice lifts, citrus wheels rise | Left: "Boiling. Filtered." / Right: "Sparkling. Hot. Cold." | Drift-down, word by word, echoing the pour |
-| 3 (settle) | 0.70 to 1.00 | At rest: the glass full and fizzing, the stream falling softly into it | Upper left: "Far less on your counter." / Upper right: "No kettle. No bottles. No soda machine. Just one tap." / button "Buy Farless" | Word-by-word rise into a staged settle |
+| 1 | 0.0s | Hand resting by the glass of ice and lime | "Farless." / "Five waters. One tap." | Blur-to-sharp (plays on load) |
+| 2 | 2.8s | Her hand on the handle, mid push and turn | "Boiling. Filtered." | Drift-down |
+| 3 | 4.6s | The stream runs into the glass | "Sparkling. Hot. Cold." | Drift-down |
+| 4 | 6.4s | The glass fills, she leans in | "No kettle. No bottles. No soda machine." | Drift-down |
+| 5 | end | At rest: the glass full, she smiles | "Far less on your counter." / "Just one tap." / button "Buy Farless" | Word rise into a staged settle |
 
-Layout: the footage fills its frame edge to edge (faucet left, person right), so the film sits in a framed panel on the right (60vw, rounded, soft shadow) and the band copy lives in a column on the canvas to its left. Nothing covers her face or the pour. Palette warmed toward the footage: canvas #EFE8DF, panel #F8F3EC, text #26211D, secondary #5B524A, accent mineral blue #24505C.
+Layout: captions sit bottom-left in a column that ends before the glass, light text over a bottom-left shade plus a local shade behind each caption (worst-pixel contrast at least 4.1:1 at every point and size). The video frames at object-position 20% so the faucet and glass sit a little right of the text. Palette warmed toward the footage: canvas #EFE8DF, panel #F8F3EC, text #26211D, secondary #5B524A, accent mineral blue #24505C.
 
 ## 5. The static-hero copy block
 
