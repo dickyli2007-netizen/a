@@ -1,0 +1,12 @@
+{
+  "layout": "farless",
+  "sections": {
+    "main": {
+      "type": "farless-landing",
+      "settings": {}
+    }
+  },
+  "order": [
+    "main"
+  ]
+}

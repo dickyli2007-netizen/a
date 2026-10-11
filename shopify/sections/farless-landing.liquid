@@ -1,0 +1,603 @@
+{%- liquid
+  assign p = section.settings.product
+  if p == blank
+    assign buy_url = routes.all_products_collection_url
+  elsif section.settings.straight_to_checkout
+    assign buy_url = routes.cart_url | append: '/' | append: p.selected_or_first_available_variant.id | append: ':1'
+  else
+    assign buy_url = p.url
+  endif
+-%}
+<nav class="top" aria-label="Main">
+  <ul class="l">
+    <li><a href="#waters">Five waters</a></li>
+    <li><a href="#safety">Safety</a></li>
+  </ul>
+  <a class="brand" href="#top" aria-label="Farless home">Farless</a>
+  <ul class="r">
+    <li><a href="#design">Design</a></li>
+    <li><a href="#questions">Questions</a></li>
+    <li class="keep"><a class="buy" href="{{ buy_url }}">Buy</a></li>
+  </ul>
+</nav>
+
+<header>
+  <section class="hero" id="top" aria-label="Farless introduction">
+    <div class="stage" id="stage" data-point="0">
+      <div class="poster" aria-hidden="true"></div>
+      <div class="poster-end" aria-hidden="true"></div>
+      <video id="hero" preload="none" muted playsinline aria-hidden="true" tabindex="-1"></video>
+      <div class="shade" aria-hidden="true"></div>
+
+      <div class="band" data-t="0">
+        <span class="label" aria-hidden="true"><span class="n">01</span>Five waters</span>
+        <h1 class="hx"><span class="sr">Farless. Five waters. One tap.</span>
+          <span class="bts" aria-hidden="true"><span class="soft">Farless.</span><span class="sharp">Farless.</span></span>
+        </h1>
+        <p class="hl bts" aria-hidden="true"><span class="soft">Five waters. One tap.</span><span class="sharp">Five waters. One tap.</span></p>
+      </div>
+      <div class="band" data-t="2.8">
+        <span class="label" aria-hidden="true"><span class="n">02</span>Push and turn</span>
+        <p class="hl dd split">Boiling. Filtered.</p>
+      </div>
+      <div class="band" data-t="4.6">
+        <span class="label" aria-hidden="true"><span class="n">03</span>The pour</span>
+        <p class="hl dd split">Sparkling. Hot. Cold.</p>
+      </div>
+      <div class="band" data-t="6.4">
+        <span class="label" aria-hidden="true"><span class="n">04</span>Less</span>
+        <p class="hl dd split">No kettle. No bottles. No soda machine.</p>
+      </div>
+      <div class="band settle" data-t="end">
+        <span class="label" aria-hidden="true"><span class="n">05</span>Farless</span>
+        <h2 class="hx rise split" style="font-size:clamp(2.2rem,3.6vw,3.9rem)">Far less on your counter.</h2>
+        <p class="hs">Just one tap.</p>
+        <div class="cta-row"><a class="btn" href="{{ buy_url }}">Buy Farless</a></div>
+      </div>
+
+      <nav class="dots" aria-label="Film points">
+        <button type="button" aria-label="Point 1 of 5: Farless" aria-current="step"><span class="count" aria-hidden="true">01</span></button>
+        <button type="button" aria-label="Point 2 of 5: Boiling and filtered"><span class="count" aria-hidden="true">02</span></button>
+        <button type="button" aria-label="Point 3 of 5: Sparkling, hot and cold"><span class="count" aria-hidden="true">03</span></button>
+        <button type="button" aria-label="Point 4 of 5: No kettle, no bottles"><span class="count" aria-hidden="true">04</span></button>
+        <button type="button" aria-label="Point 5 of 5: Far less on your counter"><span class="count" aria-hidden="true">05</span></button>
+      </nav>
+      <p class="hero-note" aria-hidden="true"><span>Scroll</span><span class="line"></span></p>
+    </div>
+  </section>
+
+  <section class="static-hero" aria-label="Farless introduction">
+    <div class="sh-img" role="img" aria-label="Sparkling water pouring from a Farless tap into a glass with ice and lime"></div>
+    <div class="sh-copy">
+      <span class="label" aria-hidden="true"><span class="n">Farless</span>Five waters. One tap.</span>
+      <h1 class="hx">Far less on your counter.</h1>
+      <p class="hs">Boiling, filtered, sparkling, hot and cold water. All from one quiet tap.</p>
+      <div class="cta-row"><a class="btn" href="{{ buy_url }}">Buy Farless</a></div>
+    </div>
+  </section>
+</header>
+
+<main id="main" tabindex="-1">
+
+  <section class="sec waters" id="waters" aria-labelledby="waters-h">
+    <div class="wrap" data-in>
+      <div class="head">
+        <div>
+          <span class="label kicker part">Five waters</span>
+          <h2 class="h2 part" id="waters-h">One tap does it all.</h2>
+        </div>
+        <p class="lede part">Every water your kitchen asks for, from one quiet tap.</p>
+      </div>
+      <ul class="cards">
+        <li class="card part"><span class="label"><span class="n">01</span></span>
+          <svg class="ic" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" aria-hidden="true"><path d="M16 22c-3-4 3-6 0-10M24 22c-3-4 3-6 0-10M32 22c-3-4 3-6 0-10"/><path d="M10 28h28v4a10 10 0 0 1-10 10h-8a10 10 0 0 1-10-10z"/></svg>
+          <h3>Boiling</h3><p>Tea in the time it takes to reach for a cup.</p></li>
+        <li class="card part"><span class="label"><span class="n">02</span></span>
+          <div class="bubbles" aria-hidden="true"><i style="--x:20%;--s:5px;--t:9s;--dl:-1s"></i><i style="--x:46%;--s:8px;--t:11s;--dl:-6s"></i><i style="--x:70%;--s:4px;--t:8s;--dl:-3s"></i><i style="--x:84%;--s:6px;--t:12s;--dl:-9s"></i></div>
+          <svg class="ic" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1" aria-hidden="true"><circle cx="18" cy="32" r="7"/><circle cx="31" cy="20" r="5"/><circle cx="22" cy="12" r="3"/><circle cx="35" cy="35" r="3"/></svg>
+          <h3>Sparkling</h3><p>Fresh bubbles every glass. No more flat bottles.</p></li>
+        <li class="card part"><span class="label"><span class="n">03</span></span>
+          <svg class="ic" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" aria-hidden="true"><path d="M24 6c7 9 12 15 12 22a12 12 0 0 1-24 0c0-7 5-13 12-22z"/><path d="M18 26h12M19 31h10M21 36h6"/></svg>
+          <h3>Filtered</h3><p>Clean drinking water, straight from the tap.</p></li>
+        <li class="card part"><span class="label"><span class="n">04</span></span>
+          <svg class="ic" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" aria-hidden="true"><path d="M24 6c7 9 12 15 12 22a12 12 0 0 1-24 0c0-7 5-13 12-22z"/><path d="M17 30c2.3-2 4.7-2 7 0s4.7 2 7 0"/></svg>
+          <h3>Hot</h3><p>For washing up and everyday cooking.</p></li>
+        <li class="card part"><span class="label"><span class="n">05</span></span>
+          <svg class="ic" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" aria-hidden="true"><path d="M24 6c7 9 12 15 12 22a12 12 0 0 1-24 0c0-7 5-13 12-22z"/><path d="M24 22v14M18 26l12 6M30 26l-12 6"/></svg>
+          <h3>Cold</h3><p>Just water, the way it should be.</p></li>
+      </ul>
+    </div>
+  </section>
+
+  <div class="seam" aria-hidden="true"><svg viewBox="0 0 560 160" preserveAspectRatio="xMidYMid meet"><path pathLength="1" d="M20 150 C 20 60, 100 12, 200 12 C 300 12, 380 60, 380 110 L 380 130"/><circle cx="380" cy="146" r="3"/></svg></div>
+
+  <section class="sec leaves" aria-labelledby="leaves-h">
+    <div class="wrap">
+      <div data-in>
+        <span class="label kicker part">What leaves your counter</span>
+        <h2 class="h2 part" id="leaves-h">One tap replaces</h2>
+      </div>
+      <div>
+        <ul class="gone" data-strike>
+          <li>The kettle.<svg viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M0 6 C 30 3, 70 8, 100 4"/></svg></li>
+          <li>The filter jug.<svg viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M0 5 C 35 8, 65 2, 100 6"/></svg></li>
+          <li>The soda machine.<svg viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M0 6 C 25 3, 75 7, 100 4"/></svg></li>
+          <li>The bottles.<svg viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M0 4 C 40 8, 60 3, 100 6"/></svg></li>
+        </ul>
+        <p class="calm">Fewer things. A calmer kitchen.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="seam" aria-hidden="true"><svg viewBox="0 0 560 160" preserveAspectRatio="xMidYMid meet"><path pathLength="1" d="M540 150 C 540 60, 460 12, 360 12 C 260 12, 180 60, 180 110 L 180 130"/><circle cx="180" cy="146" r="3"/></svg></div>
+
+  <section class="sec safety" id="safety" aria-labelledby="safety-h">
+    <div class="wrap">
+      <div class="dial-wrap" id="dialWrap">
+        <svg class="dial-ticks" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="46" pathLength="1"/></svg>
+        <button class="dial" id="dial" type="button" aria-describedby="dial-help">
+          <span class="sr">Press and hold to push and turn the boiling dial</span>
+          <span class="face" aria-hidden="true"><span class="notch"></span></span>
+        </button>
+      </div>
+      <div data-in>
+        <span class="label kicker part">Safety</span>
+        <h2 class="h2 part" id="safety-h">Boiling only when you mean it.</h2>
+        <p class="lede part">Boiling water flows only when you push the dial and turn it at the same time. Small hands can't do it by accident.</p>
+        <div class="dial-state part">
+          <p class="label hint" id="dial-help">Try it. Press and hold the dial</p>
+          <p class="dial-done" aria-live="polite"><span class="dw">Push.</span><span class="dw">Turn.</span><span class="dw">Boiling.</span></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec design tone" id="design" aria-labelledby="design-h">
+    <div class="wrap">
+      <div data-in>
+        <span class="label kicker part">Design</span>
+        <h2 class="h2 part" id="design-h">Made to be looked at.</h2>
+        <p class="lede part">Brushed steel and one clean arc. Nothing to hide, and nothing to add.</p>
+      </div>
+      <figure>
+        <img src="{{ 'farless-design.jpg' | asset_url }}" alt="A hand turning the Farless handle as sparkling water starts to pour" loading="lazy" width="880" height="1080">
+        <figcaption class="label"><span>Push and turn</span><span>Farless</span></figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="sec faq" id="questions" aria-labelledby="faq-h">
+    <div class="wrap">
+      <div class="side" data-in>
+        <span class="label kicker part">Questions</span>
+        <h2 class="h2 part" id="faq-h">Good to know.</h2>
+        <span class="drop part" aria-hidden="true"></span>
+      </div>
+      <div>
+        <details><summary>Is it safe with children around?<span class="pm" aria-hidden="true"></span></summary><p>Yes. Boiling water needs a push and a turn at the same time, so it can't start by accident.</p></details>
+        <details><summary>What if something goes wrong?<span class="pm" aria-hidden="true"></span></summary><p>Every Farless comes with a 5-year warranty.</p></details>
+        <details><summary>Does it really replace the kettle?<span class="pm" aria-hidden="true"></span></summary><p>Yes. Boiling water is ready the moment you turn the dial. No waiting, no refilling.</p></details>
+        <details><summary>Will I run out of sparkling water bottles?<span class="pm" aria-hidden="true"></span></summary><p>There are no bottles to run out of. Sparkling water comes straight from the tap.</p></details>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec final tone" id="buy" aria-labelledby="buy-h">
+    <div class="bubbles" aria-hidden="true"><i style="--x:12%;--s:6px;--t:14s;--dl:-3s"></i><i style="--x:28%;--s:4px;--t:11s;--dl:-8s"></i><i style="--x:44%;--s:9px;--t:16s;--dl:-1s"></i><i style="--x:61%;--s:5px;--t:12s;--dl:-6s"></i><i style="--x:77%;--s:7px;--t:15s;--dl:-10s"></i><i style="--x:90%;--s:4px;--t:10s;--dl:-4s"></i></div>
+    <div class="wrap" data-in>
+      <span class="label part">Farless</span>
+      <h2 class="h2 part" id="buy-h">Make room.</h2>
+      <p class="lede part">Five waters. One tap. Far less on your counter.</p>
+      <a class="btn solid part" href="{{ buy_url }}">Buy Farless</a>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <ul>
+      <li><a class="label" href="#waters">Five waters</a></li>
+      <li><a class="label" href="#safety">Safety</a></li>
+    </ul>
+    <a class="brand" href="#top" aria-label="Farless home">Farless</a>
+    <ul class="r">
+      <li><a class="label" href="#design">Design</a></li>
+      <li><a class="label" href="#questions">Questions</a></li>
+      {%- for policy in shop.policies -%}
+      <li><a class="label" href="{{ policy.url }}">{{ policy.title }}</a></li>
+      {%- endfor -%}
+      <li><span class="label">© {{ "now" | date: "%Y" }} Farless</span></li>
+    </ul>
+  </div>
+</footer>
+
+<script>
+  window.FARLESS = {
+    webm: {{ 'farless-hero.webm' | asset_url | json }},
+    mp4: {{ 'farless-hero.mp4' | asset_url | json }},
+    poster: {{ 'farless-hero-poster.jpg' | asset_url | json }},
+    ending: {{ 'farless-hero-ending.jpg' | asset_url | json }}
+  };
+</script>
+{% raw %}
+<script>
+(() => {
+  'use strict';
+  // VP9 WebM is a third of the size; browsers without it get the H.264 MP4
+  const canWebm = document.createElement('video').canPlayType('video/webm; codecs="vp9"') === 'probably';
+  const VIDEO_URL = canWebm ? FARLESS.webm : FARLESS.mp4;
+  const VIDEO_BYTES = canWebm ? 1644195 : 3186482;   // real byte sizes: the fallback when Content-Length is missing
+  const VIDEO_TYPE = canWebm ? 'video/webm' : 'video/mp4';
+  const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
+  const smoothstep = (p, e0, e1) => { const t = clamp((p - e0) / (e1 - e0), 0, 1); return t * t * (3 - 2 * t); };
+  function rng(seed){ let s = seed >>> 0; return () => (s = (s * 1664525 + 1013904223) >>> 0) / 4294967296; }
+
+  /* ---------- split words once ---------- */
+  const r = rng(7);
+  document.querySelectorAll('.split').forEach(el => {
+    const text = el.textContent.trim();
+    el.setAttribute('aria-label', text);
+    el.textContent = '';
+    const words = text.split(' ');
+    words.forEach((w, i) => {
+      const s = document.createElement('span');
+      s.className = 'w'; s.setAttribute('aria-hidden', 'true');
+      s.textContent = w;
+      s.style.setProperty('--th', (i / words.length * 0.5 + r() * 0.04).toFixed(3));
+      el.appendChild(s);
+      if (i < words.length - 1) el.appendChild(document.createTextNode(' '));
+    });
+  });
+
+  /* ---------- hero: point to point ---------- */
+  const stage = document.getElementById('stage');
+  const video = document.getElementById('hero');
+  const loadLine = document.querySelector('.hero-note .line');
+  const posterLayer = document.querySelector('.poster');
+  const posterEnd = document.querySelector('.poster-end');
+  const bands = [...document.querySelectorAll('.band')].map(el => ({ el, t: el.dataset.t, raf: null }));
+  const dots = [...document.querySelectorAll('.dots button')];
+  const LAST = bands.length - 1;
+  const easeInOut = t => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+  let point = 0, videoReady = false, videoFailed = false, anim = null;
+
+  const timeOf = i => {
+    const d = video.duration || 8;
+    return Math.min(bands[i].t === 'end' ? d : +bands[i].t, d - 0.04);
+  };
+
+  // captions assemble on a time-based --k, the same entrance language as the rest of the page
+  function assemble(band){
+    cancelAnimationFrame(band.raf);
+    band.el.style.setProperty('--k', '0');
+    const t0 = performance.now() + 220;
+    const step = now => {
+      const k = smoothstep(Math.max(0, now - t0) / 1100, 0, 1);
+      band.el.style.setProperty('--k', k.toFixed(3));
+      if (k < 1) band.raf = requestAnimationFrame(step);
+    };
+    band.raf = requestAnimationFrame(step);
+  }
+
+  function render(prev){
+    stage.dataset.point = point;
+    bands.forEach((b, i) => {
+      const on = i === point;
+      b.el.classList.toggle('on', on);
+      if (b.el.classList.contains('settle')) b.el.inert = !on;
+      if (on && i !== prev) assemble(b);
+    });
+    dots.forEach((d, i) => {
+      d.style.setProperty('--o', [1, 0.78, 0.62, 0.52, 0.46][Math.min(Math.abs(i - point), 4)]);
+      if (i === point) d.setAttribute('aria-current', 'step'); else d.removeAttribute('aria-current');
+    });
+    if (videoFailed) stage.style.setProperty('--pe', (point / LAST).toFixed(3));
+  }
+
+  let seekBusy = false, pendingTime = null;
+  function requestSeek(t){
+    if (!video.duration || videoFailed) return;
+    if (seekBusy){ pendingTime = t; return; }
+    seekBusy = true;
+    video.currentTime = t;
+  }
+  video.addEventListener('seeked', () => {
+    seekBusy = false;
+    if (pendingTime !== null){ const t = pendingTime; pendingTime = null; requestSeek(t); }
+  });
+  video.addEventListener('error', () => { seekBusy = false; pendingTime = null; failVideo(); });
+
+  function stopAnim(){
+    if (anim){ cancelAnimationFrame(anim.raf); anim = null; }
+    if (!video.paused) video.pause();
+  }
+  // forward: real playback, eased in and out with the playback rate; backward: eased seeks
+  function playTo(target){
+    stopAnim();
+    if (!videoReady) return;
+    const from = video.currentTime;
+    if (target <= from + 0.05){ seekTween(from, target); return; }
+    const a = anim = { raf: 0 };
+    let lastRate = 0;
+    const watch = () => {
+      if (anim !== a) return;
+      const ct = video.currentTime;
+      if (ct >= target - 0.03 || video.ended){
+        video.pause();
+        if (Math.abs(ct - target) > 0.06) requestSeek(target);
+        anim = null; return;
+      }
+      const p = clamp((ct - from) / (target - from), 0, 1);
+      const rate = clamp(0.55 + 1.25 * Math.sin(Math.PI * p), 0.5, 1.8);
+      if (Math.abs(rate - lastRate) > 0.05){ lastRate = rate; video.playbackRate = rate; }
+      a.raf = requestAnimationFrame(watch);
+    };
+    video.playbackRate = 0.6;
+    video.play().then(() => { if (anim === a) a.raf = requestAnimationFrame(watch); })
+      .catch(() => { if (anim === a){ anim = null; seekTween(from, target); } });
+  }
+  function seekTween(from, target){
+    const dur = clamp(Math.abs(target - from) / 2.4, 0.45, 1.6) * 1000;
+    const a = anim = { raf: 0 };
+    const t0 = performance.now();
+    const step = now => {
+      if (anim !== a) return;
+      const t = Math.min(1, (now - t0) / dur);
+      requestSeek(from + (target - from) * easeInOut(t));
+      if (t < 1) a.raf = requestAnimationFrame(step); else anim = null;
+    };
+    a.raf = requestAnimationFrame(step);
+  }
+
+  function goTo(i, instant){
+    i = clamp(i, 0, LAST);
+    if (i === point) return;
+    const prev = point;
+    point = i;
+    render(prev);
+    if (instant){ stopAnim(); requestSeek(timeOf(i)); }
+    else playTo(timeOf(i));
+  }
+
+  /* one scroll gesture moves one point; momentum in the same gesture never moves another */
+  const atTop = () => scrollY <= 1;
+  const canMove = dir => dir > 0 ? point < LAST : point > 0;
+  let lastWheel = 0, gTop = false, gUsed = false, acc = 0;
+  function onWheel(e){
+    if (e.ctrlKey) return;
+    const now = performance.now();
+    if (now - lastWheel > 220){ gTop = atTop(); gUsed = false; acc = 0; }
+    lastWheel = now;
+    if (!atTop()) return;
+    if (gUsed){ e.preventDefault(); return; }
+    const dy = e.deltaMode === 1 ? e.deltaY * 16 : e.deltaY;
+    const dir = Math.sign(dy);
+    if (!dir || !canMove(dir)) return;
+    e.preventDefault();
+    if (!gTop) return;
+    acc += dy;
+    if (Math.abs(acc) >= 18){ gUsed = true; goTo(point + dir); }
+  }
+  let ty = 0, tTop = false, tUsed = false;
+  function onTouchStart(e){ ty = e.touches[0].clientY; tTop = atTop(); tUsed = false; }
+  function onTouchMove(e){
+    if (!tTop || !atTop()) return;
+    if (tUsed){ e.preventDefault(); return; }
+    const dy = ty - e.touches[0].clientY;
+    const dir = Math.sign(dy);
+    if (!dir || !canMove(dir)) return;
+    e.preventDefault();
+    if (Math.abs(dy) > 36){ tUsed = true; goTo(point + dir); }
+  }
+  function onKey(e){
+    if (!atTop() || e.altKey || e.ctrlKey || e.metaKey) return;
+    const el = e.target;
+    if (el.closest && el.closest('input,textarea,select,[contenteditable]')) return;
+    if (e.key === ' ' && el.closest && el.closest('button,a,summary')) return;
+    let dir = 0;
+    if (e.key === 'ArrowDown' || e.key === 'PageDown' || (e.key === ' ' && !e.shiftKey)) dir = 1;
+    else if (e.key === 'ArrowUp' || e.key === 'PageUp' || (e.key === ' ' && e.shiftKey)) dir = -1;
+    if (!dir || !canMove(dir)) return;
+    e.preventDefault();
+    if (!e.repeat) goTo(point + dir);
+  }
+  // anyone who leaves the hero comes back to its resting point
+  function onScrollAway(){ if (scrollY > innerHeight * 0.6 && point !== LAST) goTo(LAST, true); }
+  dots.forEach((d, i) => d.addEventListener('click', () => goTo(i)));
+
+  let heroInit = false;
+  function initHeroOnce(){
+    if (heroInit) return; heroInit = true;
+    posterLayer.style.backgroundImage = "url('" + FARLESS.poster + "')";
+    let started = false;
+    const startBlobFetch = () => { if (started) return; started = true; loadHeroBlob().catch(failVideo); };
+    const img = new Image();
+    img.onload = startBlobFetch; img.onerror = startBlobFetch;
+    img.src = FARLESS.poster;
+    setTimeout(startBlobFetch, 4000);
+  }
+  async function loadHeroBlob(){
+    const ctrl = new AbortController();
+    let watchdog = setTimeout(() => ctrl.abort(), 20000);
+    const res = await fetch(VIDEO_URL, { priority: 'low', signal: ctrl.signal });
+    if (!res.ok) throw new Error('video ' + res.status);
+    const total = Number(res.headers.get('Content-Length')) || VIDEO_BYTES;
+    const reader = res.body.getReader();
+    const chunks = []; let got = 0, lastRing = 0;
+    for (;;){
+      const { done, value } = await reader.read();
+      if (done) break;
+      clearTimeout(watchdog); watchdog = setTimeout(() => ctrl.abort(), 20000);
+      chunks.push(value); got += value.length;
+      const frac = Math.min(1, got / total), now = performance.now();
+      if (now - lastRing > 100 || frac === 1){ lastRing = now; loadLine.style.setProperty('--lp', frac.toFixed(3)); }
+    }
+    clearTimeout(watchdog);
+    loadLine.style.setProperty('--lp', '1');
+    video.src = URL.createObjectURL(new Blob(chunks, { type: VIDEO_TYPE }));
+    video.load();
+    video.addEventListener('canplay', () => {
+      videoReady = true;
+      requestSeek(timeOf(point));
+      stage.classList.add('video-ready');
+    }, { once: true });
+  }
+  function failVideo(){
+    if (videoFailed) return;
+    videoFailed = true;
+    stopAnim();
+    stage.classList.add('video-failed');
+    video.style.display = 'none';
+    posterEnd.style.backgroundImage = "url('" + FARLESS.ending + "')";
+    render(point);
+  }
+
+  /* ---------- the five gates, live ---------- */
+  const GATES = [
+    '(max-width: 720px)',
+    '(orientation: portrait) and (max-width: 1024px)',
+    '(orientation: portrait) and (pointer: coarse)',
+    '(orientation: landscape) and (pointer: coarse) and (max-height: 560px)',
+    '(prefers-reduced-motion: reduce)'
+  ];
+  let stepperOn = false;
+  function enableStepper(){
+    if (stepperOn) return; stepperOn = true;
+    initHeroOnce();
+    addEventListener('wheel', onWheel, { passive: false });
+    addEventListener('touchstart', onTouchStart, { passive: true });
+    addEventListener('touchmove', onTouchMove, { passive: false });
+    addEventListener('keydown', onKey);
+    addEventListener('scroll', onScrollAway, { passive: true });
+    if (scrollY > innerHeight * 0.6) point = LAST;
+    render(-1);
+    if (videoReady) requestSeek(timeOf(point));
+  }
+  function disableStepper(){
+    if (!stepperOn) return; stepperOn = false;
+    removeEventListener('wheel', onWheel, { passive: false });
+    removeEventListener('touchstart', onTouchStart, { passive: true });
+    removeEventListener('touchmove', onTouchMove, { passive: false });
+    removeEventListener('keydown', onKey);
+    removeEventListener('scroll', onScrollAway, { passive: true });
+    stopAnim();
+  }
+  function applyHeroMode(){ GATES.some(q => matchMedia(q).matches) ? disableStepper() : enableStepper(); }
+  const MQLS = GATES.map(q => matchMedia(q));
+  MQLS.forEach(m => m.addEventListener('change', applyHeroMode));
+  applyHeroMode();
+
+  /* ---------- header: transparent over the film, solid below it ---------- */
+  const nav = document.querySelector('nav.top');
+  let navSolid = null;
+  function updateNav(){
+    // transparent only while the page rests at the very top; anything scrolling under it gets a solid bar
+    const solid = scrollY > 8;
+    if (solid !== navSolid){ navSolid = solid; nav.classList.toggle('solid', solid); }
+  }
+  addEventListener('scroll', updateNav, { passive: true });
+  addEventListener('resize', updateNav);
+  updateNav();
+
+  /* ---------- entrances ---------- */
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)');
+  const io = new IntersectionObserver(es => es.forEach(e => {
+    if (!e.isIntersecting) return;
+    e.target.classList.add('in');
+    io.unobserve(e.target);
+    setTimeout(() => e.target.classList.add('settled'), 1400);
+  }), { rootMargin: '0px 0px -12% 0px' });
+  document.querySelectorAll('[data-in],[data-strike]').forEach(el => io.observe(el));
+
+  /* ---------- pause loops off-screen and on hidden tabs ---------- */
+  const loopIO = new IntersectionObserver(es => es.forEach(e => e.target.classList.toggle('loop-off', !e.isIntersecting)));
+  document.querySelectorAll('section.sec').forEach(el => loopIO.observe(el));
+  document.addEventListener('visibilitychange', () => document.body.classList.toggle('paused', document.hidden));
+
+  /* ---------- the arc seams, drawn by scroll ---------- */
+  const seams = [...document.querySelectorAll('.seam')].map(el => ({ el, d: -1, on: false }));
+  const seamIO = new IntersectionObserver(es => es.forEach(e => { const s = seams.find(x => x.el === e.target); s.on = e.isIntersecting; }), { rootMargin: '10% 0px' });
+  seams.forEach(s => seamIO.observe(s.el));
+  let seamRaf = null;
+  function drawSeams(){
+    seamRaf = null;
+    if (reduce.matches) return;
+    const vh = innerHeight;
+    seams.forEach(s => {
+      if (!s.on) return;
+      const rect = s.el.getBoundingClientRect();
+      const d = clamp((vh - rect.top) / (vh * 0.6 + rect.height), 0, 1);
+      if (Math.abs(d - s.d) > 0.004 || (d === 1 && s.d !== 1)){ s.d = d; s.el.style.setProperty('--d', d.toFixed(3)); }
+    });
+  }
+  addEventListener('scroll', () => { if (seamRaf === null) seamRaf = requestAnimationFrame(drawSeams); }, { passive: true });
+  drawSeams();
+
+  /* ---------- the one interactive moment: push and turn ---------- */
+  const dialWrap = document.getElementById('dialWrap');
+  const dial = document.getElementById('dial');
+  const safetyCopy = dialWrap.nextElementSibling;
+  let p = 0, holding = false, done = false, dRaf = null, dLast = 0;
+  function setP(v){ p = v; dialWrap.style.setProperty('--p', p.toFixed(3)); }
+  function finish(){
+    done = true; setP(1);
+    dialWrap.classList.add('done'); safetyCopy.classList.add('done');
+    dial.setAttribute('aria-pressed', 'true');
+  }
+  function dStep(now){
+    const dt = Math.min(100, now - (dLast || now)); dLast = now;
+    if (holding) setP(Math.min(1, p + dt / 1500));
+    else setP(Math.max(0, p - (dt / 900) * Math.max(0.25, p)));
+    if (p >= 1){ finish(); dRaf = null; dLast = 0; return; }
+    if (!holding && p <= 0){ dRaf = null; dLast = 0; return; }
+    dRaf = requestAnimationFrame(dStep);
+  }
+  function press(){ if (done) return; holding = true; if (dRaf === null) dRaf = requestAnimationFrame(dStep); }
+  function release(){ holding = false; }
+  dial.addEventListener('pointerdown', e => { e.preventDefault(); dial.setPointerCapture?.(e.pointerId); press(); });
+  ['pointerup', 'pointercancel', 'lostpointercapture'].forEach(t => dial.addEventListener(t, release));
+  dial.addEventListener('keydown', e => { if ((e.key === ' ' || e.key === 'Enter') && !e.repeat){ e.preventDefault(); press(); } });
+  dial.addEventListener('keyup', e => { if (e.key === ' ' || e.key === 'Enter') release(); });
+  dial.addEventListener('contextmenu', e => e.preventDefault());
+
+  /* ---------- reduced motion, live in both directions ---------- */
+  function pinToFinalStates(){
+    if (!done) finish();
+    seams.forEach(s => { s.d = 1; s.el.style.setProperty('--d', '1'); });
+    document.querySelectorAll('[data-in],[data-strike]').forEach(el => el.classList.add('in', 'settled'));
+  }
+  function unpinFinalStates(){ drawSeams(); }
+  if (reduce.matches) pinToFinalStates();
+  reduce.addEventListener('change', e => { if (e.matches) pinToFinalStates(); else { unpinFinalStates(); applyHeroMode(); } });
+})();
+</script>
+{% endraw %}
+
+{% schema %}
+{
+  "name": "Farless landing",
+  "tag": "div",
+  "class": "farless-landing",
+  "settings": [
+    {
+      "type": "product",
+      "id": "product",
+      "label": "Farless product",
+      "info": "Every Buy Farless button links to this product."
+    },
+    {
+      "type": "checkbox",
+      "id": "straight_to_checkout",
+      "default": false,
+      "label": "Skip the product page",
+      "info": "Buy buttons put one Farless in the cart and open checkout directly."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Farless landing"
+    }
+  ]
+}
+{% endschema %}
