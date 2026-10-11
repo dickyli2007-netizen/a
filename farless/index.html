@@ -31,6 +31,8 @@
   --text-secondary:#A69A8C;
   --accent:#C4A57D;
   --accent-soft:rgba(196,165,125,.35);
+  --hot:#D9573F;
+  --cool:#F6F1EA;
   --on-accent:#14100D;
   --film-ink:#F3ECE2;
   --film-shade:20,15,11;
@@ -64,6 +66,7 @@ p{margin:0}
   animation:drift 76s var(--ease-soft) -18s infinite alternate}
 @keyframes drift{0%{transform:translate3d(-3%,-2%,0) rotate(0deg)}100%{transform:translate3d(3%,2%,0) rotate(6deg)}}
 .grain{position:fixed;inset:0;z-index:60;pointer-events:none;opacity:.05;mix-blend-mode:overlay;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+@media (pointer:coarse){.grain{display:none}}   /* a full-screen blend layer costs phones a frame budget for barely visible texture */
 
 /* ---------- header: transparent over the film, solid once you leave it ---------- */
 nav.top{position:fixed;top:0;left:0;right:0;z-index:50;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:24px;padding:calc(22px + env(safe-area-inset-top, 0px)) var(--gutter) 22px;color:var(--film-ink);transition:background-color .6s var(--ease-out),padding .6s var(--ease-out),border-color .6s var(--ease-out);border-bottom:1px solid transparent}
@@ -97,6 +100,7 @@ nav.top ul a.buy{color:var(--accent)}
    shade, clear of her face and the pour. */
 .hero{position:relative;height:100vh;height:100svh;min-height:520px;overflow:hidden;background:var(--canvas)}
 .stage{position:absolute;inset:0;overflow:hidden}
+.pan{position:absolute;inset:0}
 .poster,.poster-end{position:absolute;inset:0;background-size:cover;background-position:20% 50%}
 .poster-end{opacity:var(--pe,0);transition:opacity 1s var(--ease-soft)}
 #hero{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:20% 50%;opacity:0;transition:opacity .8s var(--ease-out);will-change:transform;transform:translateZ(0)}
@@ -143,6 +147,8 @@ nav.top ul a.buy{color:var(--accent)}
 /* scroll cue: a hairline that fills as the film loads, then a drop of light runs down it */
 .hero-note{position:absolute;left:50%;bottom:26px;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:12px;margin:0;color:var(--film-ink);font:400 .64rem/1 var(--font);letter-spacing:.32em;text-transform:uppercase;padding-left:.32em;transition:opacity .5s var(--ease-out)}
 .stage:not([data-point="0"]) .hero-note{opacity:0}
+.hero-note .t-swipe{display:none}
+@media (pointer:coarse){.hero-note .t-scroll{display:none}.hero-note .t-swipe{display:inline}}
 .hero-note .line{position:relative;width:1px;height:44px;background:rgba(243,236,226,.25);overflow:hidden}
 .hero-note .line::before{content:"";position:absolute;inset:0;background:var(--film-ink);transform:scaleY(var(--lp,0));transform-origin:top;transition:transform .2s linear}
 .hero-note .line::after{content:"";position:absolute;left:0;top:-14px;width:1px;height:14px;background:var(--accent);opacity:0}
@@ -151,9 +157,46 @@ nav.top ul a.buy{color:var(--accent)}
 @keyframes drop{0%{transform:translateY(0)}70%,100%{transform:translateY(60px)}}
 @media (max-height:560px){.hero-note{display:none}}
 
-/* ---------- static hero (the five gates) ---------- */
+/* ---------- portrait screens: the film fills the top and pans to follow the story ----------
+   A tall screen shows only a slice of the wide film, so the slice slides from the faucet and
+   glass, to the hand on the handle, the pour, and her smile. The words sit on the dark below. */
+@media (orientation: portrait){
+  .hero{--film:64%}
+  .pan{inset:auto;top:0;left:0;height:var(--film);width:auto;aspect-ratio:16/9;transform:translate3d(calc(-1 * var(--panx, 0px)),0,0);transition:transform 1.6s cubic-bezier(.45,0,.2,1);will-change:transform}
+  .pan.snap{transition:none}
+  .pan .poster,.pan .poster-end{background-position:50% 50%}
+  .pan #hero{object-position:50% 50%}
+  .shade{background:linear-gradient(to bottom,rgba(var(--film-shade),.55) 0%,rgba(var(--film-shade),0) 15%,rgba(var(--film-shade),0) calc(var(--film) - 22%),var(--canvas) calc(var(--film) - 1%))}
+  .band{left:24px;right:24px;width:auto;bottom:calc(40px + env(safe-area-inset-bottom, 0px));text-shadow:none}
+  .band[data-t="0"]{bottom:calc(122px + env(safe-area-inset-bottom, 0px))}
+  .hero-note .line{height:36px}
+  .band::before{display:none}
+  .band .label{color:var(--text-secondary);margin-bottom:16px}
+  .hx{font-size:clamp(2.8rem,12.5vw,3.8rem)}
+  .hl{font-size:clamp(1.5rem,6.8vw,2.1rem)}
+  .band .hx + .hl,.band .hs{color:rgba(243,236,226,.82)}
+  .band.settle h2{font-size:clamp(2.1rem,9.4vw,2.9rem)!important}
+  .settle .cta-row{margin-top:24px}
+  .dots{top:calc(var(--film) / 2);right:10px}
+  .hero-note{bottom:calc(20px + env(safe-area-inset-bottom, 0px))}
+}
+@media (orientation: portrait) and (max-height: 700px){
+  .hero{--film:56%}
+  .band[data-t="0"]{bottom:calc(104px + env(safe-area-inset-bottom, 0px))}
+  .hero-note .line{height:26px}
+}
+@media (orientation: portrait) and (min-width: 600px){
+  .band{left:7vw;right:7vw}
+  .hx{font-size:clamp(3.4rem,9vw,5.2rem)}
+  .hl{font-size:clamp(2rem,4.6vw,2.9rem)}
+  .band.settle h2{font-size:clamp(2.8rem,6.8vw,4.2rem)!important}
+  .band[data-t="0"]{bottom:calc(140px + env(safe-area-inset-bottom, 0px))}
+  .dots{right:3vw}
+}
+
+/* ---------- static hero: only where the film cannot fit (phones held sideways) or motion is reduced ---------- */
 .static-hero{display:none}
-@media (max-width: 720px), (orientation: portrait) and (max-width: 1024px), (orientation: portrait) and (pointer: coarse), (orientation: landscape) and (pointer: coarse) and (max-height: 560px), (prefers-reduced-motion: reduce){
+@media (orientation: landscape) and (pointer: coarse) and (max-height: 560px), (prefers-reduced-motion: reduce){
   .hero{display:none}
   .static-hero{display:block;position:relative;height:100vh;height:100svh;min-height:520px;overflow:hidden;color:var(--film-ink);background:var(--canvas) url('assets/hero-ending.jpg') var(--shx,27%) 50%/cover no-repeat}
   .static-hero::before{content:"";position:absolute;inset:0;background:linear-gradient(to top,rgba(var(--film-shade),.9) 0%,rgba(var(--film-shade),.62) 38%,rgba(var(--film-shade),0) 70%),linear-gradient(to bottom,rgba(var(--film-shade),.55),rgba(var(--film-shade),0) 22%)}
@@ -293,38 +336,60 @@ section.sec.tone{background:var(--canvas-2)}
 @keyframes breathe{to{opacity:1;width:120px}}
 @media (max-width:860px){.leaves .wrap{grid-template-columns:1fr}}
 
-/* safety: press the pin, then turn. Back for hot, forward for sparkling. Same dark brushed steel */
+/* safety: press the pin, then turn. Back for hot (the line warms to red), forward for sparkling (it cools
+   to white). Every moving part is its own layer and only transform and opacity change, so it stays smooth. */
 .safety .wrap{display:grid;grid-template-columns:1fr 1fr;gap:clamp(40px,7vw,120px);align-items:center}
 .dial-col{display:flex;flex-direction:column;align-items:center}
-.dial-wrap{--ang:0;--pin:0;--m:0;--dir:1;position:relative;display:grid;place-items:center;aspect-ratio:1;max-width:440px;width:100%;margin:0 auto;border-radius:50%;border:1px solid var(--hair)}
+.dial-wrap{--ang:0;--pin:0;--m:0;--mh:0;--ms:0;--dir:1;position:relative;display:grid;place-items:center;aspect-ratio:1;max-width:440px;width:100%;margin:0 auto;border-radius:50%;border:1px solid var(--hair)}
 .dial-wrap::before{content:"";position:absolute;inset:16%;border-radius:50%;box-shadow:0 0 90px rgba(196,165,125,.16);opacity:.4;animation:glow 6s var(--ease-soft) -1.5s infinite alternate}
 @keyframes glow{to{opacity:1}}
 .dial{all:unset;cursor:grab;position:relative;width:56%;aspect-ratio:1;border-radius:50%;touch-action:none;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
 .grabbing .dial{cursor:grabbing}
 .dial:focus-visible{outline:1px solid var(--accent);outline-offset:10px}
-.dial .face{position:absolute;inset:0;border-radius:50%;background:
+/* the knob's drop shadow: a resting and a pressed layer, crossfaded */
+.dial::before,.dial::after{content:"";position:absolute;inset:0;border-radius:50%;pointer-events:none;will-change:opacity}
+.dial::before{box-shadow:0 22px 44px rgba(0,0,0,.55);opacity:calc(1 - var(--pin))}
+.dial::after{box-shadow:0 11px 26px rgba(0,0,0,.6);opacity:var(--pin)}
+.dial .face{position:absolute;inset:0;border-radius:50%;will-change:transform;background:
   repeating-conic-gradient(from 0deg,rgba(255,255,255,.035) 0deg 1.2deg,rgba(0,0,0,.05) 1.2deg 2.4deg),
   radial-gradient(circle at 34% 28%,#8C8178 0%,#4A423B 38%,#2A2420 72%,#1C1714 100%);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.12),inset 0 -10px 22px rgba(0,0,0,.45),0 calc(22px - 10px*var(--pin)) calc(44px - 16px*var(--pin)) rgba(0,0,0,.55);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.12),inset 0 -10px 22px rgba(0,0,0,.45);
   transform:scale(calc(1 - .03*var(--pin))) rotate(calc(var(--ang)*1deg))}
-.dial .notch{position:absolute;left:50%;top:7%;width:2px;height:17%;margin-left:-1px;background:var(--accent)}
-/* the pin: a small steel cap at the centre that presses down before the knob will turn */
-.pin{position:absolute;left:50%;top:50%;width:24%;aspect-ratio:1;margin:-12% 0 0 -12%;border-radius:50%;pointer-events:none;
+/* the indicator line: bronze at rest, warming to red going back, cooling to white going forward */
+.dial .notch{position:absolute;left:50%;top:7%;width:2px;height:17%;margin-left:-1px}
+.notch i{position:absolute;inset:0;border-radius:1px;will-change:opacity}
+.notch .n0{background:var(--accent);opacity:calc(1 - var(--mh) - var(--ms))}
+.notch .n1{background:var(--hot);opacity:var(--mh);box-shadow:0 0 10px rgba(217,87,63,.7)}
+.notch .n2{background:var(--cool);opacity:var(--ms);box-shadow:0 0 10px rgba(246,241,234,.55)}
+/* the pin: a steel cap that presses down before the knob will turn */
+.pin{position:absolute;left:50%;top:50%;width:24%;aspect-ratio:1;margin:-12% 0 0 -12%;pointer-events:none}
+.pin::after{content:"";position:absolute;inset:-14%;border-radius:50%;border:1px solid rgba(236,227,214,.12)}
+.pin-shadow,.pin-cap,.pin-cap::before,.pin .g{position:absolute;border-radius:50%}
+.pin-shadow{inset:0;box-shadow:0 7px 12px rgba(0,0,0,.6),0 0 0 1px rgba(0,0,0,.35);opacity:calc(1 - .85*var(--pin));will-change:opacity}
+.pin-cap{inset:0;overflow:hidden;will-change:transform;
   background:radial-gradient(circle at 36% 30%,#B3A89E 0%,#6A6058 42%,#3A322D 78%,#2A2420 100%);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,calc(.22 - .14*var(--pin))),inset 0 calc(5px*var(--pin)) calc(9px*var(--pin)) rgba(0,0,0,.65),0 calc(7px - 6px*var(--pin)) calc(12px - 9px*var(--pin)) rgba(0,0,0,.6),0 0 0 1px rgba(0,0,0,.35);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 0 0 1px rgba(0,0,0,.35);
   transform:translateY(calc(1.5px*var(--pin))) scale(calc(1 - .1*var(--pin)))}
-.pin::before{content:"";position:absolute;inset:-14%;border-radius:50%;border:1px solid rgba(236,227,214,.12)}
-.pin::after{content:"";position:absolute;inset:38%;border-radius:50%;background:var(--accent);opacity:calc(.15 + .85*var(--pin));box-shadow:0 0 12px rgba(196,165,125,calc(.65*var(--pin)))}
-/* ring: ticks for off, hot and sparkling, and a bronze arc that follows the turn either way */
+.pin-cap::before{content:"";inset:0;background:radial-gradient(circle at 50% 30%,rgba(0,0,0,.05) 30%,rgba(0,0,0,.55) 100%);opacity:var(--pin);will-change:opacity}
+.pin .g{inset:38%;will-change:opacity}
+.pin .g0{background:var(--accent);box-shadow:0 0 12px rgba(196,165,125,.7);opacity:calc(.15 + .85*var(--pin)*(1 - var(--mh) - var(--ms)))}
+.pin .g1{background:var(--hot);box-shadow:0 0 12px rgba(217,87,63,.75);opacity:calc(var(--pin)*var(--mh))}
+.pin .g2{background:var(--cool);box-shadow:0 0 12px rgba(246,241,234,.6);opacity:calc(var(--pin)*var(--ms))}
+/* ring: ticks for off, hot and sparkling, and an arc that follows the turn in the line's colour */
 .dial-ring,.dial-arc{position:absolute;inset:6%;pointer-events:none;overflow:visible}
 .dial-ring line{stroke:var(--hair-strong);stroke-width:1;vector-effect:non-scaling-stroke}
 .dial-arc{transform:scaleX(var(--dir))}
-.dial-arc circle{opacity:clamp(0,var(--m)*20,1);fill:none;stroke:var(--accent);stroke-width:.35;stroke-dasharray:1;stroke-dashoffset:calc(1 - var(--m)*.25);transform:rotate(-90deg);transform-origin:50% 50%}
-.ind{position:absolute;top:50%;width:8%;aspect-ratio:1;transform:translateY(-50%);color:var(--text-secondary);opacity:.6;transition:color .5s var(--ease-out),opacity .5s var(--ease-out);pointer-events:none}
+.dial-arc circle{fill:none;stroke-width:.35;stroke-dasharray:1;stroke-dashoffset:calc(1 - var(--m)*.25);transform:rotate(-90deg);transform-origin:50% 50%}
+.dial-arc .a1{stroke:var(--hot);opacity:clamp(0,var(--mh)*20,1)}
+.dial-arc .a2{stroke:var(--cool);opacity:clamp(0,var(--ms)*20,1)}
+.ind{position:absolute;top:50%;width:8%;aspect-ratio:1;transform:translateY(-50%);color:var(--text-secondary);opacity:.6;transition:color .6s var(--ease-out),opacity .6s var(--ease-out);pointer-events:none}
 .ind svg{width:100%;height:100%;display:block;overflow:visible}
 .ind-hot{left:9.5%}
 .ind-spark{right:9.5%}
-.is-hot .ind-hot,.is-spark .ind-spark{color:var(--accent);opacity:1}
+.is-hot .ind-hot{color:var(--hot);opacity:1}
+.is-spark .ind-spark{color:var(--cool);opacity:1}
+.ind.pulse svg{animation:detent .8s var(--ease-out)}
+@keyframes detent{35%{transform:scale(1.2)}}
 .dial-controls{display:flex;justify-content:center;align-items:center;gap:clamp(22px,4vw,44px);margin-top:30px;flex-wrap:wrap}
 .dc{all:unset;box-sizing:border-box;cursor:pointer;display:inline-flex;align-items:center;gap:10px;padding:10px 2px;position:relative;font:400 .72rem/1 var(--font);letter-spacing:.26em;text-transform:uppercase;color:var(--text-secondary);transition:color .35s var(--ease-out)}
 .dc::after{content:"";position:absolute;left:0;right:0;bottom:2px;height:1px;background:currentColor;transform:scaleX(0);transform-origin:left;transition:transform .45s var(--ease-out)}
@@ -333,7 +398,9 @@ section.sec.tone{background:var(--canvas-2)}
 .dc:focus-visible{outline:1px solid var(--accent);outline-offset:4px}
 .dc .dot{width:5px;height:5px;border-radius:50%;background:currentColor;opacity:.45;transition:background-color .4s var(--ease-out),opacity .4s var(--ease-out)}
 .dc.on{color:var(--text-primary)}
-.dc.on .dot{background:var(--accent);opacity:1}
+.dc.on .dot{opacity:1}
+.dc[data-set="-1"].on .dot{background:var(--hot);box-shadow:0 0 8px rgba(217,87,63,.6)}
+.dc[data-set="1"].on .dot{background:var(--cool);box-shadow:0 0 8px rgba(246,241,234,.45)}
 .dc.reset svg{width:13px;height:13px}
 .dc.reset[aria-disabled="true"]{opacity:.35;cursor:default}
 .dc.reset[aria-disabled="true"]:hover::after{transform:scaleX(0)}
@@ -346,7 +413,9 @@ section.sec.tone{background:var(--canvas-2)}
 .done .dial-done .dw:nth-child(3){transition-delay:.36s}
 .done .dial-state .hint{opacity:0}
 .dial-done{display:flex;flex-wrap:wrap;gap:0 .4em;font:200 clamp(1.8rem,2.8vw,2.6rem)/1.15 var(--font);margin-top:8px}
-.dial-done .dw:last-child{color:var(--accent)}
+.dial-done .dw:last-child{color:var(--accent);transition:opacity .8s var(--ease-out),transform .8s var(--ease-out),color .6s var(--ease-out)}
+.res-hot .dial-done .dw:last-child{color:var(--hot)}
+.res-spark .dial-done .dw:last-child{color:var(--cool)}
 .hint.nudge{animation:nudge .9s var(--ease-out)}
 @keyframes nudge{30%{color:var(--text-primary)}}
 @media (max-width:860px){.safety .wrap{grid-template-columns:1fr}}
@@ -430,31 +499,33 @@ body.paused *, body.paused *::before, body.paused *::after{animation-play-state:
 <header>
   <section class="hero" id="top" aria-label="Farless introduction">
     <div class="stage" id="stage" data-point="0">
-      <div class="poster" aria-hidden="true"></div>
-      <div class="poster-end" aria-hidden="true"></div>
-      <video id="hero" preload="none" muted playsinline aria-hidden="true" tabindex="-1"></video>
+      <div class="pan">
+        <div class="poster" aria-hidden="true"></div>
+        <div class="poster-end" aria-hidden="true"></div>
+        <video id="hero" preload="none" muted playsinline aria-hidden="true" tabindex="-1"></video>
+      </div>
       <div class="shade" aria-hidden="true"></div>
 
-      <div class="band" data-t="0">
+      <div class="band" data-t="0" data-cx="760">
         <span class="label" aria-hidden="true"><span class="n">01</span>Five waters</span>
         <h1 class="hx"><span class="sr">Farless. Five waters. One tap.</span>
           <span class="bts" aria-hidden="true"><span class="soft">Farless.</span><span class="sharp">Farless.</span></span>
         </h1>
         <p class="hl bts" aria-hidden="true"><span class="soft">Five waters. One tap.</span><span class="sharp">Five waters. One tap.</span></p>
       </div>
-      <div class="band" data-t="2.8">
+      <div class="band" data-t="2.8" data-cx="640">
         <span class="label" aria-hidden="true"><span class="n">02</span>Push and turn</span>
         <p class="hl dd split">Boiling. Filtered.</p>
       </div>
-      <div class="band" data-t="4.6">
+      <div class="band" data-t="4.6" data-cx="820">
         <span class="label" aria-hidden="true"><span class="n">03</span>The pour</span>
         <p class="hl dd split">Sparkling. Hot. Cold.</p>
       </div>
-      <div class="band" data-t="6.4">
+      <div class="band" data-t="6.4" data-cx="1100">
         <span class="label" aria-hidden="true"><span class="n">04</span>Less</span>
         <p class="hl dd split">No kettle. No bottles. No soda machine.</p>
       </div>
-      <div class="band settle" data-t="end">
+      <div class="band settle" data-t="end" data-cx="1120">
         <span class="label" aria-hidden="true"><span class="n">05</span>Farless</span>
         <h2 class="hx rise split" style="font-size:clamp(2.2rem,3.6vw,3.9rem)">Far less on your counter.</h2>
         <p class="hs">Just one tap.</p>
@@ -468,7 +539,7 @@ body.paused *, body.paused *::before, body.paused *::after{animation-play-state:
         <button type="button" aria-label="Point 4 of 5: No kettle, no bottles"></button>
         <button type="button" aria-label="Point 5 of 5: Far less on your counter"></button>
       </nav>
-      <p class="hero-note" aria-hidden="true"><span>Scroll</span><span class="line"></span></p>
+      <p class="hero-note" aria-hidden="true"><span class="t-scroll">Scroll</span><span class="t-swipe">Swipe</span><span class="line"></span></p>
     </div>
   </section>
 
@@ -592,12 +663,12 @@ body.paused *, body.paused *::before, body.paused *::after{animation-play-state:
       <div class="dial-col">
         <div class="dial-wrap" id="dialWrap">
           <svg class="dial-ring" viewBox="0 0 100 100" aria-hidden="true"><line x1="50" y1="-3" x2="50" y2="3"/><line x1="-3" y1="50" x2="3" y2="50"/><line x1="97" y1="50" x2="103" y2="50"/></svg>
-          <svg class="dial-arc" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="50" pathLength="1"/></svg>
+          <svg class="dial-arc" viewBox="0 0 100 100" aria-hidden="true"><circle class="a1" cx="50" cy="50" r="50" pathLength="1"/><circle class="a2" cx="50" cy="50" r="50" pathLength="1"/></svg>
           <span class="ind ind-hot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"><path d="M8 19c-2.4-3 2.4-5 0-8s2.4-5 0-8M12 19c-2.4-3 2.4-5 0-8s2.4-5 0-8M16 19c-2.4-3 2.4-5 0-8s2.4-5 0-8"/></svg></span>
           <span class="ind ind-spark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="9" cy="16" r="4"/><circle cx="16" cy="9" r="2.6"/><circle cx="10" cy="5" r="1.6"/><circle cx="18" cy="17.5" r="1.6"/></svg></span>
           <div class="dial" id="dial" role="slider" tabindex="0" aria-label="Water knob" aria-valuemin="-1" aria-valuemax="1" aria-valuenow="0" aria-valuetext="Off" aria-describedby="dial-help">
-            <span class="face" aria-hidden="true"><span class="notch"></span></span>
-            <span class="pin" aria-hidden="true"></span>
+            <span class="face" aria-hidden="true"><span class="notch"><i class="n0"></i><i class="n1"></i><i class="n2"></i></span></span>
+            <span class="pin" aria-hidden="true"><i class="pin-shadow"></i><i class="pin-cap"></i><i class="g g0"></i><i class="g g1"></i><i class="g g2"></i></span>
           </div>
         </div>
         <div class="dial-controls" role="group" aria-label="Knob settings">
@@ -680,11 +751,14 @@ body.paused *, body.paused *::before, body.paused *::after{animation-play-state:
 <script>
 (() => {
   'use strict';
-  // VP9 WebM is a third of the size; browsers without it get the H.264 MP4
+  // VP9 WebM is half the size; Apple devices and browsers without it get the H.264 MP4 first,
+  // and whichever loads first falls back to the other if it cannot play
+  const ua = navigator.userAgent;
+  const apple = /iPad|iPhone|iPod/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1) || (/Safari\//.test(ua) && !/Chrome|Chromium|CriOS|FxiOS|Edg|Android/.test(ua));
   const canWebm = document.createElement('video').canPlayType('video/webm; codecs="vp9"') === 'probably';
-  const VIDEO_URL = canWebm ? 'assets/hero-scrub.webm' : 'assets/hero-scrub.mp4';
-  const VIDEO_BYTES = canWebm ? 1644195 : 3186482;   // real byte sizes: the fallback when Content-Length is missing
-  const VIDEO_TYPE = canWebm ? 'video/webm' : 'video/mp4';
+  const WEBM = { url: 'assets/hero-scrub.webm', type: 'video/webm', bytes: 1644195 };   // real byte sizes: the fallback when Content-Length is missing
+  const MP4 = { url: 'assets/hero-scrub.mp4', type: 'video/mp4', bytes: 3186482 };
+  const SOURCES = canWebm && !apple ? [WEBM, MP4] : [MP4, WEBM];
   const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
   const smoothstep = (p, e0, e1) => { const t = clamp((p - e0) / (e1 - e0), 0, 1); return t * t * (3 - 2 * t); };
   function rng(seed){ let s = seed >>> 0; return () => (s = (s * 1664525 + 1013904223) >>> 0) / 4294967296; }
@@ -761,7 +835,8 @@ body.paused *, body.paused *::before, body.paused *::after{animation-play-state:
     seekBusy = false;
     if (pendingTime !== null){ const t = pendingTime; pendingTime = null; requestSeek(t); }
   });
-  video.addEventListener('error', () => { seekBusy = false; pendingTime = null; failVideo(); });
+  // a format that downloads but cannot decode here gets one retry with the other format
+  video.addEventListener('error', () => { seekBusy = false; pendingTime = null; if (srcIndex >= 0 && srcIndex + 1 < SOURCES.length && !videoReady) tryLoad(srcIndex + 1); else failVideo(); });
 
   function stopAnim(){
     if (anim){ cancelAnimationFrame(anim.raf); anim = null; }
@@ -805,12 +880,31 @@ body.paused *, body.paused *::before, body.paused *::after{animation-play-state:
     a.raf = requestAnimationFrame(step);
   }
 
+  /* portrait screens: slide the wide film so the point's subject stays in view */
+  const pan = document.querySelector('.pan');
+  const portrait = matchMedia('(orientation: portrait)');
+  function panTo(i, ms){
+    if (!portrait.matches){ pan.style.removeProperty('--panx'); return; }
+    const h = pan.offsetHeight, w = stage.offsetWidth;
+    if (!h) return;
+    const sc = h / 1080, cx = +bands[i].el.dataset.cx || 960;
+    const x = clamp(cx * sc - w / 2, 0, Math.max(0, 1920 * sc - w));
+    if (ms === 0) pan.classList.add('snap');
+    else pan.style.transitionDuration = (ms / 1000).toFixed(2) + 's';
+    pan.style.setProperty('--panx', x.toFixed(1) + 'px');
+    if (ms === 0){ void pan.offsetWidth; pan.classList.remove('snap'); }
+  }
+  addEventListener('resize', () => panTo(point, 0));
+  portrait.addEventListener('change', () => panTo(point, 0));
+
   function goTo(i, instant){
     i = clamp(i, 0, LAST);
     if (i === point) return;
     const prev = point;
     point = i;
     render(prev);
+    const dt = Math.abs(timeOf(i) - timeOf(prev));
+    panTo(i, instant ? 0 : Math.round(clamp(i > prev ? dt / 1.25 : dt / 2.4, 0.6, 2.2) * 1000));
     if (instant){ stopAnim(); requestSeek(timeOf(i)); }
     else playTo(timeOf(i));
   }
@@ -866,18 +960,24 @@ body.paused *, body.paused *::before, body.paused *::after{animation-play-state:
     if (heroInit) return; heroInit = true;
     posterLayer.style.backgroundImage = "url('assets/hero-poster.jpg')";
     let started = false;
-    const startBlobFetch = () => { if (started) return; started = true; loadHeroBlob().catch(failVideo); };
+    const startBlobFetch = () => { if (started) return; started = true; tryLoad(0); };
     const img = new Image();
     img.onload = startBlobFetch; img.onerror = startBlobFetch;
     img.src = 'assets/hero-poster.jpg';
     setTimeout(startBlobFetch, 4000);
   }
-  async function loadHeroBlob(){
+  let srcIndex = -1;
+  function tryLoad(i){
+    if (i >= SOURCES.length){ failVideo(); return; }
+    srcIndex = i;
+    loadHeroBlob(SOURCES[i]).catch(() => tryLoad(i + 1));
+  }
+  async function loadHeroBlob(src){
     const ctrl = new AbortController();
     let watchdog = setTimeout(() => ctrl.abort(), 20000);
-    const res = await fetch(VIDEO_URL, { priority: 'low', signal: ctrl.signal });
+    const res = await fetch(src.url, { priority: 'low', signal: ctrl.signal });
     if (!res.ok) throw new Error('video ' + res.status);
-    const total = Number(res.headers.get('Content-Length')) || VIDEO_BYTES;
+    const total = Number(res.headers.get('Content-Length')) || src.bytes;
     const reader = res.body.getReader();
     const chunks = []; let got = 0, lastRing = 0;
     for (;;){
@@ -890,7 +990,7 @@ body.paused *, body.paused *::before, body.paused *::after{animation-play-state:
     }
     clearTimeout(watchdog);
     loadLine.style.setProperty('--lp', '1');
-    video.src = URL.createObjectURL(new Blob(chunks, { type: VIDEO_TYPE }));
+    video.src = URL.createObjectURL(new Blob(chunks, { type: src.type }));
     video.load();
     video.addEventListener('canplay', () => {
       videoReady = true;
@@ -908,11 +1008,8 @@ body.paused *, body.paused *::before, body.paused *::after{animation-play-state:
     render(point);
   }
 
-  /* ---------- the five gates, live ---------- */
+  /* ---------- the static-hero gates, live (kept identical to the CSS query) ---------- */
   const GATES = [
-    '(max-width: 720px)',
-    '(orientation: portrait) and (max-width: 1024px)',
-    '(orientation: portrait) and (pointer: coarse)',
     '(orientation: landscape) and (pointer: coarse) and (max-height: 560px)',
     '(prefers-reduced-motion: reduce)'
   ];
@@ -927,6 +1024,7 @@ body.paused *, body.paused *::before, body.paused *::after{animation-play-state:
     addEventListener('scroll', onScrollAway, { passive: true });
     if (scrollY > innerHeight * 0.6) point = LAST;
     render(-1);
+    panTo(point, 0);
     if (videoReady) requestSeek(timeOf(point));
   }
   function disableStepper(){
@@ -1011,8 +1109,9 @@ body.paused *, body.paused *::before, body.paused *::after{animation-play-state:
   drawSeams();
 
   /* ---------- the one interactive moment: press the pin, then turn ----------
-     Back (counter-clockwise) for hot, forward (clockwise) for sparkling. Drag the knob,
-     tap the settings underneath, or use the arrow keys; Reset turns it home and lifts the pin. */
+     Back (counter-clockwise) for hot, forward (clockwise) for sparkling. Drag the knob, tap the
+     settings underneath, or use the arrow keys; Reset turns it home and lets the pin spring up.
+     Button turns are eased tweens; a drag follows the finger smoothly and springs into its detent. */
   const dialWrap = document.getElementById('dialWrap');
   const dial = document.getElementById('dial');
   const safetyCopy = document.getElementById('safetyCopy');
@@ -1020,34 +1119,79 @@ body.paused *, body.paused *::before, body.paused *::after{animation-play-state:
   const hint = safetyCopy.querySelector('.hint');
   const ctrlBtns = [...document.querySelectorAll('.dial-controls .dc')];
   const resetBtn = document.querySelector('.dial-controls .reset');
+  const inds = { '-1': dialWrap.querySelector('.ind-hot'), '1': dialWrap.querySelector('.ind-spark') };
   const LINES = { '-1': ['Press.', 'Turn back.', 'Hot.'], '1': ['Press.', 'Turn forward.', 'Sparkling.'] };
   const NAMES = { '-1': 'Hot', '0': 'Off', '1': 'Sparkling' };
   const K = { ang: 0, pin: 0 };
-  let setting = 0, kTween = null, run = 0, drag = null;
+  let setting = 0, run = 0, drag = null;
 
   function drawKnob(){
-    dialWrap.style.setProperty('--ang', K.ang.toFixed(2));
-    dialWrap.style.setProperty('--pin', K.pin.toFixed(3));
-    dialWrap.style.setProperty('--m', Math.min(1, Math.abs(K.ang) / 90).toFixed(3));
-    dialWrap.style.setProperty('--dir', K.ang < 0 ? '-1' : '1');
+    const m = Math.min(1, Math.abs(K.ang) / 90), st = dialWrap.style;
+    st.setProperty('--ang', K.ang.toFixed(2));
+    st.setProperty('--pin', K.pin.toFixed(3));
+    st.setProperty('--m', m.toFixed(3));
+    st.setProperty('--mh', (K.ang < 0 ? m : 0).toFixed(3));
+    st.setProperty('--ms', (K.ang > 0 ? m : 0).toFixed(3));
+    st.setProperty('--dir', K.ang < 0 ? '-1' : '1');
   }
-  function tweenKnob(to, ms){
-    return new Promise(done => {
-      if (kTween) cancelAnimationFrame(kTween.raf);
-      const from = { ang: K.ang, pin: K.pin };
-      if (reduce.matches || ms <= 0){ kTween = null; Object.assign(K, to); drawKnob(); done(); return; }
-      const tw = kTween = { raf: 0 };
-      const t0 = performance.now();
+  // cubic-bezier easing, solved numerically, for a soft start and a long glide into the detent
+  function bezier(x1, y1, x2, y2){
+    const cx = 3 * x1, bx = 3 * (x2 - x1) - cx, ax = 1 - cx - bx;
+    const cy = 3 * y1, by = 3 * (y2 - y1) - cy, ay = 1 - cy - by;
+    const X = t => ((ax * t + bx) * t + cx) * t, Y = t => ((ay * t + by) * t + cy) * t, dX = t => (3 * ax * t + 2 * bx) * t + cx;
+    return x => {
+      let t = x;
+      for (let i = 0; i < 6; i++){ const d = dX(t); if (Math.abs(d) < 1e-6) break; t -= (X(t) - x) / d; }
+      return Y(clamp(t, 0, 1));
+    };
+  }
+  const EASE_TURN = bezier(0.62, 0.02, 0.3, 1);
+  const EASE_PRESS = t => 1 - Math.pow(1 - t, 3);
+  const EASE_RISE = t => { const c = 1.35; return 1 + (c + 1) * Math.pow(t - 1, 3) + c * Math.pow(t - 1, 2); };
+
+  // one tween per property, so the pin and the turn can overlap
+  const tw = {};
+  function stopKey(key){ const a = tw[key]; if (!a) return; tw[key] = null; cancelAnimationFrame(a.raf); a.settle(false); }
+  function animateKey(key, to, ms, ease, delay){
+    stopKey(key);
+    return new Promise(settle => {
+      if (reduce.matches || ms <= 0){ K[key] = to; drawKnob(); settle(true); return; }
+      const from = K[key], t0 = performance.now() + (delay || 0);
+      const a = tw[key] = { raf: 0, settle };
       const step = now => {
-        if (kTween !== tw) return done();
-        const t = Math.min(1, (now - t0) / ms), e = easeInOut(t);
-        for (const key in to) K[key] = from[key] + (to[key] - from[key]) * e;
+        if (tw[key] !== a) return;
+        const t = clamp((now - t0) / ms, 0, 1);
+        K[key] = from + (to - from) * ease(t);
         drawKnob();
-        if (t < 1) tw.raf = requestAnimationFrame(step); else { kTween = null; done(); }
+        if (t < 1) a.raf = requestAnimationFrame(step); else { tw[key] = null; settle(true); }
       };
-      tw.raf = requestAnimationFrame(step);
+      a.raf = requestAnimationFrame(step);
     });
   }
+  // a gently under-damped spring for the angle, carrying the velocity of a flick
+  let springId = 0;
+  function springAngle(target, v0){
+    stopKey('ang');
+    const id = ++springId;
+    return new Promise(settle => {
+      if (reduce.matches){ K.ang = target; drawKnob(); settle(true); return; }
+      let x = K.ang, v = v0 || 0, last = performance.now();
+      const w = 14, z = 0.82;
+      const step = now => {
+        if (id !== springId) return settle(false);
+        const dt = Math.min(32, now - last) / 1000; last = now;
+        v += (-2 * z * w * v - w * w * (x - target)) * dt;
+        x += v * dt;
+        K.ang = clamp(x, -96, 96);
+        drawKnob();
+        if (Math.abs(x - target) < 0.05 && Math.abs(v) < 1.5){ K.ang = target; drawKnob(); settle(true); }
+        else requestAnimationFrame(step);
+      };
+      requestAnimationFrame(step);
+    });
+  }
+  function stopAll(){ springId++; stopKey('ang'); }
+
   function showSetting(next){
     setting = next;
     dialWrap.classList.toggle('is-hot', next === -1);
@@ -1059,26 +1203,32 @@ body.paused *, body.paused *::before, body.paused *::after{animation-play-state:
     safetyCopy.classList.remove('done');
     if (next !== 0){
       [...doneLine.children].forEach((w, i) => { w.textContent = LINES[next][i]; });
+      safetyCopy.classList.toggle('res-hot', next === -1);
+      safetyCopy.classList.toggle('res-spark', next === 1);
       void doneLine.offsetWidth;   // restart the staged entrance
       safetyCopy.classList.add('done');
+      const ind = inds[next];
+      ind.classList.remove('pulse'); void ind.offsetWidth; ind.classList.add('pulse');
     }
   }
-  // the full sequence: press the pin, then turn; switching sides passes home first
+  // the full sequence: the pin presses, and the turn begins as it bottoms out
   async function goSetting(next){
     const id = ++run;
+    stopAll();
     if (next === 0){
       showSetting(0);
-      await tweenKnob({ ang: 0 }, 750); if (id !== run) return;
-      await tweenKnob({ pin: 0 }, 280);
+      if (!(await animateKey('ang', 0, 420 + Math.abs(K.ang) * 6, EASE_TURN)) || id !== run) return;
+      await animateKey('pin', 0, 520, EASE_RISE);
       return;
     }
     if (setting === next && Math.abs(K.ang - 90 * next) < 1) return;
     if (setting !== 0 || Math.abs(K.ang) > 1){
       showSetting(0);
-      await tweenKnob({ ang: 0 }, 600); if (id !== run) return;
+      if (!(await animateKey('ang', 0, 380 + Math.abs(K.ang) * 5, EASE_TURN)) || id !== run) return;
     }
-    if (K.pin < 0.99){ await tweenKnob({ pin: 1 }, 300); if (id !== run) return; }
-    await tweenKnob({ ang: 90 * next }, 950); if (id !== run) return;
+    const wasDown = K.pin > 0.98;
+    if (!wasDown) animateKey('pin', 1, 340, EASE_PRESS);
+    if (!(await animateKey('ang', 90 * next, 1200, EASE_TURN, wasDown ? 0 : 210)) || id !== run) return;
     showSetting(next);
   }
 
@@ -1086,42 +1236,58 @@ body.paused *, body.paused *::before, body.paused *::after{animation-play-state:
     const r = dial.getBoundingClientRect();
     return Math.atan2(y - (r.top + r.height / 2), x - (r.left + r.width / 2)) * 180 / Math.PI;
   };
+  // while dragging, the knob eases after the finger instead of jumping to it
+  function follow(){
+    let last = performance.now();
+    const step = now => {
+      if (!drag) return;
+      const dt = Math.min(50, now - last); last = now;
+      const prev = K.ang;
+      K.ang += (drag.target - K.ang) * (1 - Math.exp(-dt / 55));
+      drag.v = drag.v * 0.6 + ((K.ang - prev) / Math.max(1, dt)) * 1000 * 0.4;
+      drawKnob();
+      requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  }
   dial.addEventListener('pointerdown', e => {
     e.preventDefault();
     dial.setPointerCapture?.(e.pointerId);
-    run++;
-    drag = { a0: angleAt(e.clientX, e.clientY), start: K.ang, x: e.clientX, y: e.clientY, moved: false };
+    run++; stopAll();
+    drag = { a0: angleAt(e.clientX, e.clientY), start: K.ang, target: K.ang, v: 0, x: e.clientX, y: e.clientY, moved: false };
     dialWrap.classList.add('grabbing');
-    tweenKnob({ pin: 1 }, 180);
+    animateKey('pin', 1, 260, EASE_PRESS);
+    follow();
   });
   dial.addEventListener('pointermove', e => {
     if (!drag) return;
-    if (Math.hypot(e.clientX - drag.x, e.clientY - drag.y) > 4) drag.moved = true;
+    if (!drag.moved && Math.hypot(e.clientX - drag.x, e.clientY - drag.y) > 4) drag.moved = true;
     if (!drag.moved) return;
     const d = ((angleAt(e.clientX, e.clientY) - drag.a0 + 540) % 360) - 180;
-    K.ang = clamp(drag.start + d, -90, 90);
-    drawKnob();
+    drag.target = clamp(drag.start + d, -90, 90);
   });
   function endDrag(){
     if (!drag) return;
-    const moved = drag.moved;
+    const { moved, v } = drag;
     drag = null;
     dialWrap.classList.remove('grabbing');
     const id = ++run;
     if (!moved){
-      // a tap: the pin presses and springs back, the knob stays where it is
+      // a tap: the pin presses and springs back up, the knob stays where it is
       if (setting === 0){
         hint.classList.remove('nudge'); void hint.offsetWidth; hint.classList.add('nudge');
-        tweenKnob({ pin: 1 }, 140).then(() => { if (id === run) tweenKnob({ pin: 0 }, 360); });
-      } else tweenKnob({ pin: 1 }, 140);
+        animateKey('pin', 1, 140, EASE_PRESS).then(ok => { if (ok && id === run) animateKey('pin', 0, 520, EASE_RISE); });
+      } else animateKey('pin', 1, 140, EASE_PRESS);
       return;
     }
-    const next = K.ang >= 55 ? 1 : K.ang <= -55 ? -1 : 0;
+    // where the knob would coast to decides the detent, so a quick flick counts
+    const coast = K.ang + v * 0.12;
+    const next = coast >= 50 ? 1 : coast <= -50 ? -1 : 0;
     if (next === 0){
       showSetting(0);
-      tweenKnob({ ang: 0 }, 460).then(() => { if (id === run) tweenKnob({ pin: 0 }, 260); });
+      springAngle(0, v).then(ok => { if (ok && id === run) animateKey('pin', 0, 520, EASE_RISE); });
     } else {
-      tweenKnob({ ang: 90 * next, pin: 1 }, 340).then(() => { if (id === run) showSetting(next); });
+      springAngle(90 * next, v).then(ok => { if (ok && id === run) showSetting(next); });
     }
   }
   ['pointerup', 'pointercancel', 'lostpointercapture'].forEach(t => dial.addEventListener(t, endDrag));

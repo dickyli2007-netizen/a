@@ -78,8 +78,8 @@ page = must_replace(page, '      <li><span class="label">© Farless</span></li>'
 
 script_start = page.index('<script>')
 markup, script = page[:script_start], page[script_start:]
-script = must_replace(script, "const VIDEO_URL = canWebm ? 'assets/hero-scrub.webm' : 'assets/hero-scrub.mp4';",
-                      'const VIDEO_URL = canWebm ? FARLESS.webm : FARLESS.mp4;')
+script = must_replace(script, "url: 'assets/hero-scrub.webm'", 'url: FARLESS.webm')
+script = must_replace(script, "url: 'assets/hero-scrub.mp4'", 'url: FARLESS.mp4')
 script = must_replace(script, "\"url('assets/hero-poster.jpg')\"", '"url(\'" + FARLESS.poster + "\')"')
 script = must_replace(script, "img.src = 'assets/hero-poster.jpg';", 'img.src = FARLESS.poster;')
 script = must_replace(script, "\"url('assets/hero-ending.jpg')\"", '"url(\'" + FARLESS.ending + "\')"')
