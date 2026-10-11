@@ -61,6 +61,9 @@ layout = (
 )
 
 # ---------- section: the page, wired to a Shopify product ----------
+# the static shop preview is swapped for live Liquid: real product media, stock state and collections
+shop_start, shop_end = page.index('  <!-- SHOP:START -->'), page.index('<!-- SHOP:END -->') + len('<!-- SHOP:END -->')
+page = page[:shop_start] + (ROOT / 'farless-work' / 'shopify-shop.liquid').read_text(encoding='utf-8').rstrip() + page[shop_end:]
 page = must_replace(page, '<img src="assets/design-faucet.jpg"', '<img src="%s"' % asset('design-faucet.jpg'))
 page = must_replace(page, '<li class="keep"><a class="buy" href="#buy">Buy</a></li>',
                     '<li class="keep"><a class="buy" href="{{ buy_url }}">Buy</a></li>')
@@ -111,6 +114,11 @@ section = (
             {'type': 'checkbox', 'id': 'straight_to_checkout', 'default': False,
              'label': 'Skip the product page',
              'info': 'Buy buttons put one Farless in the cart and open checkout directly.'},
+            {'type': 'header', 'content': 'Shop section'},
+            {'type': 'product_list', 'id': 'shop_products', 'label': 'Products to show', 'limit': 8,
+             'info': 'Leave empty to feature the Farless product above. Two or more show as a grid.'},
+            {'type': 'checkbox', 'id': 'show_prices', 'default': False, 'label': 'Show prices'},
+            {'type': 'collection_list', 'id': 'collections', 'label': 'Collections to show', 'limit': 6},
         ],
         'presets': [{'name': 'Farless landing'}],
     }, indent=2) + '\n{% endschema %}\n'

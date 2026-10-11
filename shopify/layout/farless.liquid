@@ -130,19 +130,16 @@ nav.top ul a.buy{color:var(--accent)}
 .rise .w{display:inline-block;--kc:clamp(0,(var(--k,0) - var(--th,0))*3,1);opacity:var(--kc);transform:translateY(calc((1 - var(--kc))*20px))}
 .settle .hs{opacity:clamp(0,(var(--k,0) - .66)*4,1);transform:translateY(calc((1 - clamp(0,(var(--k,0) - .66)*4,1))*10px))}
 .settle .cta-row{margin-top:30px;opacity:clamp(0,(var(--k,0) - .78)*5,1)}
-/* the point dots: a hairline rail, ivory points, the current one in bronze inside a fine ring */
-.dots{position:absolute;right:max(2.6vw,16px);top:50%;transform:translateY(-50%);display:flex;flex-direction:column;align-items:center;z-index:2}
-.dots::before{content:"";position:absolute;top:14px;bottom:14px;left:50%;width:1px;margin-left:-.5px;background:rgba(243,236,226,.28)}
-.dots button{all:unset;position:relative;box-sizing:border-box;width:28px;height:36px;display:grid;place-items:center;cursor:pointer}
-.dots button::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--film-ink);opacity:var(--o,.5);box-shadow:0 0 0 3px rgba(var(--film-shade),.35);transition:opacity .5s var(--ease-out),background-color .5s var(--ease-out),transform .5s var(--ease-out)}
-.dots button::after{content:"";position:absolute;left:50%;top:50%;width:17px;height:17px;margin:-8.5px 0 0 -8.5px;border-radius:50%;border:1px solid var(--accent);opacity:0;transform:scale(.5);transition:opacity .5s var(--ease-out),transform .6s var(--ease-out)}
-.dots button[aria-current]::before{background:var(--accent);opacity:1;transform:scale(1.3)}
-.dots button[aria-current]::after{opacity:1;transform:scale(1)}
-.dots button:hover::before{opacity:1}
-.dots button:focus-visible{outline:1px solid var(--film-ink);outline-offset:-2px}
-.dots .count{position:absolute;right:calc(100% + 10px);top:50%;transform:translateY(-50%);font:400 .66rem/1 var(--font);letter-spacing:.24em;color:rgba(243,236,226,.8);white-space:nowrap;opacity:0;transition:opacity .4s var(--ease-out);pointer-events:none}
-.dots button[aria-current] .count{opacity:1}
-@media (pointer:coarse){.dots button{width:44px;height:44px}}
+/* the point dots: quiet ivory points; the current one stretches into a short bar */
+.dots{position:absolute;right:max(2.4vw,16px);top:50%;transform:translateY(-50%);display:flex;flex-direction:column;align-items:center;z-index:2}
+.dots button{all:unset;position:relative;box-sizing:border-box;width:24px;height:22px;display:grid;place-items:center;cursor:pointer}
+.dots button::before{content:"";width:3px;height:3px;border-radius:2px;background:var(--film-ink);opacity:.42;box-shadow:0 0 6px rgba(var(--film-shade),.45);transition:height .7s var(--ease-out),opacity .5s var(--ease-out),transform .4s var(--ease-out)}
+.dots button[aria-current]{height:40px}
+.dots button[aria-current]::before{height:22px;opacity:1}
+.dots button{transition:height .7s var(--ease-out)}
+.dots button:not([aria-current]):hover::before{opacity:.9;transform:scale(1.5)}
+.dots button:focus-visible{outline:1px solid var(--film-ink);outline-offset:-3px}
+@media (pointer:coarse){.dots button{width:44px;height:30px}.dots button[aria-current]{height:44px}}
 /* scroll cue: a hairline that fills as the film loads, then a drop of light runs down it */
 .hero-note{position:absolute;left:50%;bottom:26px;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:12px;margin:0;color:var(--film-ink);font:400 .64rem/1 var(--font);letter-spacing:.32em;text-transform:uppercase;padding-left:.32em;transition:opacity .5s var(--ease-out)}
 .stage:not([data-point="0"]) .hero-note{opacity:0}
@@ -204,6 +201,61 @@ section.sec.tone{background:var(--canvas-2)}
 .seam svg{width:min(560px,80vw);height:100%;overflow:visible}
 .seam path{fill:none;stroke:var(--hair-strong);stroke-width:1;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:calc(1 - var(--d,0));vector-effect:non-scaling-stroke}
 .seam circle{fill:var(--accent);opacity:clamp(0,(var(--d,0) - .9)*10,1)}
+
+/* shop: the product first, then the collections */
+.shop .head{display:flex;justify-content:space-between;align-items:end;gap:32px;flex-wrap:wrap;margin-bottom:clamp(56px,8vh,88px)}
+.feature{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:clamp(40px,7vw,120px);align-items:center}
+.f-frame{position:relative;aspect-ratio:4/5;overflow:hidden;background:var(--panel)}
+.f-frame img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:opacity .45s var(--ease-out),transform 1.4s var(--ease-out)}
+.f-frame:hover img{transform:scale(1.025)}
+.f-frame img.swap{opacity:0}
+.f-thumbs{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
+.f-thumbs button{all:unset;box-sizing:border-box;cursor:pointer;position:relative;width:64px;height:64px;overflow:hidden;opacity:.5;transition:opacity .4s var(--ease-out)}
+.f-thumbs button::after{content:"";position:absolute;inset:0;border:1px solid var(--hair-strong);transition:border-color .4s var(--ease-out)}
+.f-thumbs button:hover,.f-thumbs button[aria-current]{opacity:1}
+.f-thumbs button[aria-current]::after{border-color:var(--text-primary)}
+.f-thumbs button:focus-visible{outline:1px solid var(--accent);outline-offset:3px}
+.f-thumbs img{width:100%;height:100%;object-fit:cover;display:block}
+.f-info .label{margin-bottom:24px}
+.f-info h3{font:200 clamp(2.2rem,3.6vw,3.6rem)/1.08 var(--font);letter-spacing:-.005em}
+.f-info .excerpt{color:var(--text-secondary);margin-top:22px;max-width:42ch}
+.f-info .price{margin-top:22px;font:300 1.15rem/1 var(--font);letter-spacing:.06em}
+.f-actions{display:flex;flex-wrap:wrap;align-items:center;gap:30px;margin-top:38px}
+.f-actions form{margin:0}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.btn[disabled]:hover{background:transparent;color:var(--film-ink);border-color:rgba(243,236,226,.55)}
+.link{text-decoration:none;font:400 .72rem/1 var(--font);letter-spacing:.26em;text-transform:uppercase;color:var(--text-secondary);position:relative;padding:8px 0;transition:color .35s var(--ease-out)}
+.link::after{content:"";position:absolute;left:0;right:0;bottom:0;height:1px;background:currentColor;transform:scaleX(.35);transform-origin:left;transition:transform .5s var(--ease-out)}
+.link:hover{color:var(--text-primary)}
+.link:hover::after{transform:scaleX(1)}
+.f-notes{list-style:none;margin:44px 0 0;padding:26px 0 0;border-top:1px solid var(--hair);display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.f-notes li{color:var(--text-secondary);font-size:.95rem;line-height:1.5}
+.f-notes .label{color:var(--text-primary);margin-bottom:8px}
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:56px 28px;list-style:none;margin:0;padding:0}
+.pcard a{display:block;text-decoration:none}
+.pcard .pimg{position:relative;aspect-ratio:4/5;overflow:hidden;background:var(--panel)}
+.pcard .pimg img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:opacity .7s var(--ease-out),transform 1.4s var(--ease-out)}
+.pcard .pimg img + img{opacity:0}
+.pcard a:hover .pimg img{transform:scale(1.03)}
+.pcard a:hover .pimg img + img{opacity:1}
+.pcard h3{font:300 .92rem/1.35 var(--font);letter-spacing:.2em;text-transform:uppercase;margin-top:20px}
+.pcard .price,.pcard .sold{display:block;margin-top:8px;color:var(--text-secondary);font-size:.95rem}
+.collections{margin-top:clamp(110px,16vh,170px)}
+.collections .chead{display:flex;justify-content:space-between;align-items:baseline;gap:20px;border-bottom:1px solid var(--hair);padding-bottom:18px;margin-bottom:34px}
+.ccards{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:28px;list-style:none;margin:0;padding:0}
+.ccard a{display:block;text-decoration:none}
+.ccard .cimg{position:relative;aspect-ratio:3/2;overflow:hidden;background:var(--panel)}
+.ccard .cimg img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform 1.4s var(--ease-out)}
+.ccard a:hover .cimg img{transform:scale(1.04)}
+.ccard .cimg.empty{display:grid;place-items:center;border:1px solid var(--hair)}
+.ccard .cimg.empty svg{width:42%;height:auto;overflow:visible}
+.ccard .cimg.empty path{fill:none;stroke:var(--hair-strong);stroke-width:1;vector-effect:non-scaling-stroke;transition:stroke .6s var(--ease-out)}
+.ccard .cimg.empty circle{fill:var(--accent);opacity:.6}
+.ccard a:hover .cimg.empty path{stroke:var(--accent)}
+.ccard .cmeta{display:flex;justify-content:space-between;align-items:baseline;gap:16px;margin-top:18px}
+.ccard h3{font:300 1.15rem/1.3 var(--font);letter-spacing:.02em}
+@media (max-width:860px){.feature{grid-template-columns:1fr}}
+@media (max-width:600px){.f-notes{grid-template-columns:1fr}}
 
 /* five waters: five columns divided by hairlines, no boxes */
 .waters .head{display:grid;grid-template-columns:1.2fr 1fr;gap:48px;align-items:end}
