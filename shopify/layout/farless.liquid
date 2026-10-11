@@ -293,30 +293,62 @@ section.sec.tone{background:var(--canvas-2)}
 @keyframes breathe{to{opacity:1;width:120px}}
 @media (max-width:860px){.leaves .wrap{grid-template-columns:1fr}}
 
-/* safety: press and turn on a dark brushed-steel knob */
+/* safety: press the pin, then turn. Back for hot, forward for sparkling. Same dark brushed steel */
 .safety .wrap{display:grid;grid-template-columns:1fr 1fr;gap:clamp(40px,7vw,120px);align-items:center}
-.dial-wrap{--p:0;--push:clamp(0,var(--p)*5,1);position:relative;display:grid;place-items:center;aspect-ratio:1;max-width:440px;width:100%;margin:0 auto;border-radius:50%;border:1px solid var(--hair)}
+.dial-col{display:flex;flex-direction:column;align-items:center}
+.dial-wrap{--ang:0;--pin:0;--m:0;--dir:1;position:relative;display:grid;place-items:center;aspect-ratio:1;max-width:440px;width:100%;margin:0 auto;border-radius:50%;border:1px solid var(--hair)}
 .dial-wrap::before{content:"";position:absolute;inset:16%;border-radius:50%;box-shadow:0 0 90px rgba(196,165,125,.16);opacity:.4;animation:glow 6s var(--ease-soft) -1.5s infinite alternate}
 @keyframes glow{to{opacity:1}}
-.dial{all:unset;cursor:pointer;position:relative;width:56%;aspect-ratio:1;border-radius:50%;touch-action:none;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
+.dial{all:unset;cursor:grab;position:relative;width:56%;aspect-ratio:1;border-radius:50%;touch-action:none;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
+.grabbing .dial{cursor:grabbing}
 .dial:focus-visible{outline:1px solid var(--accent);outline-offset:10px}
 .dial .face{position:absolute;inset:0;border-radius:50%;background:
   repeating-conic-gradient(from 0deg,rgba(255,255,255,.035) 0deg 1.2deg,rgba(0,0,0,.05) 1.2deg 2.4deg),
   radial-gradient(circle at 34% 28%,#8C8178 0%,#4A423B 38%,#2A2420 72%,#1C1714 100%);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.12),inset 0 -10px 22px rgba(0,0,0,.45),0 calc(22px - 12px*var(--push)) calc(44px - 20px*var(--push)) rgba(0,0,0,.55);
-  transform:scale(calc(1 - .045*var(--push))) rotate(calc(var(--p)*90deg))}
-.dial .notch{position:absolute;left:50%;top:9%;width:2px;height:20%;margin-left:-1px;background:var(--accent)}
-.dial-ticks{position:absolute;inset:6%;pointer-events:none}
-.dial-ticks circle{opacity:clamp(0,var(--p)*20,1);fill:none;stroke:var(--accent);stroke-width:1;stroke-dasharray:1;stroke-dashoffset:calc(1 - var(--p));transform:rotate(-90deg);transform-origin:50% 50%}
-.dial-state{margin-top:30px;min-height:1.6em}
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.12),inset 0 -10px 22px rgba(0,0,0,.45),0 calc(22px - 10px*var(--pin)) calc(44px - 16px*var(--pin)) rgba(0,0,0,.55);
+  transform:scale(calc(1 - .03*var(--pin))) rotate(calc(var(--ang)*1deg))}
+.dial .notch{position:absolute;left:50%;top:7%;width:2px;height:17%;margin-left:-1px;background:var(--accent)}
+/* the pin: a small steel cap at the centre that presses down before the knob will turn */
+.pin{position:absolute;left:50%;top:50%;width:24%;aspect-ratio:1;margin:-12% 0 0 -12%;border-radius:50%;pointer-events:none;
+  background:radial-gradient(circle at 36% 30%,#B3A89E 0%,#6A6058 42%,#3A322D 78%,#2A2420 100%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,calc(.22 - .14*var(--pin))),inset 0 calc(5px*var(--pin)) calc(9px*var(--pin)) rgba(0,0,0,.65),0 calc(7px - 6px*var(--pin)) calc(12px - 9px*var(--pin)) rgba(0,0,0,.6),0 0 0 1px rgba(0,0,0,.35);
+  transform:translateY(calc(1.5px*var(--pin))) scale(calc(1 - .1*var(--pin)))}
+.pin::before{content:"";position:absolute;inset:-14%;border-radius:50%;border:1px solid rgba(236,227,214,.12)}
+.pin::after{content:"";position:absolute;inset:38%;border-radius:50%;background:var(--accent);opacity:calc(.15 + .85*var(--pin));box-shadow:0 0 12px rgba(196,165,125,calc(.65*var(--pin)))}
+/* ring: ticks for off, hot and sparkling, and a bronze arc that follows the turn either way */
+.dial-ring,.dial-arc{position:absolute;inset:6%;pointer-events:none;overflow:visible}
+.dial-ring line{stroke:var(--hair-strong);stroke-width:1;vector-effect:non-scaling-stroke}
+.dial-arc{transform:scaleX(var(--dir))}
+.dial-arc circle{opacity:clamp(0,var(--m)*20,1);fill:none;stroke:var(--accent);stroke-width:.35;stroke-dasharray:1;stroke-dashoffset:calc(1 - var(--m)*.25);transform:rotate(-90deg);transform-origin:50% 50%}
+.ind{position:absolute;top:50%;width:8%;aspect-ratio:1;transform:translateY(-50%);color:var(--text-secondary);opacity:.6;transition:color .5s var(--ease-out),opacity .5s var(--ease-out);pointer-events:none}
+.ind svg{width:100%;height:100%;display:block;overflow:visible}
+.ind-hot{left:9.5%}
+.ind-spark{right:9.5%}
+.is-hot .ind-hot,.is-spark .ind-spark{color:var(--accent);opacity:1}
+.dial-controls{display:flex;justify-content:center;align-items:center;gap:clamp(22px,4vw,44px);margin-top:30px;flex-wrap:wrap}
+.dc{all:unset;box-sizing:border-box;cursor:pointer;display:inline-flex;align-items:center;gap:10px;padding:10px 2px;position:relative;font:400 .72rem/1 var(--font);letter-spacing:.26em;text-transform:uppercase;color:var(--text-secondary);transition:color .35s var(--ease-out)}
+.dc::after{content:"";position:absolute;left:0;right:0;bottom:2px;height:1px;background:currentColor;transform:scaleX(0);transform-origin:left;transition:transform .45s var(--ease-out)}
+.dc:hover{color:var(--text-primary)}
+.dc:hover::after{transform:scaleX(1)}
+.dc:focus-visible{outline:1px solid var(--accent);outline-offset:4px}
+.dc .dot{width:5px;height:5px;border-radius:50%;background:currentColor;opacity:.45;transition:background-color .4s var(--ease-out),opacity .4s var(--ease-out)}
+.dc.on{color:var(--text-primary)}
+.dc.on .dot{background:var(--accent);opacity:1}
+.dc.reset svg{width:13px;height:13px}
+.dc.reset[aria-disabled="true"]{opacity:.35;cursor:default}
+.dc.reset[aria-disabled="true"]:hover::after{transform:scaleX(0)}
+@media (pointer:coarse){.dc{min-height:44px}}
+.dial-state{margin-top:30px;min-height:1.6em;position:relative}
 .dial-state .hint{transition:opacity .4s var(--ease-out)}
 .dial-done .dw{opacity:0;transform:translateY(10px);transition:opacity .8s var(--ease-out),transform .8s var(--ease-out)}
 .done .dial-done .dw{opacity:1;transform:none}
 .done .dial-done .dw:nth-child(2){transition-delay:.18s}
 .done .dial-done .dw:nth-child(3){transition-delay:.36s}
 .done .dial-state .hint{opacity:0}
-.dial-done{display:flex;gap:.4em;font:200 clamp(1.8rem,2.8vw,2.6rem)/1.1 var(--font);margin-top:8px}
+.dial-done{display:flex;flex-wrap:wrap;gap:0 .4em;font:200 clamp(1.8rem,2.8vw,2.6rem)/1.15 var(--font);margin-top:8px}
 .dial-done .dw:last-child{color:var(--accent)}
+.hint.nudge{animation:nudge .9s var(--ease-out)}
+@keyframes nudge{30%{color:var(--text-primary)}}
 @media (max-width:860px){.safety .wrap{grid-template-columns:1fr}}
 
 /* design: text low on the left, the tall still on the right, square-cut */
@@ -369,7 +401,7 @@ body.paused *, body.paused *::before, body.paused *::after{animation-play-state:
 @media (prefers-reduced-motion: reduce){
   html{scroll-behavior:auto}
   *,*::before,*::after{animation:none!important;transition:none!important;transition-delay:0s!important}
-  [data-in] .part,.dial-done .dw{opacity:1!important;transform:none!important}
+  [data-in] .part,.done .dial-done .dw{opacity:1!important;transform:none!important}
   .gone li path{stroke-dashoffset:0!important}
   .seam{--d:1!important}
   .bubbles,.grain{display:none}

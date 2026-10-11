@@ -293,30 +293,62 @@ section.sec.tone{background:var(--canvas-2)}
 @keyframes breathe{to{opacity:1;width:120px}}
 @media (max-width:860px){.leaves .wrap{grid-template-columns:1fr}}
 
-/* safety: press and turn on a dark brushed-steel knob */
+/* safety: press the pin, then turn. Back for hot, forward for sparkling. Same dark brushed steel */
 .safety .wrap{display:grid;grid-template-columns:1fr 1fr;gap:clamp(40px,7vw,120px);align-items:center}
-.dial-wrap{--p:0;--push:clamp(0,var(--p)*5,1);position:relative;display:grid;place-items:center;aspect-ratio:1;max-width:440px;width:100%;margin:0 auto;border-radius:50%;border:1px solid var(--hair)}
+.dial-col{display:flex;flex-direction:column;align-items:center}
+.dial-wrap{--ang:0;--pin:0;--m:0;--dir:1;position:relative;display:grid;place-items:center;aspect-ratio:1;max-width:440px;width:100%;margin:0 auto;border-radius:50%;border:1px solid var(--hair)}
 .dial-wrap::before{content:"";position:absolute;inset:16%;border-radius:50%;box-shadow:0 0 90px rgba(196,165,125,.16);opacity:.4;animation:glow 6s var(--ease-soft) -1.5s infinite alternate}
 @keyframes glow{to{opacity:1}}
-.dial{all:unset;cursor:pointer;position:relative;width:56%;aspect-ratio:1;border-radius:50%;touch-action:none;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
+.dial{all:unset;cursor:grab;position:relative;width:56%;aspect-ratio:1;border-radius:50%;touch-action:none;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
+.grabbing .dial{cursor:grabbing}
 .dial:focus-visible{outline:1px solid var(--accent);outline-offset:10px}
 .dial .face{position:absolute;inset:0;border-radius:50%;background:
   repeating-conic-gradient(from 0deg,rgba(255,255,255,.035) 0deg 1.2deg,rgba(0,0,0,.05) 1.2deg 2.4deg),
   radial-gradient(circle at 34% 28%,#8C8178 0%,#4A423B 38%,#2A2420 72%,#1C1714 100%);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.12),inset 0 -10px 22px rgba(0,0,0,.45),0 calc(22px - 12px*var(--push)) calc(44px - 20px*var(--push)) rgba(0,0,0,.55);
-  transform:scale(calc(1 - .045*var(--push))) rotate(calc(var(--p)*90deg))}
-.dial .notch{position:absolute;left:50%;top:9%;width:2px;height:20%;margin-left:-1px;background:var(--accent)}
-.dial-ticks{position:absolute;inset:6%;pointer-events:none}
-.dial-ticks circle{opacity:clamp(0,var(--p)*20,1);fill:none;stroke:var(--accent);stroke-width:1;stroke-dasharray:1;stroke-dashoffset:calc(1 - var(--p));transform:rotate(-90deg);transform-origin:50% 50%}
-.dial-state{margin-top:30px;min-height:1.6em}
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.12),inset 0 -10px 22px rgba(0,0,0,.45),0 calc(22px - 10px*var(--pin)) calc(44px - 16px*var(--pin)) rgba(0,0,0,.55);
+  transform:scale(calc(1 - .03*var(--pin))) rotate(calc(var(--ang)*1deg))}
+.dial .notch{position:absolute;left:50%;top:7%;width:2px;height:17%;margin-left:-1px;background:var(--accent)}
+/* the pin: a small steel cap at the centre that presses down before the knob will turn */
+.pin{position:absolute;left:50%;top:50%;width:24%;aspect-ratio:1;margin:-12% 0 0 -12%;border-radius:50%;pointer-events:none;
+  background:radial-gradient(circle at 36% 30%,#B3A89E 0%,#6A6058 42%,#3A322D 78%,#2A2420 100%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,calc(.22 - .14*var(--pin))),inset 0 calc(5px*var(--pin)) calc(9px*var(--pin)) rgba(0,0,0,.65),0 calc(7px - 6px*var(--pin)) calc(12px - 9px*var(--pin)) rgba(0,0,0,.6),0 0 0 1px rgba(0,0,0,.35);
+  transform:translateY(calc(1.5px*var(--pin))) scale(calc(1 - .1*var(--pin)))}
+.pin::before{content:"";position:absolute;inset:-14%;border-radius:50%;border:1px solid rgba(236,227,214,.12)}
+.pin::after{content:"";position:absolute;inset:38%;border-radius:50%;background:var(--accent);opacity:calc(.15 + .85*var(--pin));box-shadow:0 0 12px rgba(196,165,125,calc(.65*var(--pin)))}
+/* ring: ticks for off, hot and sparkling, and a bronze arc that follows the turn either way */
+.dial-ring,.dial-arc{position:absolute;inset:6%;pointer-events:none;overflow:visible}
+.dial-ring line{stroke:var(--hair-strong);stroke-width:1;vector-effect:non-scaling-stroke}
+.dial-arc{transform:scaleX(var(--dir))}
+.dial-arc circle{opacity:clamp(0,var(--m)*20,1);fill:none;stroke:var(--accent);stroke-width:.35;stroke-dasharray:1;stroke-dashoffset:calc(1 - var(--m)*.25);transform:rotate(-90deg);transform-origin:50% 50%}
+.ind{position:absolute;top:50%;width:8%;aspect-ratio:1;transform:translateY(-50%);color:var(--text-secondary);opacity:.6;transition:color .5s var(--ease-out),opacity .5s var(--ease-out);pointer-events:none}
+.ind svg{width:100%;height:100%;display:block;overflow:visible}
+.ind-hot{left:9.5%}
+.ind-spark{right:9.5%}
+.is-hot .ind-hot,.is-spark .ind-spark{color:var(--accent);opacity:1}
+.dial-controls{display:flex;justify-content:center;align-items:center;gap:clamp(22px,4vw,44px);margin-top:30px;flex-wrap:wrap}
+.dc{all:unset;box-sizing:border-box;cursor:pointer;display:inline-flex;align-items:center;gap:10px;padding:10px 2px;position:relative;font:400 .72rem/1 var(--font);letter-spacing:.26em;text-transform:uppercase;color:var(--text-secondary);transition:color .35s var(--ease-out)}
+.dc::after{content:"";position:absolute;left:0;right:0;bottom:2px;height:1px;background:currentColor;transform:scaleX(0);transform-origin:left;transition:transform .45s var(--ease-out)}
+.dc:hover{color:var(--text-primary)}
+.dc:hover::after{transform:scaleX(1)}
+.dc:focus-visible{outline:1px solid var(--accent);outline-offset:4px}
+.dc .dot{width:5px;height:5px;border-radius:50%;background:currentColor;opacity:.45;transition:background-color .4s var(--ease-out),opacity .4s var(--ease-out)}
+.dc.on{color:var(--text-primary)}
+.dc.on .dot{background:var(--accent);opacity:1}
+.dc.reset svg{width:13px;height:13px}
+.dc.reset[aria-disabled="true"]{opacity:.35;cursor:default}
+.dc.reset[aria-disabled="true"]:hover::after{transform:scaleX(0)}
+@media (pointer:coarse){.dc{min-height:44px}}
+.dial-state{margin-top:30px;min-height:1.6em;position:relative}
 .dial-state .hint{transition:opacity .4s var(--ease-out)}
 .dial-done .dw{opacity:0;transform:translateY(10px);transition:opacity .8s var(--ease-out),transform .8s var(--ease-out)}
 .done .dial-done .dw{opacity:1;transform:none}
 .done .dial-done .dw:nth-child(2){transition-delay:.18s}
 .done .dial-done .dw:nth-child(3){transition-delay:.36s}
 .done .dial-state .hint{opacity:0}
-.dial-done{display:flex;gap:.4em;font:200 clamp(1.8rem,2.8vw,2.6rem)/1.1 var(--font);margin-top:8px}
+.dial-done{display:flex;flex-wrap:wrap;gap:0 .4em;font:200 clamp(1.8rem,2.8vw,2.6rem)/1.15 var(--font);margin-top:8px}
 .dial-done .dw:last-child{color:var(--accent)}
+.hint.nudge{animation:nudge .9s var(--ease-out)}
+@keyframes nudge{30%{color:var(--text-primary)}}
 @media (max-width:860px){.safety .wrap{grid-template-columns:1fr}}
 
 /* design: text low on the left, the tall still on the right, square-cut */
@@ -369,7 +401,7 @@ body.paused *, body.paused *::before, body.paused *::after{animation-play-state:
 @media (prefers-reduced-motion: reduce){
   html{scroll-behavior:auto}
   *,*::before,*::after{animation:none!important;transition:none!important;transition-delay:0s!important}
-  [data-in] .part,.dial-done .dw{opacity:1!important;transform:none!important}
+  [data-in] .part,.done .dial-done .dw{opacity:1!important;transform:none!important}
   .gone li path{stroke-dashoffset:0!important}
   .seam{--d:1!important}
   .bubbles,.grain{display:none}
@@ -557,20 +589,30 @@ body.paused *, body.paused *::before, body.paused *::after{animation-play-state:
 
   <section class="sec safety" id="safety" aria-labelledby="safety-h">
     <div class="wrap">
-      <div class="dial-wrap" id="dialWrap">
-        <svg class="dial-ticks" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="46" pathLength="1"/></svg>
-        <button class="dial" id="dial" type="button" aria-describedby="dial-help">
-          <span class="sr">Press and hold to push and turn the boiling dial</span>
-          <span class="face" aria-hidden="true"><span class="notch"></span></span>
-        </button>
+      <div class="dial-col">
+        <div class="dial-wrap" id="dialWrap">
+          <svg class="dial-ring" viewBox="0 0 100 100" aria-hidden="true"><line x1="50" y1="-3" x2="50" y2="3"/><line x1="-3" y1="50" x2="3" y2="50"/><line x1="97" y1="50" x2="103" y2="50"/></svg>
+          <svg class="dial-arc" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="50" pathLength="1"/></svg>
+          <span class="ind ind-hot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"><path d="M8 19c-2.4-3 2.4-5 0-8s2.4-5 0-8M12 19c-2.4-3 2.4-5 0-8s2.4-5 0-8M16 19c-2.4-3 2.4-5 0-8s2.4-5 0-8"/></svg></span>
+          <span class="ind ind-spark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="9" cy="16" r="4"/><circle cx="16" cy="9" r="2.6"/><circle cx="10" cy="5" r="1.6"/><circle cx="18" cy="17.5" r="1.6"/></svg></span>
+          <div class="dial" id="dial" role="slider" tabindex="0" aria-label="Water knob" aria-valuemin="-1" aria-valuemax="1" aria-valuenow="0" aria-valuetext="Off" aria-describedby="dial-help">
+            <span class="face" aria-hidden="true"><span class="notch"></span></span>
+            <span class="pin" aria-hidden="true"></span>
+          </div>
+        </div>
+        <div class="dial-controls" role="group" aria-label="Knob settings">
+          <button type="button" class="dc" data-set="-1"><span class="dot" aria-hidden="true"></span>Hot</button>
+          <button type="button" class="dc reset" data-set="0" aria-disabled="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" aria-hidden="true"><path d="M4.5 12a7.5 7.5 0 1 0 2.2-5.3"/><path d="M4.5 3.5v3.7h3.7"/></svg>Reset</button>
+          <button type="button" class="dc" data-set="1">Sparkling<span class="dot" aria-hidden="true"></span></button>
+        </div>
       </div>
-      <div data-in>
+      <div data-in id="safetyCopy">
         <span class="label kicker part">Safety</span>
-        <h2 class="h2 part" id="safety-h">Boiling only when you mean it.</h2>
-        <p class="lede part">Boiling water flows only when you push the dial and turn it at the same time. Small hands can't do it by accident.</p>
+        <h2 class="h2 part" id="safety-h">Press the pin. Then turn.</h2>
+        <p class="lede part">Back for hot, forward for sparkling. The knob only turns once the pin is pressed down, so small hands can't start it by accident.</p>
         <div class="dial-state part">
-          <p class="label hint" id="dial-help">Try it. Press and hold the dial</p>
-          <p class="dial-done" aria-live="polite"><span class="dw">Push.</span><span class="dw">Turn.</span><span class="dw">Boiling.</span></p>
+          <p class="label hint" id="dial-help">Try it. Hold the pin and turn the knob</p>
+          <p class="dial-done" aria-live="polite"><span class="dw">Press.</span><span class="dw">Turn forward.</span><span class="dw">Sparkling.</span></p>
         </div>
       </div>
     </div>
@@ -968,36 +1010,139 @@ body.paused *, body.paused *::before, body.paused *::after{animation-play-state:
   addEventListener('scroll', () => { if (seamRaf === null) seamRaf = requestAnimationFrame(drawSeams); }, { passive: true });
   drawSeams();
 
-  /* ---------- the one interactive moment: push and turn ---------- */
+  /* ---------- the one interactive moment: press the pin, then turn ----------
+     Back (counter-clockwise) for hot, forward (clockwise) for sparkling. Drag the knob,
+     tap the settings underneath, or use the arrow keys; Reset turns it home and lifts the pin. */
   const dialWrap = document.getElementById('dialWrap');
   const dial = document.getElementById('dial');
-  const safetyCopy = dialWrap.nextElementSibling;
-  let p = 0, holding = false, done = false, dRaf = null, dLast = 0;
-  function setP(v){ p = v; dialWrap.style.setProperty('--p', p.toFixed(3)); }
-  function finish(){
-    done = true; setP(1);
-    dialWrap.classList.add('done'); safetyCopy.classList.add('done');
-    dial.setAttribute('aria-pressed', 'true');
+  const safetyCopy = document.getElementById('safetyCopy');
+  const doneLine = safetyCopy.querySelector('.dial-done');
+  const hint = safetyCopy.querySelector('.hint');
+  const ctrlBtns = [...document.querySelectorAll('.dial-controls .dc')];
+  const resetBtn = document.querySelector('.dial-controls .reset');
+  const LINES = { '-1': ['Press.', 'Turn back.', 'Hot.'], '1': ['Press.', 'Turn forward.', 'Sparkling.'] };
+  const NAMES = { '-1': 'Hot', '0': 'Off', '1': 'Sparkling' };
+  const K = { ang: 0, pin: 0 };
+  let setting = 0, kTween = null, run = 0, drag = null;
+
+  function drawKnob(){
+    dialWrap.style.setProperty('--ang', K.ang.toFixed(2));
+    dialWrap.style.setProperty('--pin', K.pin.toFixed(3));
+    dialWrap.style.setProperty('--m', Math.min(1, Math.abs(K.ang) / 90).toFixed(3));
+    dialWrap.style.setProperty('--dir', K.ang < 0 ? '-1' : '1');
   }
-  function dStep(now){
-    const dt = Math.min(100, now - (dLast || now)); dLast = now;
-    if (holding) setP(Math.min(1, p + dt / 1500));
-    else setP(Math.max(0, p - (dt / 900) * Math.max(0.25, p)));
-    if (p >= 1){ finish(); dRaf = null; dLast = 0; return; }
-    if (!holding && p <= 0){ dRaf = null; dLast = 0; return; }
-    dRaf = requestAnimationFrame(dStep);
+  function tweenKnob(to, ms){
+    return new Promise(done => {
+      if (kTween) cancelAnimationFrame(kTween.raf);
+      const from = { ang: K.ang, pin: K.pin };
+      if (reduce.matches || ms <= 0){ kTween = null; Object.assign(K, to); drawKnob(); done(); return; }
+      const tw = kTween = { raf: 0 };
+      const t0 = performance.now();
+      const step = now => {
+        if (kTween !== tw) return done();
+        const t = Math.min(1, (now - t0) / ms), e = easeInOut(t);
+        for (const key in to) K[key] = from[key] + (to[key] - from[key]) * e;
+        drawKnob();
+        if (t < 1) tw.raf = requestAnimationFrame(step); else { kTween = null; done(); }
+      };
+      tw.raf = requestAnimationFrame(step);
+    });
   }
-  function press(){ if (done) return; holding = true; if (dRaf === null) dRaf = requestAnimationFrame(dStep); }
-  function release(){ holding = false; }
-  dial.addEventListener('pointerdown', e => { e.preventDefault(); dial.setPointerCapture?.(e.pointerId); press(); });
-  ['pointerup', 'pointercancel', 'lostpointercapture'].forEach(t => dial.addEventListener(t, release));
-  dial.addEventListener('keydown', e => { if ((e.key === ' ' || e.key === 'Enter') && !e.repeat){ e.preventDefault(); press(); } });
-  dial.addEventListener('keyup', e => { if (e.key === ' ' || e.key === 'Enter') release(); });
+  function showSetting(next){
+    setting = next;
+    dialWrap.classList.toggle('is-hot', next === -1);
+    dialWrap.classList.toggle('is-spark', next === 1);
+    dial.setAttribute('aria-valuenow', String(next));
+    dial.setAttribute('aria-valuetext', NAMES[next]);
+    ctrlBtns.forEach(b => b.classList.toggle('on', next !== 0 && +b.dataset.set === next));
+    resetBtn.setAttribute('aria-disabled', next === 0 ? 'true' : 'false');
+    safetyCopy.classList.remove('done');
+    if (next !== 0){
+      [...doneLine.children].forEach((w, i) => { w.textContent = LINES[next][i]; });
+      void doneLine.offsetWidth;   // restart the staged entrance
+      safetyCopy.classList.add('done');
+    }
+  }
+  // the full sequence: press the pin, then turn; switching sides passes home first
+  async function goSetting(next){
+    const id = ++run;
+    if (next === 0){
+      showSetting(0);
+      await tweenKnob({ ang: 0 }, 750); if (id !== run) return;
+      await tweenKnob({ pin: 0 }, 280);
+      return;
+    }
+    if (setting === next && Math.abs(K.ang - 90 * next) < 1) return;
+    if (setting !== 0 || Math.abs(K.ang) > 1){
+      showSetting(0);
+      await tweenKnob({ ang: 0 }, 600); if (id !== run) return;
+    }
+    if (K.pin < 0.99){ await tweenKnob({ pin: 1 }, 300); if (id !== run) return; }
+    await tweenKnob({ ang: 90 * next }, 950); if (id !== run) return;
+    showSetting(next);
+  }
+
+  const angleAt = (x, y) => {
+    const r = dial.getBoundingClientRect();
+    return Math.atan2(y - (r.top + r.height / 2), x - (r.left + r.width / 2)) * 180 / Math.PI;
+  };
+  dial.addEventListener('pointerdown', e => {
+    e.preventDefault();
+    dial.setPointerCapture?.(e.pointerId);
+    run++;
+    drag = { a0: angleAt(e.clientX, e.clientY), start: K.ang, x: e.clientX, y: e.clientY, moved: false };
+    dialWrap.classList.add('grabbing');
+    tweenKnob({ pin: 1 }, 180);
+  });
+  dial.addEventListener('pointermove', e => {
+    if (!drag) return;
+    if (Math.hypot(e.clientX - drag.x, e.clientY - drag.y) > 4) drag.moved = true;
+    if (!drag.moved) return;
+    const d = ((angleAt(e.clientX, e.clientY) - drag.a0 + 540) % 360) - 180;
+    K.ang = clamp(drag.start + d, -90, 90);
+    drawKnob();
+  });
+  function endDrag(){
+    if (!drag) return;
+    const moved = drag.moved;
+    drag = null;
+    dialWrap.classList.remove('grabbing');
+    const id = ++run;
+    if (!moved){
+      // a tap: the pin presses and springs back, the knob stays where it is
+      if (setting === 0){
+        hint.classList.remove('nudge'); void hint.offsetWidth; hint.classList.add('nudge');
+        tweenKnob({ pin: 1 }, 140).then(() => { if (id === run) tweenKnob({ pin: 0 }, 360); });
+      } else tweenKnob({ pin: 1 }, 140);
+      return;
+    }
+    const next = K.ang >= 55 ? 1 : K.ang <= -55 ? -1 : 0;
+    if (next === 0){
+      showSetting(0);
+      tweenKnob({ ang: 0 }, 460).then(() => { if (id === run) tweenKnob({ pin: 0 }, 260); });
+    } else {
+      tweenKnob({ ang: 90 * next, pin: 1 }, 340).then(() => { if (id === run) showSetting(next); });
+    }
+  }
+  ['pointerup', 'pointercancel', 'lostpointercapture'].forEach(t => dial.addEventListener(t, endDrag));
   dial.addEventListener('contextmenu', e => e.preventDefault());
+  dial.addEventListener('keydown', e => {
+    let next = null;
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') next = Math.max(-1, setting - 1);
+    else if (e.key === 'ArrowRight' || e.key === 'ArrowUp') next = Math.min(1, setting + 1);
+    else if (e.key === 'Escape' || e.key === 'Home') next = 0;
+    if (next === null) return;
+    e.preventDefault();
+    goSetting(next);
+  });
+  ctrlBtns.forEach(b => b.addEventListener('click', () => {
+    if (b.getAttribute('aria-disabled') === 'true') return;
+    goSetting(+b.dataset.set);
+  }));
+  drawKnob();
 
   /* ---------- reduced motion, live in both directions ---------- */
   function pinToFinalStates(){
-    if (!done) finish();
     seams.forEach(s => { s.d = 1; s.el.style.setProperty('--d', '1'); });
     document.querySelectorAll('[data-in],[data-strike]').forEach(el => el.classList.add('in', 'settled'));
   }
