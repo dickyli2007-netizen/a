@@ -78,6 +78,7 @@ Nav: Farless wordmark (inline SVG), links "Five waters", "Safety", "Design", "Qu
    - "Does it really replace the kettle?" / "Yes. Boiling water is ready the moment you turn the dial. No waiting, no refilling."
    - "Will it still make sparkling water when I'm out of bottles?" / "There are no bottles to run out of. Sparkling water comes straight from the tap."
    - Pending facts from the owner before more answers: filter change schedule and cost, installation, hard water.
+   - Confirmed by the owner: the knob only turns once the pin is pressed down (safety section copy stands), and the questions answer keeps "boiling" water for push and turn.
 6. **Final call to action**
    - Headline: "Make room."
    - Line: "Five waters. One tap. Far less on your counter."
