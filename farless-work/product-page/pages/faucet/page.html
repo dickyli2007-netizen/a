@@ -1,9 +1,4 @@
-<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Farless 5-in-1 Tap | Farless</title>
+<title>Farless Colour Preview</title>
 <meta name="description" content="Farless is one quiet kitchen tap for boiling, filtered, sparkling, hot and cold water. Far less on your counter.">
 <meta name="theme-color" content="#14100D">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%2314100D'/%3E%3Cpath d='M22 52V27a11 11 0 0 1 22 0v7' fill='none' stroke='%23ECE3D6' stroke-width='3'/%3E%3Ccircle cx='44' cy='42' r='2.6' fill='%23C4A57D'/%3E%3C/svg%3E">
@@ -490,9 +485,11 @@ body.paused *, body.paused *::before, body.paused *::after{animation-play-state:
 .stage::before{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(46% 42% at 50% 52%,rgba(236,227,214,.085),rgba(236,227,214,0) 72%)}
 .tap{position:absolute;inset:0;margin:0;will-change:transform,opacity;backface-visibility:hidden}
 .tap + .tap{opacity:0}
-.tap .obj{position:absolute;left:50%;bottom:6%;height:86%;aspect-ratio:924/1416;translate:-50% 0}
-.tap img{display:block;width:100%;height:100%;max-width:none;-webkit-user-drag:none;pointer-events:none}
-.tap .obj::after{content:"";position:absolute;z-index:-1;left:33.3%;top:98.4%;width:34%;height:5%;translate:-50% -50%;background:radial-gradient(closest-side,rgba(4,3,2,.8),rgba(4,3,2,0))}
+.stage.single{cursor:auto}
+.tap .obj{position:absolute;left:50%;bottom:6%;height:86%;max-width:100%;aspect-ratio:var(--ar);translate:-50% 0}
+.tap img{display:block;width:100%;height:100%;max-width:none;object-fit:contain;-webkit-user-drag:none;pointer-events:none}
+/* contact shadow under the product's foot; each product file says where its foot is */
+.tap .obj::after{content:"";position:absolute;z-index:-1;left:var(--shadow-x,50%);top:98.4%;width:var(--shadow-w,34%);height:5%;translate:-50% -50%;background:radial-gradient(closest-side,rgba(4,3,2,.8),rgba(4,3,2,0))}
 .f-rail{display:flex;align-items:center;gap:22px;margin-top:18px}
 .f-rail .bar{position:relative;flex:1;height:1px;background:var(--hair)}
 .f-rail .bar i{position:absolute;left:0;top:0;height:1px;width:calc(100% / var(--n,4));background:var(--text-primary);transform:translate3d(calc(var(--pos,0) * 100%),0,0);transition:transform 1.05s cubic-bezier(.45,0,.15,1)}
@@ -546,8 +543,7 @@ body.paused *, body.paused *::before, body.paused *::after{animation-play-state:
   .swatches{margin-top:8px}
 }
 </style>
-</head>
-<body>
+
 <a class="skip" href="#main">Skip to content</a>
 <div class="env" aria-hidden="true"></div>
 <div class="grain" aria-hidden="true"></div>
@@ -571,11 +567,11 @@ body.paused *, body.paused *::before, body.paused *::after{animation-play-state:
     <nav class="crumbs label" aria-label="Breadcrumb"><a href="https://claude.ai/artifact/VUaaH6Je53dopSGLQ8Hors#shop">Shop</a><span aria-hidden="true">/</span><a href="https://claude.ai/artifact/VUaaH6Je53dopSGLQ8Hors#shop">Multi Function Faucets</a><span aria-hidden="true">/</span><span aria-current="page">Farless 5-in-1 Tap</span></nav>
     <div class="pdp-grid">
       <div class="stage-col" style="--n:4">
-        <div class="stage" data-stage aria-roledescription="carousel" aria-label="Farless in 4 colours">
-          <figure class="tap"><div class="obj"><img src="assets/tap-chrome.webp" alt="The Farless 5-in-1 tap in polished chrome" width="924" height="1416" draggable="false"></div></figure>
-          <figure class="tap" aria-hidden="true"><div class="obj"><img src="assets/tap-brass.webp" alt="The Farless 5-in-1 tap in satin brass" width="924" height="1416" draggable="false"></div></figure>
-          <figure class="tap" aria-hidden="true"><div class="obj"><img src="assets/tap-copper.webp" alt="The Farless 5-in-1 tap in warm copper" width="924" height="1416" draggable="false"></div></figure>
-          <figure class="tap" aria-hidden="true"><div class="obj"><img src="assets/tap-black.webp" alt="The Farless 5-in-1 tap in matte black" width="924" height="1416" draggable="false"></div></figure>
+        <div class="stage" data-stage style="--ar:924/1416;--shadow-x:33.3%;--shadow-w:34%" aria-roledescription="carousel" aria-label="Farless 5-in-1 Tap in 4 colours">
+          <figure class="tap"><div class="obj"><img src="assets/tap-chrome.webp" alt="The Farless 5-in-1 Tap in polished chrome" width="924" height="1416" draggable="false"></div></figure>
+          <figure class="tap" aria-hidden="true"><div class="obj"><img src="assets/tap-brass.webp" alt="The Farless 5-in-1 Tap in satin brass" width="924" height="1416" draggable="false"></div></figure>
+          <figure class="tap" aria-hidden="true"><div class="obj"><img src="assets/tap-copper.webp" alt="The Farless 5-in-1 Tap in warm copper" width="924" height="1416" draggable="false"></div></figure>
+          <figure class="tap" aria-hidden="true"><div class="obj"><img src="assets/tap-black.webp" alt="The Farless 5-in-1 Tap in matte black" width="924" height="1416" draggable="false"></div></figure>
         </div>
         <div class="f-rail" aria-hidden="true"><span class="bar"><i></i></span><span class="label"><b data-count>01</b> / 04</span></div>
       </div>
@@ -594,7 +590,7 @@ body.paused *, body.paused *::before, body.paused *::after{animation-play-state:
           </div>
         </div>
         <div class="buy-actions">
-          <button class="btn solid" type="button" data-add>Add to cart</button>
+          <button class="btn solid" type="button" data-add data-title="Farless 5-in-1 Tap">Add to cart</button>
           <p class="buy-note" data-buy-note aria-live="polite"></p>
         </div>
         <p class="excerpt">Farless gives you boiling, filtered, sparkling, hot and cold water from one quiet tap. The kettle, the filter jug, the soda machine and the bottles can leave your counter.</p>
@@ -647,6 +643,13 @@ body.paused *, body.paused *::before, body.paused *::after{animation-play-state:
   const SETTLE = 'cubic-bezier(.22,.61,.36,1)';       // after a swipe the tap is already moving
   const still = matchMedia('(prefers-reduced-motion: reduce)');
   let cur = 0, drag = null;
+
+  const add = document.querySelector('[data-add]');
+  add.addEventListener('click', () => {
+    const colour = radios[cur] ? ` in ${radios[cur].getAttribute('aria-label')}` : '';
+    note.textContent = `Preview only. In the shop this adds the ${add.dataset.title}${colour} to the cart.`;
+  });
+  if (N < 2) return;   // one colour: no picker, nothing to slide
 
   // only transform and opacity change, so the browser slides the taps on the compositor
   function place(el, d, opacity){
@@ -741,12 +744,6 @@ body.paused *, body.paused *::before, body.paused *::after{animation-play-state:
   stage.addEventListener('pointerup', release);
   stage.addEventListener('pointercancel', release);
 
-  document.querySelector('[data-add]').addEventListener('click', () => {
-    note.textContent = `Preview only. In the shop this adds the tap in ${radios[cur].getAttribute('aria-label')} to the cart.`;
-  });
-
   taps.forEach((el, k) => { el.style.transition = 'none'; place(el, k, k === 0 ? 1 : 0); });
 })();
 </script>
-</body>
-</html>

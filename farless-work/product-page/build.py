@@ -1,30 +1,42 @@
-"""Build a preview of a Farless product page with a colour picker, without touching the live site.
+"""The Farless product page template: every product gets a page built from this one design.
 
 Takes the head, styles, nav and footer from farless/index.html and builds a product page around
-them: the tap cut out on its own on the page, sliding sideways to the chosen colour, with the
-picker in the column beside it. The main page keeps its shop section as it is.
+them: the product cut out on its own on the page, sliding sideways to the chosen colour, with the
+colour picker in the column beside it. The colour picker lives on product pages only; the main
+page keeps its shop section as it is.
 
-Writes:
-  farless-work/colour-preview/index.html   full page, for local testing
-  farless-work/colour-preview/page.html    the same page without the document shell, for the artifact preview
+Each product is one file in products/<handle>.json (see products/faucet.json), with its cut-out
+images in assets/<handle>/ (make them with cutout.py). A product with one colour gets the same
+page without the picker.
 
-The finish cut-outs in assets/ are recoloured from the chrome product photo, as stand-ins until
-real photos of each finish exist. Run from the repo root: python3 farless-work/colour-preview/make.py
+Run from the repo root:
+  python3 farless-work/product-page/build.py            every product
+  python3 farless-work/product-page/build.py faucet     one product
+
+Writes, per product:
+  farless-work/product-page/pages/<handle>/index.html   full page, for local testing (serve it with assets/<handle> as assets/)
+  farless-work/product-page/pages/<handle>/page.html    the same page without the document shell, for the artifact preview
 """
+import html
+import json
 import re
+import sys
 from pathlib import Path
+
+from PIL import Image
 
 ROOT = Path(__file__).resolve().parent.parent.parent
 HERE = Path(__file__).resolve().parent
 SITE = 'https://claude.ai/artifact/VUaaH6Je53dopSGLQ8Hors'   # the published site preview the nav links back to
 src = (ROOT / 'farless' / 'index.html').read_text(encoding='utf-8')
 
-FINISHES = [
-    ('chrome', 'Polished Chrome', 'linear-gradient(135deg,#fbfbfc 0%,#c3c6ca 38%,#eef0f2 56%,#8c9095 100%)'),
-    ('brass', 'Satin Brass', 'linear-gradient(135deg,#f6e4b0 0%,#c09a52 40%,#e3c682 58%,#7a5822 100%)'),
-    ('copper', 'Warm Copper', 'linear-gradient(135deg,#f4d0bb 0%,#b5714f 40%,#dca184 58%,#6c3822 100%)'),
-    ('black', 'Matte Black', 'linear-gradient(135deg,#5b5651 0%,#1c1a19 42%,#2e2b29 60%,#0c0b0a 100%)'),
-]
+# swatch fills for the finishes we have used; a product file can give its own "swatch" instead
+SWATCHES = {
+    'chrome': 'linear-gradient(135deg,#fbfbfc 0%,#c3c6ca 38%,#eef0f2 56%,#8c9095 100%)',
+    'brass': 'linear-gradient(135deg,#f6e4b0 0%,#c09a52 40%,#e3c682 58%,#7a5822 100%)',
+    'copper': 'linear-gradient(135deg,#f4d0bb 0%,#b5714f 40%,#dca184 58%,#6c3822 100%)',
+    'black': 'linear-gradient(135deg,#5b5651 0%,#1c1a19 42%,#2e2b29 60%,#0c0b0a 100%)',
+}
 
 
 def cut(text, start, end):
@@ -58,9 +70,11 @@ CSS = '''
 .stage::before{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(46% 42% at 50% 52%,rgba(236,227,214,.085),rgba(236,227,214,0) 72%)}
 .tap{position:absolute;inset:0;margin:0;will-change:transform,opacity;backface-visibility:hidden}
 .tap + .tap{opacity:0}
-.tap .obj{position:absolute;left:50%;bottom:6%;height:86%;aspect-ratio:924/1416;translate:-50% 0}
-.tap img{display:block;width:100%;height:100%;max-width:none;-webkit-user-drag:none;pointer-events:none}
-.tap .obj::after{content:"";position:absolute;z-index:-1;left:33.3%;top:98.4%;width:34%;height:5%;translate:-50% -50%;background:radial-gradient(closest-side,rgba(4,3,2,.8),rgba(4,3,2,0))}
+.stage.single{cursor:auto}
+.tap .obj{position:absolute;left:50%;bottom:6%;height:86%;max-width:100%;aspect-ratio:var(--ar);translate:-50% 0}
+.tap img{display:block;width:100%;height:100%;max-width:none;object-fit:contain;-webkit-user-drag:none;pointer-events:none}
+/* contact shadow under the product's foot; each product file says where its foot is */
+.tap .obj::after{content:"";position:absolute;z-index:-1;left:var(--shadow-x,50%);top:98.4%;width:var(--shadow-w,34%);height:5%;translate:-50% -50%;background:radial-gradient(closest-side,rgba(4,3,2,.8),rgba(4,3,2,0))}
 .f-rail{display:flex;align-items:center;gap:22px;margin-top:18px}
 .f-rail .bar{position:relative;flex:1;height:1px;background:var(--hair)}
 .f-rail .bar i{position:absolute;left:0;top:0;height:1px;width:calc(100% / var(--n,4));background:var(--text-primary);transform:translate3d(calc(var(--pos,0) * 100%),0,0);transition:transform 1.05s cubic-bezier(.45,0,.15,1)}
@@ -115,50 +129,64 @@ CSS = '''
 }
 '''
 
-taps = '\n'.join(
-    f'          <figure class="tap"{"" if i == 0 else " aria-hidden=\"true\""}><div class="obj">'
-    f'<img src="assets/tap-{key}.webp" alt="The Farless 5-in-1 tap in {name.lower()}" width="924" height="1416" draggable="false"></div></figure>'
-    for i, (key, name, _) in enumerate(FINISHES))
-swatches = '\n'.join(
-    f'            <button type="button" role="radio" aria-checked="{"true" if i == 0 else "false"}" tabindex="{0 if i == 0 else -1}" '
-    f'aria-label="{name}" style="--sw:{grad}"></button>'
-    for i, (_, name, grad) in enumerate(FINISHES))
-
-MAIN = f'''<main id="main" class="pdp" tabindex="-1">
-  <div class="wrap">
-    <nav class="crumbs label" aria-label="Breadcrumb"><a href="{SITE}#shop">Shop</a><span aria-hidden="true">/</span><a href="{SITE}#shop">Multi Function Faucets</a><span aria-hidden="true">/</span><span aria-current="page">Farless 5-in-1 Tap</span></nav>
-    <div class="pdp-grid">
-      <div class="stage-col" style="--n:{len(FINISHES)}">
-        <div class="stage" data-stage aria-roledescription="carousel" aria-label="Farless in {len(FINISHES)} colours">
-{taps}
-        </div>
-        <div class="f-rail" aria-hidden="true"><span class="bar"><i></i></span><span class="label"><b data-count>01</b> / {len(FINISHES):02d}</span></div>
-      </div>
-      <div class="buy-col">
-        <span class="label">The tap</span>
-        <h1>Farless 5-in-1 Tap</h1>
-        <p class="lede">Five waters. One tap.</p>
-        <div class="finish">
-          <p class="finish-h">Colour. <span>Pick your favourite.</span></p>
-          <p class="finish-name"><span class="label">Colour</span><b data-finish-name>{FINISHES[0][1]}</b></p>
-          <div class="swatches" role="radiogroup" aria-label="Colour">
-{swatches}
-          </div>
-        </div>
-        <div class="buy-actions">
-          <button class="btn solid" type="button" data-add>Add to cart</button>
-          <p class="buy-note" data-buy-note aria-live="polite"></p>
-        </div>
-        <p class="excerpt">Farless gives you boiling, filtered, sparkling, hot and cold water from one quiet tap. The kettle, the filter jug, the soda machine and the bottles can leave your counter.</p>
-        <ul class="f-notes">
-          <li><span class="label">Five waters</span>Boiling, filtered, sparkling, hot and cold.</li>
-          <li><span class="label">Push and turn</span>Boiling only when you mean it.</li>
-          <li><span class="label">5-year warranty</span>On every Farless.</li>
-        </ul>
-      </div>
-    </div>
-  </div>
-</main>'''
+def render_main(prod, w, h):
+    """The page body for one product. Text from the product file is escaped; the layout is fixed."""
+    e = lambda t: html.escape(t, quote=True)
+    fins = prod['finishes']
+    n = len(fins)
+    title = prod['title']
+    shadow = prod.get('shadow', {})
+    stage_vars = f'--ar:{w}/{h};--shadow-x:{shadow.get("x", 50)}%;--shadow-w:{shadow.get("width", 34)}%'
+    taps = '\n'.join(
+        f'          <figure class="tap"{"" if i == 0 else " aria-hidden=\"true\""}><div class="obj">'
+        f'<img src="assets/{e(f["image"])}" alt="The {e(title)} in {e(f["name"].lower())}" width="{w}" height="{h}" draggable="false"></div></figure>'
+        for i, f in enumerate(fins))
+    swatches = '\n'.join(
+        f'            <button type="button" role="radio" aria-checked="{"true" if i == 0 else "false"}" tabindex="{0 if i == 0 else -1}" '
+        f'aria-label="{e(f["name"])}" style="--sw:{f.get("swatch") or SWATCHES[f["key"]]}"></button>'
+        for i, f in enumerate(fins))
+    picker = (
+        '        <div class="finish">\n'
+        '          <p class="finish-h">Colour. <span>Pick your favourite.</span></p>\n'
+        f'          <p class="finish-name"><span class="label">Colour</span><b data-finish-name>{e(fins[0]["name"])}</b></p>\n'
+        '          <div class="swatches" role="radiogroup" aria-label="Colour">\n'
+        f'{swatches}\n'
+        '          </div>\n'
+        '        </div>\n'
+    ) if n > 1 else ''
+    rail = (f'        <div class="f-rail" aria-hidden="true"><span class="bar"><i></i></span>'
+            f'<span class="label"><b data-count>01</b> / {n:02d}</span></div>\n') if n > 1 else ''
+    stage_attrs = f'aria-roledescription="carousel" aria-label="{e(title)} in {n} colours"' if n > 1 else f'aria-label="{e(title)}"'
+    notes = '\n'.join(f'          <li><span class="label">{e(k)}</span>{e(v)}</li>' for k, v in prod.get('notes', []))
+    notes = f'        <ul class="f-notes">\n{notes}\n        </ul>\n' if notes else ''
+    crumb = f'<a href="{SITE}#shop">{e(prod["collection"])}</a><span aria-hidden="true">/</span>' if prod.get('collection') else ''
+    return (
+        '<main id="main" class="pdp" tabindex="-1">\n'
+        '  <div class="wrap">\n'
+        f'    <nav class="crumbs label" aria-label="Breadcrumb"><a href="{SITE}#shop">Shop</a><span aria-hidden="true">/</span>{crumb}<span aria-current="page">{e(title)}</span></nav>\n'
+        '    <div class="pdp-grid">\n'
+        f'      <div class="stage-col" style="--n:{n}">\n'
+        f'        <div class="stage{"" if n > 1 else " single"}" data-stage style="{stage_vars}" {stage_attrs}>\n'
+        f'{taps}\n'
+        '        </div>\n'
+        f'{rail}'
+        '      </div>\n'
+        '      <div class="buy-col">\n'
+        f'        <span class="label">{e(prod.get("kicker", "Farless"))}</span>\n'
+        f'        <h1>{e(title)}</h1>\n'
+        f'        <p class="lede">{e(prod.get("lede", ""))}</p>\n'
+        f'{picker}'
+        '        <div class="buy-actions">\n'
+        f'          <button class="btn solid" type="button" data-add data-title="{e(title)}">Add to cart</button>\n'
+        '          <p class="buy-note" data-buy-note aria-live="polite"></p>\n'
+        '        </div>\n'
+        f'        <p class="excerpt">{e(prod.get("description", ""))}</p>\n'
+        f'{notes}'
+        '      </div>\n'
+        '    </div>\n'
+        '  </div>\n'
+        '</main>'
+    )
 
 JS = '''<script>
 (() => {
@@ -183,6 +211,13 @@ JS = '''<script>
   const SETTLE = 'cubic-bezier(.22,.61,.36,1)';       // after a swipe the tap is already moving
   const still = matchMedia('(prefers-reduced-motion: reduce)');
   let cur = 0, drag = null;
+
+  const add = document.querySelector('[data-add]');
+  add.addEventListener('click', () => {
+    const colour = radios[cur] ? ` in ${radios[cur].getAttribute('aria-label')}` : '';
+    note.textContent = `Preview only. In the shop this adds the ${add.dataset.title}${colour} to the cart.`;
+  });
+  if (N < 2) return;   // one colour: no picker, nothing to slide
 
   // only transform and opacity change, so the browser slides the taps on the compositor
   function place(el, d, opacity){
@@ -277,33 +312,44 @@ JS = '''<script>
   stage.addEventListener('pointerup', release);
   stage.addEventListener('pointercancel', release);
 
-  document.querySelector('[data-add]').addEventListener('click', () => {
-    note.textContent = `Preview only. In the shop this adds the tap in ${radios[cur].getAttribute('aria-label')} to the cart.`;
-  });
-
   taps.forEach((el, k) => { el.style.transition = 'none'; place(el, k, k === 0 ? 1 : 0); });
 })();
 </script>'''
 
-BODY = '\n'.join([
-    '<a class="skip" href="#main">Skip to content</a>',
-    '<div class="env" aria-hidden="true"></div>',
-    '<div class="grain" aria-hidden="true"></div>',
-    '', nav, '', MAIN, '', footer, '', JS,
-])
 
-style_end = head.rindex('</style>')
-head = head[:style_end] + CSS.lstrip('\n') + head[style_end:]
-head = head.replace('<title>Farless | Five waters. One tap.</title>', '<title>Farless 5-in-1 Tap | Farless</title>', 1)
-assert '<title>Farless 5-in-1 Tap | Farless</title>' in head
+def build(prod):
+    handle = prod['handle']
+    assets = HERE / 'assets' / handle
+    with Image.open(assets / prod['finishes'][0]['image']) as im:
+        w, h = im.size
+    for f in prod['finishes']:
+        assert (assets / f['image']).is_file(), f'missing {assets / f["image"]}'
+        assert f.get('swatch') or f['key'] in SWATCHES, f'no swatch for {f["key"]}: add "swatch" to the product file'
+    body = '\n'.join([
+        '<a class="skip" href="#main">Skip to content</a>',
+        '<div class="env" aria-hidden="true"></div>',
+        '<div class="grain" aria-hidden="true"></div>',
+        '', nav, '', render_main(prod, w, h), '', footer, '', JS,
+    ])
+    title = f'{prod["title"]} | Farless'
+    style_end = head.rindex('</style>')
+    page_head = head[:style_end] + CSS.lstrip('\n') + head[style_end:]
+    page_head = page_head.replace('<title>Farless | Five waters. One tap.</title>', f'<title>{html.escape(title)}</title>', 1)
+    assert f'<title>{html.escape(title)}</title>' in page_head
+    out = HERE / 'pages' / handle
+    out.mkdir(parents=True, exist_ok=True)
+    (out / 'index.html').write_text('<!doctype html>\n<html lang="en">\n<head>' + page_head + '</head>\n<body>\n' + body + '\n</body>\n</html>\n', encoding='utf-8')
+    # artifact copy: the host supplies the document shell
+    art = page_head
+    for tag in ('<meta charset="utf-8">\n', '<meta name="viewport" content="width=device-width, initial-scale=1">\n'):
+        art = art.replace(tag, '', 1)
+    preview_title = prod.get('preview', {}).get('title', prod['title'])
+    art = art.replace(f'<title>{html.escape(title)}</title>', f'<title>{html.escape(preview_title)}</title>', 1)
+    (out / 'page.html').write_text(art.lstrip() + '\n' + body + '\n', encoding='utf-8')
+    print('built', out)
 
-page = '<!doctype html>\n<html lang="en">\n<head>' + head + '</head>\n<body>\n' + BODY + '\n</body>\n</html>\n'
-(HERE / 'index.html').write_text(page, encoding='utf-8')
 
-# artifact copy: the host supplies the document shell
-art = head
-for tag in ('<meta charset="utf-8">\n', '<meta name="viewport" content="width=device-width, initial-scale=1">\n'):
-    art = art.replace(tag, '', 1)
-art = art.replace('<title>Farless 5-in-1 Tap | Farless</title>', '<title>Farless Colour Preview</title>', 1)
-(HERE / 'page.html').write_text(art.lstrip() + '\n' + BODY + '\n', encoding='utf-8')
-print('wrote', HERE / 'index.html', 'and', HERE / 'page.html')
+wanted = sys.argv[1:]
+files = [HERE / 'products' / f'{h}.json' for h in wanted] if wanted else sorted((HERE / 'products').glob('*.json'))
+for path in files:
+    build(json.loads(path.read_text(encoding='utf-8')))

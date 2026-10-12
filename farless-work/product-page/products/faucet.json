@@ -1,0 +1,21 @@
+{
+  "handle": "faucet",
+  "title": "Farless 5-in-1 Tap",
+  "kicker": "The tap",
+  "lede": "Five waters. One tap.",
+  "collection": "Multi Function Faucets",
+  "description": "Farless gives you boiling, filtered, sparkling, hot and cold water from one quiet tap. The kettle, the filter jug, the soda machine and the bottles can leave your counter.",
+  "notes": [
+    ["Five waters", "Boiling, filtered, sparkling, hot and cold."],
+    ["Push and turn", "Boiling only when you mean it."],
+    ["5-year warranty", "On every Farless."]
+  ],
+  "shadow": {"x": 33.3, "width": 34},
+  "finishes": [
+    {"key": "chrome", "name": "Polished Chrome", "image": "tap-chrome.webp"},
+    {"key": "brass", "name": "Satin Brass", "image": "tap-brass.webp", "stand_in": true},
+    {"key": "copper", "name": "Warm Copper", "image": "tap-copper.webp", "stand_in": true},
+    {"key": "black", "name": "Matte Black", "image": "tap-black.webp", "stand_in": true}
+  ],
+  "preview": {"title": "Farless Colour Preview", "url": "https://claude.ai/artifact/CbtjXLSyknvk6Hb2CFsAa7"}
+}

@@ -102,3 +102,11 @@ Blob fetch with the loading ring (plain Blob if under 8 MB), the dt-normalized l
 ## 9. The copy gate line
 
 Every viewer-facing line above ships verbatim. The built page must pass the Phase 9 grep gate (zero em dashes, zero stock words) and the body-copy sweep for AI tells before anyone sees it. Deliberate brand devices here ("Five waters. One tap.", "Push. Turn. Boiling.", the "The kettle. The filter jug." staccato) are craft and stay.
+
+## 10. Product pages
+
+Approved by the owner as the template for every product: the product cut out alone on the dark page,
+the colour picker beside it ("Colour. Pick your favourite." with round swatches), and a sideways slide
+between colours. The picker lives on product pages only; the main page's shop section stays as it is.
+The template, its cut-out tool and the steps for adding a product are in `farless-work/product-page/`
+and `CLAUDE.md`.
