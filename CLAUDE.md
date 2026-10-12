@@ -100,7 +100,11 @@ copper and black are stand-ins until real photos exist.
   `templates/page.farless.json` (home page), `templates/product.json` (every product page). The theme's
   original product page is kept as the alternate template `templates/product.atelier.json`. Buttons that
   buy link to `shopify://products/faucet` in the templates; the owner can repoint them in the editor.
-- The connector cannot write to the live theme or publish one, so uploads go to an unpublished copy
-  (duplicate the live theme, upload with `themeFilesUpsert` from raw GitHub URLs pinned to a commit,
-  check the checksums) and the owner previews and publishes it. The landing shop section skips variant
-  images, so colour cut-outs never show as photos there.
+- The connector cannot write to the live theme, publish one or delete theme files, so uploads go to an
+  unpublished copy (duplicate the newest theme, upload with `themeFilesUpsert` from raw GitHub URLs
+  pinned to a commit, check the checksums) and the owner previews and publishes it. Before copying, read
+  the live theme's `templates/*.json` and group files: the owner's own editor changes live there and must
+  not be overwritten. Upload sections and snippets before the templates and groups that use them; a
+  URL upload runs as a background job, so check the checksums after it finishes. The retired
+  `sections/farless-landing.liquid` is an empty stub with no preset; the owner can delete it.
+- The landing shop section skips variant images, so colour cut-outs never show as photos there.
