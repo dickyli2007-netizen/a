@@ -1,0 +1,193 @@
+{
+  "layout": "farless",
+  "sections": {
+    "hero": {
+      "type": "farless-hero",
+      "settings": {
+        "still_button_link": "shopify://products/faucet"
+      },
+      "blocks": {
+        "opening_1": {
+          "type": "opening",
+          "settings": {
+            "label": "Five waters",
+            "title": "Farless.",
+            "line": "Five waters. One tap.",
+            "time": "0",
+            "focus": 40
+          }
+        },
+        "caption_2": {
+          "type": "caption",
+          "settings": {
+            "label": "Push and turn",
+            "line": "Boiling. Filtered.",
+            "time": "2.8",
+            "focus": 33
+          }
+        },
+        "caption_3": {
+          "type": "caption",
+          "settings": {
+            "label": "The pour",
+            "line": "Sparkling. Hot. Cold.",
+            "time": "4.6",
+            "focus": 43
+          }
+        },
+        "caption_4": {
+          "type": "caption",
+          "settings": {
+            "label": "Less",
+            "line": "No kettle. No bottles. No soda machine.",
+            "time": "6.4",
+            "focus": 57
+          }
+        },
+        "closing_5": {
+          "type": "closing",
+          "settings": {
+            "label": "Farless",
+            "heading": "Far less on your counter.",
+            "line": "Just one tap.",
+            "button_label": "Buy Farless",
+            "button_link": "shopify://products/faucet",
+            "time": "end",
+            "focus": 58
+          }
+        }
+      },
+      "block_order": [
+        "opening_1",
+        "caption_2",
+        "caption_3",
+        "caption_4",
+        "closing_5"
+      ]
+    },
+    "shop": {
+      "type": "farless-shop",
+      "settings": {
+        "product": "faucet",
+        "collections": [
+          "multi-function-faucets",
+          "filtered-faucets"
+        ],
+        "show_prices": false
+      }
+    },
+    "waters": {
+      "type": "farless-waters",
+      "settings": {},
+      "blocks": {
+        "row_1": {
+          "type": "row",
+          "settings": {
+            "icon": "boiling",
+            "name": "Boiling",
+            "replaces": "The kettle",
+            "crossed": true
+          }
+        },
+        "row_2": {
+          "type": "row",
+          "settings": {
+            "icon": "sparkling",
+            "name": "Sparkling",
+            "replaces": "The soda machine",
+            "crossed": true
+          }
+        },
+        "row_3": {
+          "type": "row",
+          "settings": {
+            "icon": "filtered",
+            "name": "Filtered",
+            "replaces": "The filter jug and bottles",
+            "crossed": true
+          }
+        },
+        "row_4": {
+          "type": "row",
+          "settings": {
+            "icon": "hot_cold",
+            "name": "Hot and cold",
+            "replaces": "Still your everyday tap.",
+            "crossed": false
+          }
+        }
+      },
+      "block_order": [
+        "row_1",
+        "row_2",
+        "row_3",
+        "row_4"
+      ]
+    },
+    "safety": {
+      "type": "farless-safety",
+      "settings": {
+        "arc": "right"
+      }
+    },
+    "design": {
+      "type": "farless-design",
+      "settings": {}
+    },
+    "questions": {
+      "type": "farless-questions",
+      "settings": {},
+      "blocks": {
+        "question_1": {
+          "type": "question",
+          "settings": {
+            "question": "Is it safe with children around?",
+            "answer": "<p>Yes. Boiling water needs a push and a turn at the same time, so it can't start by accident.</p>"
+          }
+        },
+        "question_2": {
+          "type": "question",
+          "settings": {
+            "question": "What if something goes wrong?",
+            "answer": "<p>Every Farless comes with a 5-year warranty.</p>"
+          }
+        },
+        "question_3": {
+          "type": "question",
+          "settings": {
+            "question": "Does it really replace the kettle?",
+            "answer": "<p>Yes. Boiling water is ready the moment you turn the dial. No waiting, no refilling.</p>"
+          }
+        },
+        "question_4": {
+          "type": "question",
+          "settings": {
+            "question": "Will I run out of sparkling water bottles?",
+            "answer": "<p>There are no bottles to run out of. Sparkling water comes straight from the tap.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "question_1",
+        "question_2",
+        "question_3",
+        "question_4"
+      ]
+    },
+    "final": {
+      "type": "farless-final",
+      "settings": {
+        "button_link": "shopify://products/faucet"
+      }
+    }
+  },
+  "order": [
+    "hero",
+    "shop",
+    "waters",
+    "safety",
+    "design",
+    "questions",
+    "final"
+  ]
+}

@@ -168,7 +168,7 @@ nav.top ul a.buy{color:var(--accent)}
   .pan #hero{object-position:50% 50%}
   .shade{background:linear-gradient(to bottom,rgba(var(--film-shade),.55) 0%,rgba(var(--film-shade),0) 15%,rgba(var(--film-shade),0) calc(var(--film) - 22%),var(--canvas) calc(var(--film) - 1%))}
   .band{left:24px;right:24px;width:auto;bottom:calc(40px + env(safe-area-inset-bottom, 0px));text-shadow:none}
-  .band[data-t="0"]{bottom:calc(122px + env(safe-area-inset-bottom, 0px))}
+  .band.opening{bottom:calc(122px + env(safe-area-inset-bottom, 0px))}
   .hero-note .line{height:36px}
   .band::before{display:none}
   .band .label{color:var(--text-secondary);margin-bottom:16px}
@@ -182,7 +182,7 @@ nav.top ul a.buy{color:var(--accent)}
 }
 @media (orientation: portrait) and (max-height: 700px){
   .hero{--film:56%}
-  .band[data-t="0"]{bottom:calc(104px + env(safe-area-inset-bottom, 0px))}
+  .band.opening{bottom:calc(104px + env(safe-area-inset-bottom, 0px))}
   .hero-note .line{height:26px}
 }
 @media (orientation: portrait) and (min-width: 600px){
@@ -190,7 +190,7 @@ nav.top ul a.buy{color:var(--accent)}
   .hx{font-size:clamp(3.4rem,9vw,5.2rem)}
   .hl{font-size:clamp(2rem,4.6vw,2.9rem)}
   .band.settle h2{font-size:clamp(2.8rem,6.8vw,4.2rem)!important}
-  .band[data-t="0"]{bottom:calc(140px + env(safe-area-inset-bottom, 0px))}
+  .band.opening{bottom:calc(140px + env(safe-area-inset-bottom, 0px))}
   .dots{right:3vw}
 }
 
@@ -639,18 +639,19 @@ body.paused *, body.paused *::before, body.paused *::after{animation-play-state:
 (() => {
   'use strict';
   const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
+  const root = document;
   const nav = document.querySelector('nav.top');
   const onScroll = () => nav.classList.toggle('solid', scrollY > 8);
   addEventListener('scroll', onScroll, { passive: true });
   onScroll();
 
   /* ---------- colour picker: the tap slides sideways to the chosen colour ---------- */
-  const stage = document.querySelector('[data-stage]');
+  const stage = root.querySelector('[data-stage]');
   const taps = stage ? [...stage.querySelectorAll('.tap')] : [];
-  const radios = [...document.querySelectorAll('.swatches [role="radio"]')];
-  const nameEl = document.querySelector('[data-finish-name]');
-  const countEl = document.querySelector('[data-count]');
-  const rail = document.querySelector('.f-rail');
+  const radios = [...root.querySelectorAll('.swatches [role="radio"]')];
+  const nameEl = root.querySelector('[data-finish-name]');
+  const countEl = root.querySelector('[data-count]');
+  const rail = root.querySelector('.f-rail');
   const N = taps.length;
   const SHIFT = 55;                                   // how far a tap travels, in % of the stage width
   const MOVE = 'cubic-bezier(.45,0,.15,1)';            // eases off the mark, long soft landing

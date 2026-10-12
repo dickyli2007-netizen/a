@@ -1,0 +1,11 @@
+{%- comment -%} The five water icons, drawn in one hairline. icon: boiling, sparkling, filtered, hot, cold, hot_cold or none. {%- endcomment -%}
+{%- capture hot -%}<svg class="ic" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" aria-hidden="true"><path d="M24 6c7 9 12 15 12 22a12 12 0 0 1-24 0c0-7 5-13 12-22z"/><path d="M17 30c2.3-2 4.7-2 7 0s4.7 2 7 0"/></svg>{%- endcapture -%}
+{%- capture cold -%}<svg class="ic" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" aria-hidden="true"><path d="M24 6c7 9 12 15 12 22a12 12 0 0 1-24 0c0-7 5-13 12-22z"/><path d="M24 22v14M18 26l12 6M30 26l-12 6"/></svg>{%- endcapture -%}
+{%- case icon -%}
+  {%- when 'boiling' -%}<svg class="ic" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" aria-hidden="true"><path d="M16 22c-3-4 3-6 0-10M24 22c-3-4 3-6 0-10M32 22c-3-4 3-6 0-10"/><path d="M10 28h28v4a10 10 0 0 1-10 10h-8a10 10 0 0 1-10-10z"/></svg>
+  {%- when 'sparkling' -%}<svg class="ic" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1" aria-hidden="true"><circle cx="18" cy="32" r="7"/><circle cx="31" cy="20" r="5"/><circle cx="22" cy="12" r="3"/><circle cx="35" cy="35" r="3"/></svg>
+  {%- when 'filtered' -%}<svg class="ic" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" aria-hidden="true"><path d="M24 6c7 9 12 15 12 22a12 12 0 0 1-24 0c0-7 5-13 12-22z"/><path d="M18 26h12M19 31h10M21 36h6"/></svg>
+  {%- when 'hot' -%}{{ hot }}
+  {%- when 'cold' -%}{{ cold }}
+  {%- when 'hot_cold' -%}{{ hot }}{{ cold }}
+{%- endcase -%}

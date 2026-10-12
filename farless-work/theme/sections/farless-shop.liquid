@@ -1,0 +1,174 @@
+{%- comment -%}
+  The shop on the home page: one featured product (or a grid when several are picked), then collections.
+  The colour cut-outs belong to the product page, so the photos here skip variant images.
+{%- endcomment -%}
+{%- liquid
+  assign fp = section.settings.product
+  assign plist = section.settings.shop_products
+  assign many = false
+  if plist != blank
+    if plist.size == 1
+      assign fp = plist.first
+    else
+      assign many = true
+    endif
+  endif
+-%}
+{%- capture nl %}
+{% endcapture -%}
+{%- render 'farless-arc', arc: section.settings.arc -%}
+<section class="sec shop{% if section.settings.tone %} tone{% endif %}" id="{{ section.settings.anchor | default: 'shop' | handleize }}" aria-labelledby="h-{{ section.id }}">
+  <div class="wrap">
+    <div class="head" data-in>
+      <div>
+        <span class="label kicker part">{{ section.settings.kicker | escape }}</span>
+        <h2 class="h2 part" id="h-{{ section.id }}">{{ section.settings.heading | escape }}</h2>
+      </div>
+    </div>
+
+    {%- if many -%}
+    <ul class="pgrid" data-in>
+      {%- for p in plist -%}
+      <li class="pcard part"><a href="{{ p.url }}">
+        <div class="pimg">
+          {%- if p.featured_media -%}
+            {{ p.featured_media.preview_image | image_url: width: 900 | image_tag: widths: '400, 600, 900', sizes: '(min-width: 990px) 25vw, 50vw', loading: 'lazy', alt: p.featured_media.alt }}
+          {%- endif -%}
+          {%- if p.media.size > 1 -%}
+            {{ p.media[1].preview_image | image_url: width: 900 | image_tag: widths: '400, 600, 900', sizes: '(min-width: 990px) 25vw, 50vw', loading: 'lazy', alt: '' }}
+          {%- endif -%}
+        </div>
+        <h3>{{ p.title }}</h3>
+        {%- if section.settings.show_prices -%}<span class="price">{{ p.price | money }}</span>{%- endif -%}
+        {%- unless p.available -%}<span class="sold label">{{ section.settings.sold_out_label | escape }}</span>{%- endunless -%}
+      </a></li>
+      {%- endfor -%}
+    </ul>
+    {%- elsif fp != blank -%}
+    {%- assign v = fp.selected_or_first_available_variant -%}
+    <div class="feature" data-in>
+      <div class="f-media part" data-gallery>
+        <div class="f-frame">
+          {%- if fp.featured_media -%}
+            {{ fp.featured_media.preview_image | image_url: width: 1400 | image_tag: widths: '600, 900, 1200, 1400', sizes: '(min-width: 860px) 52vw, 100vw', loading: 'lazy', alt: fp.featured_media.alt, class: 'f-main' }}
+          {%- endif -%}
+        </div>
+        {%- capture variant_media -%}{%- for fv in fp.variants -%}{%- if fv.featured_media -%},{{ fv.featured_media.id }},{%- endif -%}{%- endfor -%}{%- endcapture -%}
+        {%- assign photo_count = 0 -%}
+        {%- for m in fp.media -%}
+          {%- assign mid = m.id | prepend: ',' | append: ',' -%}
+          {%- unless variant_media contains mid -%}{%- assign photo_count = photo_count | plus: 1 -%}{%- endunless -%}
+        {%- endfor -%}
+        {%- if photo_count > 1 -%}
+        <div class="f-thumbs" role="group" aria-label="Product images">
+          {%- for m in fp.media limit: 12 -%}
+            {%- assign mid = m.id | prepend: ',' | append: ',' -%}
+            {%- if variant_media contains mid -%}{%- continue -%}{%- endif -%}
+            {%- if m.preview_image -%}
+            <button type="button" data-src="{{ m.preview_image | image_url: width: 1400 }}" data-srcset="{{ m.preview_image | image_url: width: 600 }} 600w, {{ m.preview_image | image_url: width: 900 }} 900w, {{ m.preview_image | image_url: width: 1400 }} 1400w" data-alt="{{ m.alt | escape }}" aria-label="Show image {{ forloop.index }}"{% if forloop.first %} aria-current="true"{% endif %}>{{ m.preview_image | image_url: width: 160 | image_tag: loading: 'lazy', alt: '' }}</button>
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+        {%- endif -%}
+      </div>
+      <div class="f-info">
+        <span class="label part">{{ fp.metafields.farless.kicker.value | default: section.settings.product_kicker | escape }}</span>
+        <h3 class="part">{{ fp.title }}</h3>
+        {%- liquid
+          assign lede = fp.metafields.farless.lede.value
+          assign excerpt = ''
+          assign paras = fp.description | split: '</p>'
+          for para in paras
+            assign text = para | strip_html | strip
+            if text != blank and text != lede
+              assign excerpt = text
+              break
+            endif
+          endfor
+        -%}
+        {%- if excerpt != blank -%}
+        <p class="excerpt part">{{ excerpt | truncatewords: 34 | escape }}</p>
+        {%- endif -%}
+        {%- if section.settings.show_prices -%}<p class="price part">{{ v.price | money }}</p>{%- endif -%}
+        <div class="f-actions part">
+          {%- form 'product', fp -%}
+            <input type="hidden" name="id" value="{{ v.id }}">
+            <button class="btn" type="submit"{% unless v.available %} disabled{% endunless %}>{% if v.available %}{{ section.settings.add_label | escape }}{% else %}{{ section.settings.sold_out_label | escape }}{% endif %}</button>
+          {%- endform -%}
+          <a class="link" href="{{ fp.url }}">{{ section.settings.details_label | escape }}</a>
+        </div>
+        {%- assign notes = fp.metafields.farless.notes.value | strip -%}
+        {%- if notes != blank %}
+        <ul class="f-notes part">
+          {%- assign lines = notes | split: nl -%}
+          {%- for line in lines -%}
+            {%- assign parts = line | split: '|' -%}
+            {%- assign note_label = parts.first | strip -%}
+            {%- assign note_text = parts | slice: 1, 9 | join: '|' | strip -%}
+            {%- if note_label != blank %}
+          <li><span class="label">{{ note_label | escape }}</span>{{ note_text | escape }}</li>
+            {%- endif -%}
+          {%- endfor %}
+        </ul>
+        {%- endif %}
+      </div>
+    </div>
+    {%- endif -%}
+
+    {%- if section.settings.collections != blank -%}
+    <div class="collections" data-in>
+      <div class="chead part"><span class="label">{{ section.settings.collections_label | escape }}</span><a class="link" href="{{ routes.collections_url }}">{{ section.settings.view_all_label | escape }}</a></div>
+      <ul class="ccards">
+        {%- for c in section.settings.collections -%}
+        {%- liquid
+          assign cimg = c.featured_image
+          if cimg == blank and c.products.first.featured_media
+            assign cimg = c.products.first.featured_media.preview_image
+          endif
+        -%}
+        <li class="ccard part"><a href="{{ c.url }}">
+          {%- if cimg -%}
+          <div class="cimg">{{ cimg | image_url: width: 1000 | image_tag: widths: '500, 750, 1000', sizes: '(min-width: 990px) 33vw, 100vw', loading: 'lazy', alt: c.title }}</div>
+          {%- else -%}
+          <div class="cimg empty" aria-hidden="true"><svg viewBox="0 0 200 120"><path d="M30 118 V58 C30 22 58 4 100 4 C142 4 170 22 170 58 V82"/><circle cx="170" cy="98" r="3"/></svg></div>
+          {%- endif -%}
+          <div class="cmeta"><h3>{{ c.title }}</h3><span class="label">{% if c.products_count == 0 %}{{ section.settings.coming_soon_label | escape }}{% elsif c.products_count == 1 %}1 {{ section.settings.piece_label | escape }}{% else %}{{ c.products_count }} {{ section.settings.pieces_label | escape }}{% endif %}</span></div>
+        </a></li>
+        {%- endfor -%}
+      </ul>
+    </div>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Farless shop",
+  "tag": "div",
+  "class": "farless-shop",
+  "disabled_on": { "groups": ["header", "footer"] },
+  "settings": [
+    { "type": "text", "id": "kicker", "label": "Small label", "default": "Shop" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Bring Farless home." },
+    { "type": "product", "id": "product", "label": "Featured product", "info": "Its photos, name, the first paragraph of its description and its Notes field show here." },
+    { "type": "product_list", "id": "shop_products", "label": "Or show several products", "limit": 8, "info": "Leave empty to feature the product above. Two or more show as a grid." },
+    { "type": "checkbox", "id": "show_prices", "default": false, "label": "Show prices" },
+    { "type": "collection_list", "id": "collections", "label": "Collections to show", "limit": 6 },
+    { "type": "header", "content": "Labels" },
+    { "type": "text", "id": "product_kicker", "label": "Label above the product name", "default": "The tap", "info": "Used when the product has no Small heading field of its own." },
+    { "type": "text", "id": "add_label", "label": "Add to cart button", "default": "Add to cart" },
+    { "type": "text", "id": "sold_out_label", "label": "Sold out button", "default": "Sold out" },
+    { "type": "text", "id": "details_label", "label": "Product page link", "default": "View details" },
+    { "type": "text", "id": "collections_label", "label": "Collections label", "default": "Collections" },
+    { "type": "text", "id": "view_all_label", "label": "View all link", "default": "View all" },
+    { "type": "text", "id": "coming_soon_label", "label": "Empty collection", "default": "Coming soon" },
+    { "type": "text", "id": "piece_label", "label": "One product", "default": "piece" },
+    { "type": "text", "id": "pieces_label", "label": "Several products", "default": "pieces" },
+    { "type": "header", "content": "Layout" },
+    { "type": "text", "id": "anchor", "label": "Link name", "default": "shop", "info": "Menu links ending in #shop jump here." },
+    { "type": "checkbox", "id": "tone", "label": "Slightly lighter background", "default": true },
+    { "type": "select", "id": "arc", "label": "Arc line above", "default": "none", "options": [ { "value": "none", "label": "None" }, { "value": "left", "label": "From the left" }, { "value": "right", "label": "From the right" } ] }
+  ],
+  "presets": [ { "name": "Farless shop" } ]
+}
+{% endschema %}

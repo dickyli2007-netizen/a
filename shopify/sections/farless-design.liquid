@@ -1,0 +1,46 @@
+{%- comment -%} Design: a heading and one tall picture with a two-part caption. {%- endcomment -%}
+{%- render 'farless-arc', arc: section.settings.arc -%}
+<section class="sec design{% if section.settings.tone %} tone{% endif %}" id="{{ section.settings.anchor | default: 'design' | handleize }}" aria-labelledby="h-{{ section.id }}">
+  <div class="wrap">
+    <div data-in>
+      <span class="label kicker part">{{ section.settings.kicker | escape }}</span>
+      <h2 class="h2 part" id="h-{{ section.id }}">{{ section.settings.heading | escape }}</h2>
+      {%- if section.settings.lede != blank %}
+      <p class="lede part">{{ section.settings.lede | escape }}</p>
+      {%- endif %}
+    </div>
+    <figure>
+      {%- if section.settings.image != blank -%}
+        {{ section.settings.image | image_url: width: 1400 | image_tag: widths: '600, 900, 1200, 1400', sizes: '(min-width: 860px) 50vw, 100vw', loading: 'lazy', alt: section.settings.image_alt }}
+      {%- else -%}
+        <img src="{{ 'farless-design.jpg' | asset_url }}" alt="{{ section.settings.image_alt | escape }}" loading="lazy" width="880" height="1080">
+      {%- endif %}
+      {%- if section.settings.caption_left != blank or section.settings.caption_right != blank %}
+      <figcaption class="label"><span>{{ section.settings.caption_left | escape }}</span><span>{{ section.settings.caption_right | escape }}</span></figcaption>
+      {%- endif %}
+    </figure>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Farless design",
+  "tag": "div",
+  "class": "farless-design",
+  "disabled_on": { "groups": ["header", "footer"] },
+  "settings": [
+    { "type": "text", "id": "kicker", "label": "Small label", "default": "Design" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Made to be looked at." },
+    { "type": "textarea", "id": "lede", "label": "Text", "default": "Brushed steel and one clean arc. Nothing to hide, and nothing to add." },
+    { "type": "image_picker", "id": "image", "label": "Picture", "info": "Tall pictures work best (4:5). Leave empty to use the Farless picture." },
+    { "type": "text", "id": "image_alt", "label": "Picture description", "default": "A hand turning the Farless handle as sparkling water starts to pour" },
+    { "type": "text", "id": "caption_left", "label": "Caption, left", "default": "Push and turn" },
+    { "type": "text", "id": "caption_right", "label": "Caption, right", "default": "Farless" },
+    { "type": "header", "content": "Layout" },
+    { "type": "text", "id": "anchor", "label": "Link name", "default": "design", "info": "Menu links ending in #design jump here." },
+    { "type": "checkbox", "id": "tone", "label": "Slightly lighter background", "default": true },
+    { "type": "select", "id": "arc", "label": "Arc line above", "default": "none", "options": [ { "value": "none", "label": "None" }, { "value": "left", "label": "From the left" }, { "value": "right", "label": "From the right" } ] }
+  ],
+  "presets": [ { "name": "Farless design" } ]
+}
+{% endschema %}

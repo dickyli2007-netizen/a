@@ -1,0 +1,6 @@
+{%- comment -%} The hairline arc between sections, drawn as you scroll. arc: none, left or right. {%- endcomment -%}
+{%- if arc == 'right' -%}
+<div class="seam" aria-hidden="true"><svg viewBox="0 0 560 160" preserveAspectRatio="xMidYMid meet"><path pathLength="1" d="M540 150 C 540 60, 460 12, 360 12 C 260 12, 180 60, 180 110 L 180 130"/><circle cx="180" cy="146" r="3"/></svg></div>
+{%- elsif arc == 'left' -%}
+<div class="seam" aria-hidden="true"><svg viewBox="0 0 560 160" preserveAspectRatio="xMidYMid meet"><path pathLength="1" d="M20 150 C 20 60, 100 12, 200 12 C 300 12, 380 60, 380 110 L 380 130"/><circle cx="380" cy="146" r="3"/></svg></div>
+{%- endif -%}

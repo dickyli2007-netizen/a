@@ -1,0 +1,7 @@
+{
+  "private": true,
+  "description": "Local render and browser tests for the Farless Shopify theme",
+  "dependencies": {
+    "liquidjs": "10.16.1"
+  }
+}

@@ -1,0 +1,70 @@
+{%- comment -%}
+  Safety: the knob you can try. Press the pin, then turn back for hot or forward for sparkling.
+  The lines shown after a turn are split at each full stop and appear one after another.
+{%- endcomment -%}
+{%- liquid
+  assign spark_words = section.settings.result_spark | split: '. '
+-%}
+{%- render 'farless-arc', arc: section.settings.arc -%}
+<section class="sec safety{% if section.settings.tone %} tone{% endif %}" id="{{ section.settings.anchor | default: 'safety' | handleize }}" aria-labelledby="h-{{ section.id }}">
+  <div class="wrap">
+    <div class="dial-col">
+      <div class="dial-wrap" id="dialWrap">
+        <svg class="dial-ring" viewBox="0 0 100 100" aria-hidden="true"><line x1="50" y1="-3" x2="50" y2="3"/><line x1="-3" y1="50" x2="3" y2="50"/><line x1="97" y1="50" x2="103" y2="50"/></svg>
+        <svg class="dial-arc" viewBox="0 0 100 100" aria-hidden="true"><circle class="a1" cx="50" cy="50" r="50" pathLength="1"/><circle class="a2" cx="50" cy="50" r="50" pathLength="1"/></svg>
+        <span class="ind ind-hot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"><path d="M8 19c-2.4-3 2.4-5 0-8s2.4-5 0-8M12 19c-2.4-3 2.4-5 0-8s2.4-5 0-8M16 19c-2.4-3 2.4-5 0-8s2.4-5 0-8"/></svg></span>
+        <span class="ind ind-spark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="9" cy="16" r="4"/><circle cx="16" cy="9" r="2.6"/><circle cx="10" cy="5" r="1.6"/><circle cx="18" cy="17.5" r="1.6"/></svg></span>
+        <div class="dial" id="dial" role="slider" tabindex="0" aria-label="{{ section.settings.knob_label | escape }}" aria-valuemin="-1" aria-valuemax="1" aria-valuenow="0" aria-valuetext="{{ section.settings.off_label | escape }}" aria-describedby="dial-help">
+          <span class="face" aria-hidden="true"><span class="notch"><i class="n0"></i><i class="n1"></i><i class="n2"></i></span></span>
+          <span class="pin" aria-hidden="true"><i class="pin-shadow"></i><i class="pin-cap"></i><i class="g g0"></i><i class="g g1"></i><i class="g g2"></i></span>
+        </div>
+      </div>
+      <div class="dial-controls" role="group" aria-label="{{ section.settings.controls_label | escape }}">
+        <button type="button" class="dc" data-set="-1"><span class="dot" aria-hidden="true"></span>{{ section.settings.hot_label | escape }}</button>
+        <button type="button" class="dc reset" data-set="0" aria-disabled="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" aria-hidden="true"><path d="M4.5 12a7.5 7.5 0 1 0 2.2-5.3"/><path d="M4.5 3.5v3.7h3.7"/></svg>{{ section.settings.reset_label | escape }}</button>
+        <button type="button" class="dc" data-set="1">{{ section.settings.spark_label | escape }}<span class="dot" aria-hidden="true"></span></button>
+      </div>
+    </div>
+    <div data-in id="safetyCopy" data-hot="{{ section.settings.result_hot | escape }}" data-spark="{{ section.settings.result_spark | escape }}" data-off="{{ section.settings.off_label | escape }}">
+      <span class="label kicker part">{{ section.settings.kicker | escape }}</span>
+      <h2 class="h2 part" id="h-{{ section.id }}">{{ section.settings.heading | escape }}</h2>
+      <p class="lede part">{{ section.settings.lede | escape }}</p>
+      <div class="dial-state part">
+        <p class="label hint" id="dial-help">{{ section.settings.hint | escape }}</p>
+        <p class="dial-done" aria-live="polite">
+          {%- for word in spark_words -%}<span class="dw">{{ word | strip | escape }}{% unless forloop.last %}.{% endunless %}</span>{%- endfor -%}
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Farless safety knob",
+  "tag": "div",
+  "class": "farless-safety",
+  "limit": 1,
+  "disabled_on": { "groups": ["header", "footer"] },
+  "settings": [
+    { "type": "text", "id": "kicker", "label": "Small label", "default": "Safety" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Press the pin. Then turn." },
+    { "type": "textarea", "id": "lede", "label": "Text", "default": "Back for hot, forward for sparkling. The knob only turns once the pin is pressed down, so small hands can't start it by accident." },
+    { "type": "text", "id": "hint", "label": "Hint under the text", "default": "Try it. Hold the pin and turn the knob" },
+    { "type": "text", "id": "result_hot", "label": "Shown after turning back", "default": "Press. Turn back. Hot.", "info": "Each sentence appears in turn." },
+    { "type": "text", "id": "result_spark", "label": "Shown after turning forward", "default": "Press. Turn forward. Sparkling." },
+    { "type": "header", "content": "Knob buttons" },
+    { "type": "text", "id": "hot_label", "label": "Back", "default": "Hot" },
+    { "type": "text", "id": "reset_label", "label": "Reset", "default": "Reset" },
+    { "type": "text", "id": "spark_label", "label": "Forward", "default": "Sparkling" },
+    { "type": "text", "id": "off_label", "label": "Name of the resting position", "default": "Off", "info": "Read out by screen readers." },
+    { "type": "text", "id": "knob_label", "label": "Name of the knob", "default": "Water knob", "info": "Read out by screen readers." },
+    { "type": "text", "id": "controls_label", "label": "Name of the buttons", "default": "Knob settings", "info": "Read out by screen readers." },
+    { "type": "header", "content": "Layout" },
+    { "type": "text", "id": "anchor", "label": "Link name", "default": "safety", "info": "Menu links ending in #safety jump here." },
+    { "type": "checkbox", "id": "tone", "label": "Slightly lighter background", "default": false },
+    { "type": "select", "id": "arc", "label": "Arc line above", "default": "right", "options": [ { "value": "none", "label": "None" }, { "value": "left", "label": "From the left" }, { "value": "right", "label": "From the right" } ] }
+  ],
+  "presets": [ { "name": "Farless safety knob" } ]
+}
+{% endschema %}

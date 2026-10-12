@@ -1,0 +1,72 @@
+{%- comment -%} The footer: links either side of the name, the store policies and the copyright line. {%- endcomment -%}
+{%- liquid
+  assign on_home = false
+  if template.name == 'index' or template.suffix == 'farless'
+    assign on_home = true
+  endif
+  if on_home
+    assign brand_href = '#top'
+  else
+    assign brand_href = routes.root_url
+  endif
+-%}
+<footer>
+  <div class="wrap">
+    <ul>
+      {%- for block in section.blocks -%}
+        {%- if block.settings.side == 'left' %}{% render 'farless-link', block: block, on_home: on_home, class: 'label' %}{% endif -%}
+      {%- endfor %}
+    </ul>
+    <a class="brand" href="{{ brand_href }}" aria-label="{{ section.settings.brand | escape }} home">{{ section.settings.brand | escape }}</a>
+    <ul class="r">
+      {%- for block in section.blocks -%}
+        {%- if block.settings.side == 'right' %}{% render 'farless-link', block: block, on_home: on_home, class: 'label' %}{% endif -%}
+      {%- endfor -%}
+      {%- if section.settings.show_policies -%}
+        {%- for policy in shop.policies %}
+      <li><a class="label" href="{{ policy.url }}">{{ policy.title }}</a></li>
+        {%- endfor -%}
+      {%- endif %}
+      <li><span class="label">© {{ 'now' | date: '%Y' }} {{ section.settings.copyright | escape }}</span></li>
+    </ul>
+  </div>
+</footer>
+
+{% schema %}
+{
+  "name": "Farless footer",
+  "tag": "div",
+  "class": "farless-footer",
+  "enabled_on": { "groups": ["footer"] },
+  "max_blocks": 12,
+  "settings": [
+    { "type": "text", "id": "brand", "label": "Name in the middle", "default": "Farless" },
+    { "type": "text", "id": "copyright", "label": "Copyright name", "default": "Farless" },
+    { "type": "checkbox", "id": "show_policies", "label": "Show store policies", "default": true, "info": "Refund, privacy and terms pages from Settings > Policies." }
+  ],
+  "blocks": [
+    {
+      "type": "link",
+      "name": "Link",
+      "settings": [
+        { "type": "text", "id": "label", "label": "Label", "default": "Shop" },
+        { "type": "select", "id": "side", "label": "Side", "default": "left", "options": [ { "value": "left", "label": "Left of the name" }, { "value": "right", "label": "Right of the name" } ] },
+        { "type": "text", "id": "anchor", "label": "Section on the home page", "default": "shop", "info": "The link name of a home page section: shop, waters, safety, design, questions or buy." },
+        { "type": "url", "id": "link", "label": "Or link to a page", "info": "Used instead of the section above when set." }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Farless footer",
+      "blocks": [
+        { "type": "link", "settings": { "label": "Shop", "side": "left", "anchor": "shop" } },
+        { "type": "link", "settings": { "label": "Five waters", "side": "left", "anchor": "waters" } },
+        { "type": "link", "settings": { "label": "Safety", "side": "left", "anchor": "safety" } },
+        { "type": "link", "settings": { "label": "Design", "side": "right", "anchor": "design" } },
+        { "type": "link", "settings": { "label": "Questions", "side": "right", "anchor": "questions" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

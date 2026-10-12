@@ -195,21 +195,16 @@ def render_main(prod, w, h):
         '</main>'
     )
 
-# shared by the preview and the Shopify section: nav, the slide and the picker.
-# Each change of colour fires a 'farless:colour' event on the stage for the page-specific part.
-JS_CORE = '''  const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
-  const nav = document.querySelector('nav.top');
-  const onScroll = () => nav.classList.toggle('solid', scrollY > 8);
-  addEventListener('scroll', onScroll, { passive: true });
-  onScroll();
-
-  /* ---------- colour picker: the tap slides sideways to the chosen colour ---------- */
-  const stage = document.querySelector('[data-stage]');
+# The slide and the picker, shared by the preview and the Shopify theme (assets/farless.js wraps it
+# in a function per product section). It needs clamp() and a root element to look inside, and fires
+# a 'farless:colour' event on the stage at each change of colour for the page-specific part.
+JS_PICKER = '''  /* ---------- colour picker: the tap slides sideways to the chosen colour ---------- */
+  const stage = root.querySelector('[data-stage]');
   const taps = stage ? [...stage.querySelectorAll('.tap')] : [];
-  const radios = [...document.querySelectorAll('.swatches [role="radio"]')];
-  const nameEl = document.querySelector('[data-finish-name]');
-  const countEl = document.querySelector('[data-count]');
-  const rail = document.querySelector('.f-rail');
+  const radios = [...root.querySelectorAll('.swatches [role="radio"]')];
+  const nameEl = root.querySelector('[data-finish-name]');
+  const countEl = root.querySelector('[data-count]');
+  const rail = root.querySelector('.f-rail');
   const N = taps.length;
   const SHIFT = 55;                                   // how far a tap travels, in % of the stage width
   const MOVE = 'cubic-bezier(.45,0,.15,1)';            // eases off the mark, long soft landing
@@ -326,7 +321,16 @@ PREVIEW_JS = '''
   if (stage) stage.addEventListener('farless:colour', () => { note.textContent = ''; });
 '''
 
-JS = "<script>\n(() => {\n  'use strict';\n" + JS_CORE + PREVIEW_JS + "})();\n</script>"
+JS_PREVIEW_HEAD = '''  const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
+  const root = document;
+  const nav = document.querySelector('nav.top');
+  const onScroll = () => nav.classList.toggle('solid', scrollY > 8);
+  addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+'''
+
+JS = "<script>\n(() => {\n  'use strict';\n" + JS_PREVIEW_HEAD + JS_PICKER + PREVIEW_JS + "})();\n</script>"
 
 
 def build(prod):

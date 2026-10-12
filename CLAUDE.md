@@ -6,14 +6,28 @@ and no prices shown anywhere ("keep it exclusive").
 
 ## Where things are
 
-- `farless/index.html`: the main landing page, one self-contained file. Its `:root` tokens, nav, footer,
-  buttons and labels are the house style for everything else.
+- `farless/index.html`: the static landing page, one self-contained file, used for design previews.
+  Its `<head>` styles are the theme's styles: `:root` tokens, nav, footer, buttons and labels are the
+  house style for everything else.
+- `farless-work/theme/`: the Shopify theme's own source. Every page's words, pictures, links and film
+  are section settings and blocks there, so the owner edits them in Online Store > Customize:
+  `sections/` (film hero, shop, five waters, safety knob, design, questions, final call, product, menu bar
+  and footer, plus the header and footer groups), `snippets/`, `templates/` (which sections each page
+  shows, with today's content) and `assets/farless.src.js` (the shared script; each part starts per
+  section and restarts when the editor reloads a section).
+- `farless-work/build_shopify.py`: builds `shopify/` and `farless-shopify-addon.zip` from those pieces,
+  the landing page's styles and the product page template. Run it after any change, then Theme Check.
+- `farless-work/theme-test/`: renders the theme like Shopify does with sample data and tests it in a
+  browser (against the static page, with edited content, with theme editor events). See render.js.
 - `farless-work/design-package.md`: the brand plan (palette, type, copy decisions, confirmed facts).
-- `farless-work/build_shopify.py`: builds the Shopify theme files into `shopify/` and
-  `farless-shopify-addon.zip`: the layout and landing section from the landing page, and the product
-  section from the product page template (`farless-work/shopify-product.liquid` plus the template's
-  styles and script). Run it after changing either, then run Theme Check.
 - `farless-work/product-page/`: the product page template and its preview builder (below).
+
+## Changing the site
+
+The owner edits content in the theme editor, so content changes belong in the store, not in code.
+A design change goes in two places: the static page `farless/index.html` (styles and markup) and the
+matching section in `farless-work/theme/sections/`; the styles reach the theme through the build.
+Anything new the owner might want to change gets a setting or a block, never fixed text.
 
 ## Product pages: always use the approved template
 
@@ -70,7 +84,7 @@ select under the swatches.
 
 Stand-in colours: `cutout.py --recolour brass,copper,black` makes recoloured stand-ins from one photo,
 for previews only. Mark them `"stand_in": true` and tell the owner. The Farless 5-in-1 Tap's brass,
-copper and black are stand-ins: in Shopify it has one variant and no colour option yet.
+copper and black are stand-ins until real photos exist.
 
 ## Store
 
@@ -81,9 +95,11 @@ copper and black are stand-ins: in Shopify it has one variant and no colour opti
   Prices stay hidden on the site.
 - The Farless fields on products are metafields in the `farless` namespace with definitions:
   `kicker`, `lede`, `notes`, `foot_x`.
-- Theme files: `layout/farless.liquid`, `sections/farless-landing.liquid` (home page),
-  `sections/farless-product.liquid` with `templates/product.json` (every product page). The theme's
-  original product page is kept as the alternate template `templates/product.atelier.json`.
+- Theme files: `layout/farless.liquid` (loads `farless-header-group`, the page, `farless-footer-group`
+  and `assets/farless.js`), the `farless-*` sections and snippets, `templates/index.json` and
+  `templates/page.farless.json` (home page), `templates/product.json` (every product page). The theme's
+  original product page is kept as the alternate template `templates/product.atelier.json`. Buttons that
+  buy link to `shopify://products/faucet` in the templates; the owner can repoint them in the editor.
 - The connector cannot write to the live theme or publish one, so uploads go to an unpublished copy
   (duplicate the live theme, upload with `themeFilesUpsert` from raw GitHub URLs pinned to a commit,
   check the checksums) and the owner previews and publishes it. The landing shop section skips variant

@@ -2,7 +2,7 @@
   "layout": "farless",
   "sections": {
     "main": {
-      "type": "farless-landing",
+      "type": "farless-product",
       "settings": {}
     }
   },

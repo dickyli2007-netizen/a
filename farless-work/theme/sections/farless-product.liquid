@@ -1,6 +1,6 @@
 {%- comment -%}
-  The Farless product page, rendered for any product. build_shopify.py wraps this with the nav, the
-  template's styles and script, the footer and the schema, and fills in the swatch fills.
+  The Farless product page, rendered for any product. build_shopify.py fills in the template's styles
+  and the swatch fills; the slide and picker script is in assets/farless.js.
   Colours come from an option named Colour, Color or Finish; each colour shows its variant's image
   (a transparent cut-out). Product fields in the farless namespace carry the page copy:
   kicker, lede, notes (one per line, "Label | text") and foot_x (where the product's foot is, in %).
@@ -45,9 +45,10 @@
 -%}
 {%- capture nl %}
 {% endcapture -%}
-<main id="main" class="pdp" tabindex="-1">
+<style>/*FARLESS_PRODUCT_CSS*/</style>
+<div class="pdp">
   <div class="wrap">
-    <nav class="crumbs label" aria-label="Breadcrumb"><a href="{{ routes.root_url }}#shop">Shop</a><span aria-hidden="true">/</span>
+    <nav class="crumbs label" aria-label="Breadcrumb"><a href="{{ routes.root_url }}#shop">{{ section.settings.shop_crumb | escape }}</a><span aria-hidden="true">/</span>
       {%- liquid
         assign crumb = blank
         for c in product.collections
@@ -104,9 +105,9 @@
         {%- endif -%}
         {%- if slide_count > 1 %}
         <div class="finish">
-          <p class="finish-h">Colour. <span>Pick your favourite.</span></p>
-          <p class="finish-name"><span class="label">Colour</span><b data-finish-name>{{ colour_option.values[start].name | escape }}</b></p>
-          <div class="swatches" role="radiogroup" aria-label="Colour">
+          <p class="finish-h">{{ section.settings.colour_heading | escape }} <span>{{ section.settings.colour_subheading | escape }}</span></p>
+          <p class="finish-name"><span class="label">{{ section.settings.colour_label | escape }}</span><b data-finish-name>{{ colour_option.values[start].name | escape }}</b></p>
+          <div class="swatches" role="radiogroup" aria-label="{{ section.settings.colour_label | escape }}">
             {%- for value in colour_option.values -%}
               {%- liquid
                 assign key = value.name | downcase
@@ -148,7 +149,7 @@
         <div class="buy-actions" id="buy">
           {%- form 'product', product, class: 'buy-form' -%}
             <input type="hidden" name="id" value="{{ current.id }}">
-            <button class="btn solid" type="submit" name="add" data-add{% unless current.available %} disabled{% endunless %}>{% if current.available %}Add to cart{% else %}Sold out{% endif %}</button>
+            <button class="btn solid" type="submit" name="add" data-add data-label-add="{{ section.settings.add_label | escape }}" data-label-sold="{{ section.settings.sold_out_label | escape }}" data-label-none="{{ section.settings.unavailable_label | escape }}"{% unless current.available %} disabled{% endunless %}>{% if current.available %}{{ section.settings.add_label | escape }}{% else %}{{ section.settings.sold_out_label | escape }}{% endif %}</button>
           {%- endform -%}
         </div>
         {%- if excerpt != blank %}
@@ -171,9 +172,32 @@
       </div>
     </div>
   </div>
-</main>
+</div>
 <script type="application/json" data-variants data-colour-pos="{{ colour_pos }}">[
   {%- for v in product.variants -%}
   {"id":{{ v.id }},"available":{{ v.available | json }},"options":{{ v.options | json }},"price":{{ v.price | money | json }}}{% unless forloop.last %},{% endunless %}
   {%- endfor -%}
 ]</script>
+
+{% schema %}
+{
+  "name": "Farless product",
+  "tag": "div",
+  "class": "farless-product",
+  "disabled_on": { "groups": ["header", "footer"] },
+  "settings": [
+    { "type": "paragraph", "content": "Each product fills this page by itself: its colours, its cut-out pictures and its Farless fields (Small heading, Tagline, Notes, Shadow position) in the product admin." },
+    { "type": "text", "id": "kicker", "label": "Small heading", "default": "Farless", "info": "Used when the product has no Small heading field of its own." },
+    { "type": "checkbox", "id": "show_prices", "default": false, "label": "Show prices" },
+    { "type": "header", "content": "Colour picker" },
+    { "type": "text", "id": "colour_heading", "label": "Heading", "default": "Colour." },
+    { "type": "text", "id": "colour_subheading", "label": "Heading, second part", "default": "Pick your favourite." },
+    { "type": "text", "id": "colour_label", "label": "Label before the colour name", "default": "Colour" },
+    { "type": "header", "content": "Labels" },
+    { "type": "text", "id": "add_label", "label": "Add to cart button", "default": "Add to cart" },
+    { "type": "text", "id": "sold_out_label", "label": "Sold out button", "default": "Sold out" },
+    { "type": "text", "id": "unavailable_label", "label": "Unavailable button", "default": "Unavailable", "info": "Shown when the chosen combination of options doesn't exist." },
+    { "type": "text", "id": "shop_crumb", "label": "First link in the path above the product", "default": "Shop" }
+  ]
+}
+{% endschema %}

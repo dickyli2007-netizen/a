@@ -1,0 +1,194 @@
+{%- comment -%}
+  The film hero: a full-screen film that steps from point to point as you scroll, one caption per point.
+  Each point is a block, so captions can be edited, added, removed and reordered in the theme editor.
+  On phones turned sideways and with reduced motion, the still version below shows instead.
+{%- endcomment -%}
+{%- liquid
+  assign webm = 'farless-hero.webm' | asset_url
+  assign mp4 = 'farless-hero.mp4' | asset_url
+  assign custom_film = false
+  if section.settings.video != blank
+    assign best = blank
+    for source in section.settings.video.sources
+      if source.format == 'mp4' and source.height <= 1080
+        if best == blank or source.height > best.height
+          assign best = source
+        endif
+      endif
+    endfor
+    if best == blank
+      for source in section.settings.video.sources
+        if source.format == 'mp4'
+          assign best = source
+          break
+        endif
+      endfor
+    endif
+    if best != blank
+      assign mp4 = best.url
+      assign custom_film = true
+    endif
+  endif
+  if section.settings.poster != blank
+    assign poster = section.settings.poster | image_url: width: 1920
+  else
+    assign poster = 'farless-hero-poster.jpg' | asset_url
+  endif
+  if section.settings.ending != blank
+    assign ending = section.settings.ending | image_url: width: 1920
+  else
+    assign ending = 'farless-hero-ending.jpg' | asset_url
+  endif
+-%}
+<section class="hero" id="top" aria-label="{{ section.settings.label | escape }}">
+  <div class="stage" id="stage" data-point="0" data-mp4="{{ mp4 }}"{% unless custom_film %} data-mp4-bytes="3186482" data-webm="{{ webm }}" data-webm-bytes="1644195"{% endunless %} data-poster="{{ poster }}" data-ending="{{ ending }}">
+    <div class="pan">
+      <div class="poster" aria-hidden="true"></div>
+      <div class="poster-end" aria-hidden="true"></div>
+      <video id="hero" preload="none" muted playsinline aria-hidden="true" tabindex="-1"></video>
+    </div>
+    <div class="shade" aria-hidden="true"></div>
+    {% for block in section.blocks -%}
+      {%- capture n %}{% if forloop.index < 10 %}0{% endif %}{{ forloop.index }}{% endcapture -%}
+      {%- assign at = block.settings.time | default: '0' | strip -%}
+      {%- assign cx = block.settings.focus | times: 19.2 | round -%}
+      {%- case block.type -%}
+        {%- when 'opening' %}
+    <div class="band opening" data-t="{{ at }}" data-cx="{{ cx }}" {{ block.shopify_attributes }}>
+      <span class="label" aria-hidden="true"><span class="n">{{ n }}</span>{{ block.settings.label | escape }}</span>
+      <h1 class="hx"><span class="sr">{{ block.settings.title | escape }} {{ block.settings.line | escape }}</span>
+        <span class="bts" aria-hidden="true"><span class="soft">{{ block.settings.title | escape }}</span><span class="sharp">{{ block.settings.title | escape }}</span></span>
+      </h1>
+      {%- if block.settings.line != blank %}
+      <p class="hl bts" aria-hidden="true"><span class="soft">{{ block.settings.line | escape }}</span><span class="sharp">{{ block.settings.line | escape }}</span></p>
+      {%- endif %}
+    </div>
+        {%- when 'caption' %}
+    <div class="band" data-t="{{ at }}" data-cx="{{ cx }}" {{ block.shopify_attributes }}>
+      <span class="label" aria-hidden="true"><span class="n">{{ n }}</span>{{ block.settings.label | escape }}</span>
+      <p class="hl dd split">{{ block.settings.line | escape }}</p>
+    </div>
+        {%- when 'closing' %}
+    <div class="band settle" data-t="{{ at }}" data-cx="{{ cx }}" {{ block.shopify_attributes }}>
+      <span class="label" aria-hidden="true"><span class="n">{{ n }}</span>{{ block.settings.label | escape }}</span>
+      <h2 class="hx rise split" style="font-size:clamp(2.2rem,3.6vw,3.9rem)">{{ block.settings.heading | escape }}</h2>
+      {%- if block.settings.line != blank %}
+      <p class="hs">{{ block.settings.line | escape }}</p>
+      {%- endif -%}
+      {%- if block.settings.button_label != blank %}
+      <div class="cta-row"><a class="btn" href="{{ block.settings.button_link | default: routes.all_products_collection_url }}">{{ block.settings.button_label | escape }}</a></div>
+      {%- endif %}
+    </div>
+      {%- endcase -%}
+    {%- endfor %}
+
+    <nav class="dots" aria-label="Film points">
+      {%- for block in section.blocks -%}
+        {%- liquid
+          case block.type
+            when 'opening'
+              assign said = block.settings.title
+            when 'caption'
+              assign said = block.settings.line
+            else
+              assign said = block.settings.heading
+          endcase
+        -%}
+      <button type="button" aria-label="Point {{ forloop.index }} of {{ forloop.length }}: {{ said | escape }}"{% if forloop.first %} aria-current="step"{% endif %}></button>
+      {%- endfor %}
+    </nav>
+    <p class="hero-note" aria-hidden="true"><span class="t-scroll">{{ section.settings.scroll_hint | escape }}</span><span class="t-swipe">{{ section.settings.swipe_hint | escape }}</span><span class="line"></span></p>
+  </div>
+</section>
+
+<section class="static-hero" aria-label="{{ section.settings.label | escape }}">
+  <div class="sh-img" role="img" aria-label="{{ section.settings.ending_alt | escape }}"{% if section.settings.ending != blank %} style="background-image:url({{ ending }})"{% endif %}></div>
+  <div class="sh-copy">
+    <span class="label" aria-hidden="true"><span class="n">{{ section.settings.still_kicker | escape }}</span>{{ section.settings.still_tagline | escape }}</span>
+    <h1 class="hx">{{ section.settings.still_heading | escape }}</h1>
+    {%- if section.settings.still_text != blank %}
+    <p class="hs">{{ section.settings.still_text | escape }}</p>
+    {%- endif -%}
+    {%- if section.settings.still_button_label != blank %}
+    <div class="cta-row"><a class="btn" href="{{ section.settings.still_button_link | default: routes.all_products_collection_url }}">{{ section.settings.still_button_label | escape }}</a></div>
+    {%- endif %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Farless film",
+  "tag": "div",
+  "class": "farless-hero",
+  "limit": 1,
+  "disabled_on": { "groups": ["header", "footer"] },
+  "max_blocks": 8,
+  "settings": [
+    { "type": "paragraph", "content": "The film plays forward point by point as visitors scroll. Each point below is one caption and the moment in the film it stops at." },
+    { "type": "video", "id": "video", "label": "Film", "info": "Leave empty to use the Farless film. A new film should be wide (16:9) and short; then set each point's time to match it." },
+    { "type": "image_picker", "id": "poster", "label": "First frame", "info": "Shown while the film loads. Leave empty to use the Farless film's first frame." },
+    { "type": "image_picker", "id": "ending", "label": "Last frame", "info": "Shown when the film can't play, and as the still picture below. Leave empty to use the Farless film's last frame." },
+    { "type": "text", "id": "ending_alt", "label": "Last frame description", "default": "Sparkling water pouring from a Farless tap into a glass with ice and lime" },
+    { "type": "text", "id": "scroll_hint", "label": "Hint on computers", "default": "Scroll" },
+    { "type": "text", "id": "swipe_hint", "label": "Hint on phones", "default": "Swipe" },
+    { "type": "text", "id": "label", "label": "Name for screen readers", "default": "Farless introduction" },
+    { "type": "header", "content": "Still version", "info": "Shown instead of the film on phones turned sideways and to visitors who switch off motion." },
+    { "type": "text", "id": "still_kicker", "label": "Small label", "default": "Farless" },
+    { "type": "text", "id": "still_tagline", "label": "Small label, second part", "default": "Five waters. One tap." },
+    { "type": "text", "id": "still_heading", "label": "Heading", "default": "Far less on your counter." },
+    { "type": "textarea", "id": "still_text", "label": "Text", "default": "Boiling, filtered, sparkling, hot and cold water. All from one quiet tap." },
+    { "type": "text", "id": "still_button_label", "label": "Button label", "default": "Buy Farless" },
+    { "type": "url", "id": "still_button_link", "label": "Button link" }
+  ],
+  "blocks": [
+    {
+      "type": "opening",
+      "name": "Opening point",
+      "limit": 1,
+      "settings": [
+        { "type": "text", "id": "label", "label": "Small label", "default": "Five waters" },
+        { "type": "text", "id": "title", "label": "Big title", "default": "Farless." },
+        { "type": "text", "id": "line", "label": "Line under the title", "default": "Five waters. One tap." },
+        { "type": "text", "id": "time", "label": "Time in the film", "default": "0", "info": "Seconds from the start, for example 2.8. Write end for the last frame." },
+        { "type": "range", "id": "focus", "label": "Where to look on phones", "min": 0, "max": 100, "step": 1, "unit": "%", "default": 40, "info": "Phones show part of the wide film. This keeps the tap in view: 0% is the left edge of the film, 100% the right." }
+      ]
+    },
+    {
+      "type": "caption",
+      "name": "Point",
+      "settings": [
+        { "type": "text", "id": "label", "label": "Small label", "default": "Push and turn" },
+        { "type": "text", "id": "line", "label": "Caption", "default": "Boiling. Filtered." },
+        { "type": "text", "id": "time", "label": "Time in the film", "default": "2.8", "info": "Seconds from the start, for example 2.8. Write end for the last frame." },
+        { "type": "range", "id": "focus", "label": "Where to look on phones", "min": 0, "max": 100, "step": 1, "unit": "%", "default": 50, "info": "0% is the left edge of the film, 100% the right." }
+      ]
+    },
+    {
+      "type": "closing",
+      "name": "Closing point",
+      "limit": 1,
+      "settings": [
+        { "type": "text", "id": "label", "label": "Small label", "default": "Farless" },
+        { "type": "text", "id": "heading", "label": "Heading", "default": "Far less on your counter." },
+        { "type": "text", "id": "line", "label": "Line under the heading", "default": "Just one tap." },
+        { "type": "text", "id": "button_label", "label": "Button label", "default": "Buy Farless" },
+        { "type": "url", "id": "button_link", "label": "Button link" },
+        { "type": "text", "id": "time", "label": "Time in the film", "default": "end", "info": "Write end to stop on the last frame." },
+        { "type": "range", "id": "focus", "label": "Where to look on phones", "min": 0, "max": 100, "step": 1, "unit": "%", "default": 58, "info": "0% is the left edge of the film, 100% the right." }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Farless film",
+      "blocks": [
+        { "type": "opening" },
+        { "type": "caption", "settings": { "label": "Push and turn", "line": "Boiling. Filtered.", "time": "2.8", "focus": 33 } },
+        { "type": "caption", "settings": { "label": "The pour", "line": "Sparkling. Hot. Cold.", "time": "4.6", "focus": 43 } },
+        { "type": "caption", "settings": { "label": "Less", "line": "No kettle. No bottles. No soda machine.", "time": "6.4", "focus": 57 } },
+        { "type": "closing" }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,62 @@
+{
+  "type": "footer",
+  "name": "Farless footer",
+  "sections": {
+    "footer": {
+      "type": "farless-footer",
+      "settings": {},
+      "blocks": {
+        "link_1": {
+          "type": "link",
+          "settings": {
+            "label": "Shop",
+            "side": "left",
+            "anchor": "shop"
+          }
+        },
+        "link_2": {
+          "type": "link",
+          "settings": {
+            "label": "Five waters",
+            "side": "left",
+            "anchor": "waters"
+          }
+        },
+        "link_3": {
+          "type": "link",
+          "settings": {
+            "label": "Safety",
+            "side": "left",
+            "anchor": "safety"
+          }
+        },
+        "link_4": {
+          "type": "link",
+          "settings": {
+            "label": "Design",
+            "side": "right",
+            "anchor": "design"
+          }
+        },
+        "link_5": {
+          "type": "link",
+          "settings": {
+            "label": "Questions",
+            "side": "right",
+            "anchor": "questions"
+          }
+        }
+      },
+      "block_order": [
+        "link_1",
+        "link_2",
+        "link_3",
+        "link_4",
+        "link_5"
+      ]
+    }
+  },
+  "order": [
+    "footer"
+  ]
+}

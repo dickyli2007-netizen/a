@@ -1,0 +1,78 @@
+{%- comment -%} Five waters: each water beside the thing it takes off the counter. One block per row. {%- endcomment -%}
+{%- render 'farless-arc', arc: section.settings.arc -%}
+<section class="sec waters{% if section.settings.tone %} tone{% endif %}" id="{{ section.settings.anchor | default: 'waters' | handleize }}" aria-labelledby="h-{{ section.id }}">
+  <div class="wrap">
+    <div class="head" data-in>
+      <div>
+        <span class="label kicker part">{{ section.settings.kicker | escape }}</span>
+        <h2 class="h2 part" id="h-{{ section.id }}">{{ section.settings.heading | escape }}</h2>
+      </div>
+      {%- if section.settings.lede != blank %}
+      <p class="lede part">{{ section.settings.lede | escape }}</p>
+      {%- endif %}
+    </div>
+    <div class="swap">
+      <div class="swap-cols label" aria-hidden="true"><span>{{ section.settings.left_label | escape }}</span><span>{{ section.settings.right_label | escape }}</span></div>
+      <ul class="swaps" data-strike>
+        {%- for block in section.blocks %}
+        <li {{ block.shopify_attributes }}><div class="w"><span class="ics">{% render 'farless-water-icon', icon: block.settings.icon %}</span><h3>{{ block.settings.name | escape }}</h3></div>
+          {%- if block.settings.crossed -%}
+          <p class="x"><span class="sr">{{ section.settings.replaces_label | escape }} </span><s>{{ block.settings.replaces | escape }}</s></p>
+          {%- else -%}
+          <p class="x keep">{{ block.settings.replaces | escape }}</p>
+          {%- endif -%}
+        </li>
+        {%- endfor %}
+      </ul>
+      {%- if section.settings.closing != blank %}
+      <p class="calm">{{ section.settings.closing | escape }}</p>
+      {%- endif %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Farless five waters",
+  "tag": "div",
+  "class": "farless-waters",
+  "disabled_on": { "groups": ["header", "footer"] },
+  "max_blocks": 8,
+  "settings": [
+    { "type": "text", "id": "kicker", "label": "Small label", "default": "Five waters" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "One tap does it all." },
+    { "type": "textarea", "id": "lede", "label": "Text", "default": "Five waters from one quiet tap, and four fewer things on your counter." },
+    { "type": "text", "id": "left_label", "label": "Left column label", "default": "From the tap" },
+    { "type": "text", "id": "right_label", "label": "Right column label", "default": "Off your counter" },
+    { "type": "text", "id": "closing", "label": "Closing line", "default": "Fewer things. A calmer kitchen." },
+    { "type": "text", "id": "replaces_label", "label": "Word read before a crossed-out item", "default": "Replaces", "info": "Only screen readers say this." },
+    { "type": "header", "content": "Layout" },
+    { "type": "text", "id": "anchor", "label": "Link name", "default": "waters", "info": "Menu links ending in #waters jump here." },
+    { "type": "checkbox", "id": "tone", "label": "Slightly lighter background", "default": false },
+    { "type": "select", "id": "arc", "label": "Arc line above", "default": "none", "options": [ { "value": "none", "label": "None" }, { "value": "left", "label": "From the left" }, { "value": "right", "label": "From the right" } ] }
+  ],
+  "blocks": [
+    {
+      "type": "row",
+      "name": "Water",
+      "settings": [
+        { "type": "select", "id": "icon", "label": "Icon", "default": "boiling", "options": [ { "value": "boiling", "label": "Boiling (cup and steam)" }, { "value": "sparkling", "label": "Sparkling (bubbles)" }, { "value": "filtered", "label": "Filtered (drop with lines)" }, { "value": "hot", "label": "Hot (drop with wave)" }, { "value": "cold", "label": "Cold (drop with snowflake)" }, { "value": "hot_cold", "label": "Hot and cold (both drops)" }, { "value": "none", "label": "None" } ] },
+        { "type": "text", "id": "name", "label": "Water", "default": "Boiling" },
+        { "type": "text", "id": "replaces", "label": "What it replaces", "default": "The kettle" },
+        { "type": "checkbox", "id": "crossed", "label": "Cross it out", "default": true, "info": "Turn off for a plain line, like \"Still your everyday tap.\"" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Farless five waters",
+      "blocks": [
+        { "type": "row", "settings": { "icon": "boiling", "name": "Boiling", "replaces": "The kettle" } },
+        { "type": "row", "settings": { "icon": "sparkling", "name": "Sparkling", "replaces": "The soda machine" } },
+        { "type": "row", "settings": { "icon": "filtered", "name": "Filtered", "replaces": "The filter jug and bottles" } },
+        { "type": "row", "settings": { "icon": "hot_cold", "name": "Hot and cold", "replaces": "Still your everyday tap.", "crossed": false } }
+      ]
+    }
+  ]
+}
+{% endschema %}
