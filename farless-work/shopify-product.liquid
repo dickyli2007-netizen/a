@@ -1,0 +1,179 @@
+{%- comment -%}
+  The Farless product page, rendered for any product. build_shopify.py wraps this with the nav, the
+  template's styles and script, the footer and the schema, and fills in the swatch fills.
+  Colours come from an option named Colour, Color or Finish; each colour shows its variant's image
+  (a transparent cut-out). Product fields in the farless namespace carry the page copy:
+  kicker, lede, notes (one per line, "Label | text") and foot_x (where the product's foot is, in %).
+{%- endcomment -%}
+{%- liquid
+  assign current = product.selected_or_first_available_variant
+  assign colour_option = blank
+  for option in product.options_with_values
+    assign oname = option.name | downcase | strip
+    if oname == 'colour' or oname == 'color' or oname == 'finish' or oname == 'colours' or oname == 'colors'
+      assign colour_option = option
+      break
+    endif
+  endfor
+
+  assign colour_pos = -1
+  assign start = 0
+  assign slide_count = 1
+  if colour_option != blank
+    assign colour_pos = colour_option.position | minus: 1
+    assign slide_count = colour_option.values.size
+    for value in colour_option.values
+      if current.options[colour_pos] == value.name
+        assign start = forloop.index0
+      endif
+    endfor
+  endif
+
+  assign kicker = product.metafields.farless.kicker.value | default: section.settings.kicker
+  assign lede = product.metafields.farless.lede.value
+  assign foot_x = product.metafields.farless.foot_x.value
+
+  assign excerpt = ''
+  assign paras = product.description | split: '</p>'
+  for para in paras
+    assign text = para | strip_html | strip
+    if text != blank and text != lede
+      assign excerpt = text
+      break
+    endif
+  endfor
+-%}
+{%- capture nl %}
+{% endcapture -%}
+<main id="main" class="pdp" tabindex="-1">
+  <div class="wrap">
+    <nav class="crumbs label" aria-label="Breadcrumb"><a href="{{ routes.root_url }}#shop">Shop</a><span aria-hidden="true">/</span>
+      {%- liquid
+        assign crumb = blank
+        for c in product.collections
+          unless c.handle == 'frontpage'
+            assign crumb = c
+            break
+          endunless
+        endfor
+      -%}
+      {%- if crumb != blank -%}<a href="{{ crumb.url }}">{{ crumb.title | escape }}</a><span aria-hidden="true">/</span>{%- endif -%}
+      <span aria-current="page">{{ product.title | escape }}</span></nav>
+    <div class="pdp-grid">
+      <div class="stage-col" style="--n:{{ slide_count }}">
+        <div class="stage{% if slide_count < 2 %} single{% endif %}" data-stage data-start="{{ start }}" style="--shadow-x:{{ foot_x | default: 50 }}%;--shadow-w:{% if foot_x != blank %}34{% else %}0{% endif %}%"
+          {%- if slide_count > 1 %} aria-roledescription="carousel" aria-label="{{ product.title | escape }} in {{ slide_count }} colours"{% else %} aria-label="{{ product.title | escape }}"{% endif %}>
+          {%- if colour_option != blank -%}
+            {%- for value in colour_option.values -%}
+              {%- liquid
+                assign media = blank
+                for v in product.variants
+                  if v.options[colour_pos] == value.name and v.featured_media
+                    assign media = v.featured_media
+                    break
+                  endif
+                endfor
+                if media == blank
+                  assign media = product.featured_media
+                endif
+                assign colour_lc = value.name | downcase
+                assign alt = 'The ' | append: product.title | append: ' in ' | append: colour_lc
+              -%}
+          <figure class="tap{% if forloop.index0 == start %} is-on{% endif %}"{% unless forloop.index0 == start %} aria-hidden="true"{% endunless %}><div class="obj" style="--ar:{{ media.preview_image.aspect_ratio | default: 0.65 }}">
+            {%- if media != blank -%}{{ media.preview_image | image_url: width: 1400 | image_tag: widths: '500, 800, 1100, 1400', sizes: '(min-width: 860px) 46vw, 80vw', alt: alt, draggable: 'false' }}{%- endif -%}
+          </div></figure>
+            {%- endfor -%}
+          {%- else -%}
+          <figure class="tap is-on"><div class="obj" style="--ar:{{ product.featured_media.preview_image.aspect_ratio | default: 0.65 }}">
+            {%- if product.featured_media -%}{{ product.featured_media.preview_image | image_url: width: 1400 | image_tag: widths: '500, 800, 1100, 1400', sizes: '(min-width: 860px) 46vw, 80vw', alt: product.title, draggable: 'false' }}{%- endif -%}
+          </div></figure>
+          {%- endif %}
+        </div>
+        {%- if slide_count > 1 %}
+        <div class="f-rail" aria-hidden="true" style="--pos:{{ start }}"><span class="bar"><i></i></span><span class="label"><b data-count>{% if start < 9 %}0{% endif %}{{ start | plus: 1 }}</b> / {% if slide_count < 10 %}0{% endif %}{{ slide_count }}</span></div>
+        {%- endif %}
+      </div>
+      <div class="buy-col">
+        <span class="label">{{ kicker | escape }}</span>
+        <h1>{{ product.title | escape }}</h1>
+        {%- if lede != blank %}
+        <p class="lede">{{ lede | escape }}</p>
+        {%- endif -%}
+        {%- if section.settings.show_prices %}
+        <p class="price" data-price>{{ current.price | money }}</p>
+        {%- endif -%}
+        {%- if slide_count > 1 %}
+        <div class="finish">
+          <p class="finish-h">Colour. <span>Pick your favourite.</span></p>
+          <p class="finish-name"><span class="label">Colour</span><b data-finish-name>{{ colour_option.values[start].name | escape }}</b></p>
+          <div class="swatches" role="radiogroup" aria-label="Colour">
+            {%- for value in colour_option.values -%}
+              {%- liquid
+                assign key = value.name | downcase
+                assign sw = '%%SW_NEUTRAL%%'
+                if value.swatch.color
+                  assign sw = value.swatch.color
+                elsif key contains 'chrome' or key contains 'steel' or key contains 'nickel' or key contains 'silver'
+                  assign sw = '%%SW_CHROME%%'
+                elsif key contains 'brass' or key contains 'gold'
+                  assign sw = '%%SW_BRASS%%'
+                elsif key contains 'copper' or key contains 'rose' or key contains 'bronze'
+                  assign sw = '%%SW_COPPER%%'
+                elsif key contains 'black' or key contains 'graphite' or key contains 'gunmetal'
+                  assign sw = '%%SW_BLACK%%'
+                elsif key contains 'white'
+                  assign sw = '%%SW_WHITE%%'
+                endif
+              -%}
+            <button type="button" role="radio" aria-checked="{% if forloop.index0 == start %}true{% else %}false{% endif %}" tabindex="{% if forloop.index0 == start %}0{% else %}-1{% endif %}" aria-label="{{ value.name | escape }}" style="--sw:{{ sw }}"></button>
+            {%- endfor %}
+          </div>
+        </div>
+        {%- endif -%}
+        {%- unless product.has_only_default_variant %}
+          {%- capture other_options -%}
+            {%- for option in product.options_with_values -%}
+              {%- assign pos = option.position | minus: 1 -%}
+              {%- unless pos == colour_pos -%}
+          <label class="opt"><span class="label">{{ option.name | escape }}</span><select data-option="{{ pos }}">
+            {%- for value in option.values -%}<option value="{{ value.name | escape }}"{% if value.selected %} selected{% endif %}>{{ value.name | escape }}</option>{%- endfor -%}
+          </select></label>
+              {%- endunless -%}
+            {%- endfor -%}
+          {%- endcapture -%}
+          {%- if other_options != blank %}
+        <div class="opts">{{ other_options }}</div>
+          {%- endif -%}
+        {%- endunless %}
+        <div class="buy-actions" id="buy">
+          {%- form 'product', product, class: 'buy-form' -%}
+            <input type="hidden" name="id" value="{{ current.id }}">
+            <button class="btn solid" type="submit" name="add" data-add{% unless current.available %} disabled{% endunless %}>{% if current.available %}Add to cart{% else %}Sold out{% endif %}</button>
+          {%- endform -%}
+        </div>
+        {%- if excerpt != blank %}
+        <p class="excerpt">{{ excerpt | escape }}</p>
+        {%- endif -%}
+        {%- assign notes = product.metafields.farless.notes.value | strip -%}
+        {%- if notes != blank %}
+        <ul class="f-notes">
+          {%- assign lines = notes | split: nl -%}
+          {%- for line in lines -%}
+            {%- assign parts = line | split: '|' -%}
+            {%- assign note_label = parts.first | strip -%}
+            {%- assign note_text = parts | slice: 1, 9 | join: '|' | strip -%}
+            {%- if note_label != blank %}
+          <li><span class="label">{{ note_label | escape }}</span>{{ note_text | escape }}</li>
+            {%- endif -%}
+          {%- endfor %}
+        </ul>
+        {%- endif %}
+      </div>
+    </div>
+  </div>
+</main>
+<script type="application/json" data-variants data-colour-pos="{{ colour_pos }}">[
+  {%- for v in product.variants -%}
+  {"id":{{ v.id }},"available":{{ v.available | json }},"options":{{ v.options | json }},"price":{{ v.price | money | json }}}{% unless forloop.last %},{% endunless %}
+  {%- endfor -%}
+]</script>

@@ -130,9 +130,18 @@
               {{ fp.featured_media.preview_image | image_url: width: 1400 | image_tag: widths: '600, 900, 1200, 1400', sizes: '(min-width: 860px) 52vw, 100vw', loading: 'lazy', alt: fp.featured_media.alt, class: 'f-main' }}
             {%- endif -%}
           </div>
-          {%- if fp.media.size > 1 -%}
+          {%- comment -%} colour cut-outs belong to the product page, so the photos here skip variant images {%- endcomment -%}
+          {%- capture variant_media -%}{%- for v in fp.variants -%}{%- if v.featured_media -%},{{ v.featured_media.id }},{%- endif -%}{%- endfor -%}{%- endcapture -%}
+          {%- assign photo_count = 0 -%}
+          {%- for m in fp.media -%}
+            {%- assign mid = m.id | prepend: ',' | append: ',' -%}
+            {%- unless variant_media contains mid -%}{%- assign photo_count = photo_count | plus: 1 -%}{%- endunless -%}
+          {%- endfor -%}
+          {%- if photo_count > 1 -%}
           <div class="f-thumbs" role="group" aria-label="Product images">
-            {%- for m in fp.media limit: 6 -%}
+            {%- for m in fp.media limit: 12 -%}
+              {%- assign mid = m.id | prepend: ',' | append: ',' -%}
+              {%- if variant_media contains mid -%}{%- continue -%}{%- endif -%}
               {%- if m.preview_image -%}
               <button type="button" data-src="{{ m.preview_image | image_url: width: 1400 }}" data-srcset="{{ m.preview_image | image_url: width: 600 }} 600w, {{ m.preview_image | image_url: width: 900 }} 900w, {{ m.preview_image | image_url: width: 1400 }} 1400w" data-alt="{{ m.alt | escape }}" aria-label="Show image {{ forloop.index }}"{% if forloop.first %} aria-current="true"{% endif %}>{{ m.preview_image | image_url: width: 160 | image_tag: loading: 'lazy', alt: '' }}</button>
               {%- endif -%}
@@ -190,49 +199,21 @@
   </section>
 
   <section class="sec waters" id="waters" aria-labelledby="waters-h">
-    <div class="wrap" data-in>
-      <div class="head">
+    <div class="wrap">
+      <div class="head" data-in>
         <div>
           <span class="label kicker part">Five waters</span>
           <h2 class="h2 part" id="waters-h">One tap does it all.</h2>
         </div>
-        <p class="lede part">Every water your kitchen asks for, from one quiet tap.</p>
+        <p class="lede part">Five waters from one quiet tap, and four fewer things on your counter.</p>
       </div>
-      <ul class="cards">
-        <li class="card part"><span class="label"><span class="n">01</span></span>
-          <svg class="ic" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" aria-hidden="true"><path d="M16 22c-3-4 3-6 0-10M24 22c-3-4 3-6 0-10M32 22c-3-4 3-6 0-10"/><path d="M10 28h28v4a10 10 0 0 1-10 10h-8a10 10 0 0 1-10-10z"/></svg>
-          <h3>Boiling</h3><p>Tea in the time it takes to reach for a cup.</p></li>
-        <li class="card part"><span class="label"><span class="n">02</span></span>
-          <div class="bubbles" aria-hidden="true"><i style="--x:20%;--s:5px;--t:9s;--dl:-1s"></i><i style="--x:46%;--s:8px;--t:11s;--dl:-6s"></i><i style="--x:70%;--s:4px;--t:8s;--dl:-3s"></i><i style="--x:84%;--s:6px;--t:12s;--dl:-9s"></i></div>
-          <svg class="ic" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1" aria-hidden="true"><circle cx="18" cy="32" r="7"/><circle cx="31" cy="20" r="5"/><circle cx="22" cy="12" r="3"/><circle cx="35" cy="35" r="3"/></svg>
-          <h3>Sparkling</h3><p>Fresh bubbles every glass. No more flat bottles.</p></li>
-        <li class="card part"><span class="label"><span class="n">03</span></span>
-          <svg class="ic" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" aria-hidden="true"><path d="M24 6c7 9 12 15 12 22a12 12 0 0 1-24 0c0-7 5-13 12-22z"/><path d="M18 26h12M19 31h10M21 36h6"/></svg>
-          <h3>Filtered</h3><p>Clean drinking water, straight from the tap.</p></li>
-        <li class="card part"><span class="label"><span class="n">04</span></span>
-          <svg class="ic" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" aria-hidden="true"><path d="M24 6c7 9 12 15 12 22a12 12 0 0 1-24 0c0-7 5-13 12-22z"/><path d="M17 30c2.3-2 4.7-2 7 0s4.7 2 7 0"/></svg>
-          <h3>Hot</h3><p>For washing up and everyday cooking.</p></li>
-        <li class="card part"><span class="label"><span class="n">05</span></span>
-          <svg class="ic" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" aria-hidden="true"><path d="M24 6c7 9 12 15 12 22a12 12 0 0 1-24 0c0-7 5-13 12-22z"/><path d="M24 22v14M18 26l12 6M30 26l-12 6"/></svg>
-          <h3>Cold</h3><p>Just water, the way it should be.</p></li>
-      </ul>
-    </div>
-  </section>
-
-  <div class="seam" aria-hidden="true"><svg viewBox="0 0 560 160" preserveAspectRatio="xMidYMid meet"><path pathLength="1" d="M20 150 C 20 60, 100 12, 200 12 C 300 12, 380 60, 380 110 L 380 130"/><circle cx="380" cy="146" r="3"/></svg></div>
-
-  <section class="sec leaves" aria-labelledby="leaves-h">
-    <div class="wrap">
-      <div data-in>
-        <span class="label kicker part">What leaves your counter</span>
-        <h2 class="h2 part" id="leaves-h">One tap replaces</h2>
-      </div>
-      <div>
-        <ul class="gone" data-strike>
-          <li>The kettle.<svg viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M0 6 C 30 3, 70 8, 100 4"/></svg></li>
-          <li>The filter jug.<svg viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M0 5 C 35 8, 65 2, 100 6"/></svg></li>
-          <li>The soda machine.<svg viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M0 6 C 25 3, 75 7, 100 4"/></svg></li>
-          <li>The bottles.<svg viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M0 4 C 40 8, 60 3, 100 6"/></svg></li>
+      <div class="swap">
+        <div class="swap-cols label" aria-hidden="true"><span>From the tap</span><span>Off your counter</span></div>
+        <ul class="swaps" data-strike>
+          <li><div class="w"><span class="ics"><svg class="ic" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" aria-hidden="true"><path d="M16 22c-3-4 3-6 0-10M24 22c-3-4 3-6 0-10M32 22c-3-4 3-6 0-10"/><path d="M10 28h28v4a10 10 0 0 1-10 10h-8a10 10 0 0 1-10-10z"/></svg></span><h3>Boiling</h3></div><p class="x"><span class="sr">Replaces </span><s>The kettle</s></p></li>
+          <li><div class="w"><span class="ics"><svg class="ic" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1" aria-hidden="true"><circle cx="18" cy="32" r="7"/><circle cx="31" cy="20" r="5"/><circle cx="22" cy="12" r="3"/><circle cx="35" cy="35" r="3"/></svg></span><h3>Sparkling</h3></div><p class="x"><span class="sr">Replaces </span><s>The soda machine</s></p></li>
+          <li><div class="w"><span class="ics"><svg class="ic" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" aria-hidden="true"><path d="M24 6c7 9 12 15 12 22a12 12 0 0 1-24 0c0-7 5-13 12-22z"/><path d="M18 26h12M19 31h10M21 36h6"/></svg></span><h3>Filtered</h3></div><p class="x"><span class="sr">Replaces </span><s>The filter jug and bottles</s></p></li>
+          <li><div class="w"><span class="ics"><svg class="ic" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" aria-hidden="true"><path d="M24 6c7 9 12 15 12 22a12 12 0 0 1-24 0c0-7 5-13 12-22z"/><path d="M17 30c2.3-2 4.7-2 7 0s4.7 2 7 0"/></svg><svg class="ic" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" aria-hidden="true"><path d="M24 6c7 9 12 15 12 22a12 12 0 0 1-24 0c0-7 5-13 12-22z"/><path d="M24 22v14M18 26l12 6M30 26l-12 6"/></svg></span><h3>Hot and cold</h3></div><p class="x keep">Still your everyday tap.</p></li>
         </ul>
         <p class="calm">Fewer things. A calmer kitchen.</p>
       </div>

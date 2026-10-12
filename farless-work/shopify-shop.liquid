@@ -46,9 +46,18 @@
               {{ fp.featured_media.preview_image | image_url: width: 1400 | image_tag: widths: '600, 900, 1200, 1400', sizes: '(min-width: 860px) 52vw, 100vw', loading: 'lazy', alt: fp.featured_media.alt, class: 'f-main' }}
             {%- endif -%}
           </div>
-          {%- if fp.media.size > 1 -%}
+          {%- comment -%} colour cut-outs belong to the product page, so the photos here skip variant images {%- endcomment -%}
+          {%- capture variant_media -%}{%- for v in fp.variants -%}{%- if v.featured_media -%},{{ v.featured_media.id }},{%- endif -%}{%- endfor -%}{%- endcapture -%}
+          {%- assign photo_count = 0 -%}
+          {%- for m in fp.media -%}
+            {%- assign mid = m.id | prepend: ',' | append: ',' -%}
+            {%- unless variant_media contains mid -%}{%- assign photo_count = photo_count | plus: 1 -%}{%- endunless -%}
+          {%- endfor -%}
+          {%- if photo_count > 1 -%}
           <div class="f-thumbs" role="group" aria-label="Product images">
-            {%- for m in fp.media limit: 6 -%}
+            {%- for m in fp.media limit: 12 -%}
+              {%- assign mid = m.id | prepend: ',' | append: ',' -%}
+              {%- if variant_media contains mid -%}{%- continue -%}{%- endif -%}
               {%- if m.preview_image -%}
               <button type="button" data-src="{{ m.preview_image | image_url: width: 1400 }}" data-srcset="{{ m.preview_image | image_url: width: 600 }} 600w, {{ m.preview_image | image_url: width: 900 }} 900w, {{ m.preview_image | image_url: width: 1400 }} 1400w" data-alt="{{ m.alt | escape }}" aria-label="Show image {{ forloop.index }}"{% if forloop.first %} aria-current="true"{% endif %}>{{ m.preview_image | image_url: width: 160 | image_tag: loading: 'lazy', alt: '' }}</button>
               {%- endif -%}

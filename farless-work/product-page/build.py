@@ -69,7 +69,7 @@ CSS = '''
 /* a soft warm light behind the tap, so dark finishes still read against the page */
 .stage::before{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(46% 42% at 50% 52%,rgba(236,227,214,.085),rgba(236,227,214,0) 72%)}
 .tap{position:absolute;inset:0;margin:0;will-change:transform,opacity;backface-visibility:hidden}
-.tap + .tap{opacity:0}
+.tap:not(.is-on){opacity:0}
 .stage.single{cursor:auto}
 .tap .obj{position:absolute;left:50%;bottom:6%;height:86%;max-width:100%;aspect-ratio:var(--ar);translate:-50% 0}
 .tap img{display:block;width:100%;height:100%;max-width:none;object-fit:contain;-webkit-user-drag:none;pointer-events:none}
@@ -98,7 +98,14 @@ CSS = '''
 .swatches button:active::before{transform:scale(.94)}
 .swatches button:focus-visible{outline:none}
 .swatches button:focus-visible::after{opacity:1;transform:none;border-color:var(--accent)}
+.opts{display:grid;gap:14px;margin-top:30px}
+.opt{display:grid;gap:10px}
+.opt select{font:300 1rem/1.4 var(--font);color:var(--text-primary);background:transparent;border:1px solid var(--hair-strong);padding:12px 14px;border-radius:0}
+.opt select:focus-visible{outline:1px solid var(--accent);outline-offset:3px}
 .buy-actions{display:grid;gap:14px;margin-top:34px}
+.buy-actions form{display:grid;gap:14px;margin:0}
+.buy-col .price{margin-top:18px;font:300 1.15rem/1 var(--font);letter-spacing:.06em}
+.buy-col .excerpt p + p{margin-top:1em}
 .buy-actions .btn{justify-content:center;cursor:pointer;font-family:var(--font)}
 .buy-note{min-height:1.6em;color:var(--text-secondary);font-size:.92rem;line-height:1.6}
 .buy-col .excerpt{margin-top:40px;color:var(--text-secondary);max-width:46ch}
@@ -138,7 +145,7 @@ def render_main(prod, w, h):
     shadow = prod.get('shadow', {})
     stage_vars = f'--ar:{w}/{h};--shadow-x:{shadow.get("x", 50)}%;--shadow-w:{shadow.get("width", 34)}%'
     taps = '\n'.join(
-        f'          <figure class="tap"{"" if i == 0 else " aria-hidden=\"true\""}><div class="obj">'
+        f'          <figure class="tap{" is-on" if i == 0 else ""}"{"" if i == 0 else " aria-hidden=\"true\""}><div class="obj">'
         f'<img src="assets/{e(f["image"])}" alt="The {e(title)} in {e(f["name"].lower())}" width="{w}" height="{h}" draggable="false"></div></figure>'
         for i, f in enumerate(fins))
     swatches = '\n'.join(
@@ -188,10 +195,9 @@ def render_main(prod, w, h):
         '</main>'
     )
 
-JS = '''<script>
-(() => {
-  'use strict';
-  const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
+# shared by the preview and the Shopify section: nav, the slide and the picker.
+# Each change of colour fires a 'farless:colour' event on the stage for the page-specific part.
+JS_CORE = '''  const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
   const nav = document.querySelector('nav.top');
   const onScroll = () => nav.classList.toggle('solid', scrollY > 8);
   addEventListener('scroll', onScroll, { passive: true });
@@ -199,25 +205,19 @@ JS = '''<script>
 
   /* ---------- colour picker: the tap slides sideways to the chosen colour ---------- */
   const stage = document.querySelector('[data-stage]');
-  const taps = [...stage.querySelectorAll('.tap')];
+  const taps = stage ? [...stage.querySelectorAll('.tap')] : [];
   const radios = [...document.querySelectorAll('.swatches [role="radio"]')];
   const nameEl = document.querySelector('[data-finish-name]');
   const countEl = document.querySelector('[data-count]');
   const rail = document.querySelector('.f-rail');
-  const note = document.querySelector('[data-buy-note]');
   const N = taps.length;
   const SHIFT = 55;                                   // how far a tap travels, in % of the stage width
   const MOVE = 'cubic-bezier(.45,0,.15,1)';            // eases off the mark, long soft landing
   const SETTLE = 'cubic-bezier(.22,.61,.36,1)';       // after a swipe the tap is already moving
   const still = matchMedia('(prefers-reduced-motion: reduce)');
-  let cur = 0, drag = null;
+  let cur = stage ? clamp(+stage.dataset.start || 0, 0, Math.max(N - 1, 0)) : 0, drag = null;
 
-  const add = document.querySelector('[data-add]');
-  add.addEventListener('click', () => {
-    const colour = radios[cur] ? ` in ${radios[cur].getAttribute('aria-label')}` : '';
-    note.textContent = `Preview only. In the shop this adds the ${add.dataset.title}${colour} to the cart.`;
-  });
-  if (N < 2) return;   // one colour: no picker, nothing to slide
+  if (N > 1){   // one colour: no picker, nothing to slide
 
   // only transform and opacity change, so the browser slides the taps on the compositor
   function place(el, d, opacity){
@@ -256,8 +256,8 @@ JS = '''<script>
     rail.classList.toggle('live', still.matches);
     rail.style.setProperty('--pos', String(i));
     radios.forEach((r, k) => { r.setAttribute('aria-checked', String(k === i)); r.tabIndex = k === i ? 0 : -1; });
-    note.textContent = '';
     if (opts.focus) radios[i].focus();
+    stage.dispatchEvent(new CustomEvent('farless:colour', { detail: { index: i } }));
   }
 
   radios.forEach((r, k) => {
@@ -312,9 +312,21 @@ JS = '''<script>
   stage.addEventListener('pointerup', release);
   stage.addEventListener('pointercancel', release);
 
-  taps.forEach((el, k) => { el.style.transition = 'none'; place(el, k, k === 0 ? 1 : 0); });
-})();
-</script>'''
+  taps.forEach((el, k) => { el.style.transition = 'none'; place(el, k - cur, k === cur ? 1 : 0); });
+  }
+'''
+
+PREVIEW_JS = '''
+  // preview only: there is no store behind this page
+  const add = document.querySelector('[data-add]'), note = document.querySelector('[data-buy-note]');
+  add.addEventListener('click', () => {
+    const chosen = document.querySelector('.swatches [aria-checked="true"]');
+    note.textContent = `Preview only. In the shop this adds the ${add.dataset.title}${chosen ? ` in ${chosen.getAttribute('aria-label')}` : ''} to the cart.`;
+  });
+  if (stage) stage.addEventListener('farless:colour', () => { note.textContent = ''; });
+'''
+
+JS = "<script>\n(() => {\n  'use strict';\n" + JS_CORE + PREVIEW_JS + "})();\n</script>"
 
 
 def build(prod):
@@ -349,7 +361,8 @@ def build(prod):
     print('built', out)
 
 
-wanted = sys.argv[1:]
-files = [HERE / 'products' / f'{h}.json' for h in wanted] if wanted else sorted((HERE / 'products').glob('*.json'))
-for path in files:
-    build(json.loads(path.read_text(encoding='utf-8')))
+if __name__ == '__main__':
+    wanted = sys.argv[1:]
+    files = [HERE / 'products' / f'{h}.json' for h in wanted] if wanted else sorted((HERE / 'products').glob('*.json'))
+    for path in files:
+        build(json.loads(path.read_text(encoding='utf-8')))

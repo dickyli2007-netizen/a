@@ -3,16 +3,34 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+{%- if template.name == 'product' -%}
+<title>{{ product.title | escape }} | Farless</title>
+{%- else -%}
 <title>Farless | Five waters. One tap.</title>
+{%- endif %}
 <link rel="canonical" href="{{ canonical_url }}">
+{%- if template.name == 'product' -%}
+<meta name="description" content="{{ product.description | strip_html | strip | truncate: 160 | escape }}">
+{%- else -%}
 <meta name="description" content="Farless is one quiet kitchen tap for boiling, filtered, sparkling, hot and cold water. Far less on your counter.">
+{%- endif %}
 <meta name="theme-color" content="#14100D">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%2314100D'/%3E%3Cpath d='M22 52V27a11 11 0 0 1 22 0v7' fill='none' stroke='%23ECE3D6' stroke-width='3'/%3E%3Ccircle cx='44' cy='42' r='2.6' fill='%23C4A57D'/%3E%3C/svg%3E">
+{%- if template.name == 'product' -%}
+<meta property="og:title" content="{{ product.title | escape }} | Farless">
+<meta property="og:description" content="{{ product.description | strip_html | strip | truncate: 160 | escape }}">
+<meta property="og:type" content="product">
+{%- else -%}
 <meta property="og:title" content="Farless | Five waters. One tap.">
 <meta property="og:description" content="Boiling, filtered, sparkling, hot and cold water from one quiet tap.">
 <meta property="og:type" content="website">
+{%- endif %}
 <meta property="og:url" content="{{ canonical_url }}">
+{%- if template.name == 'product' and product.featured_media -%}
+<meta property="og:image" content="https:{{ product.featured_media.preview_image | image_url: width: 1200 }}">
+{%- else -%}
 <meta property="og:image" content="https:{{ 'farless-hero-ending.jpg' | asset_url }}">
+{%- endif %}
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Jost:wght@200;300;400;500&display=swap" rel="stylesheet">
@@ -300,41 +318,43 @@ section.sec.tone{background:var(--canvas-2)}
 @media (max-width:860px){.feature{grid-template-columns:1fr}}
 @media (max-width:600px){.f-notes{grid-template-columns:1fr}}
 
-/* five waters: five columns divided by hairlines, no boxes */
+/* five waters: each water beside the thing it takes off the counter, one row each, hairlines between */
 .waters .head{display:grid;grid-template-columns:1.2fr 1fr;gap:48px;align-items:end}
-.cards{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));margin:88px 0 0;list-style:none;padding:0;border-top:1px solid var(--hair)}
-.card{position:relative;overflow:hidden;padding:34px 26px 10px;border-left:1px solid var(--hair);min-height:300px;display:flex;flex-direction:column}
-.card:first-child{border-left:0;padding-left:0}
-.card::before{content:"";position:absolute;left:0;right:0;top:-1px;height:1px;background:var(--accent);transform:scaleX(0);transform-origin:left;transition:transform .7s var(--ease-out)}
-.card:first-child::before{right:26px}
-.card:hover::before{transform:scaleX(1)}
-.card .label .n{margin:0}
-.card svg.ic{width:40px;height:40px;color:var(--text-primary);margin:34px 0 44px}
-.card h3{font:300 1.05rem/1.2 var(--font);letter-spacing:.2em;text-transform:uppercase}
-.card p{color:var(--text-secondary);font-size:.98rem;line-height:1.65;margin-top:12px}
+.swap{margin-top:clamp(64px,9vh,96px)}
+.swap-cols,.swaps li{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.5fr);gap:clamp(20px,4vw,64px);align-items:center}
+.swap-cols{padding-bottom:18px}
+.swaps{list-style:none;margin:0;padding:0;border-bottom:1px solid var(--hair)}
+.swaps li{position:relative;padding:clamp(26px,3.6vh,38px) 0;border-top:1px solid var(--hair)}
+.swaps li::before{content:"";position:absolute;left:0;right:0;top:-1px;height:1px;background:var(--accent);transform:scaleX(0);transform-origin:left;transition:transform .7s var(--ease-out)}
+.swaps li:hover::before{transform:scaleX(1)}
+.swaps .w{display:flex;align-items:center;gap:22px;min-width:0}
+.swaps .ics{display:flex;gap:6px;flex:none}
+.swaps svg.ic{width:36px;height:36px;color:var(--text-primary)}
+.swaps h3{font:300 1rem/1.3 var(--font);letter-spacing:.2em;text-transform:uppercase}
+.swaps .x{font:200 clamp(1.4rem,2.9vw,2.6rem)/1.2 var(--font);color:var(--text-secondary);min-width:0}
+/* the strike is drawn per line, so a name that wraps on a phone is crossed out on both lines */
+.swaps s{text-decoration:none;background:linear-gradient(var(--accent),var(--accent)) no-repeat 0 60%/0 1.5px;-webkit-box-decoration-break:clone;box-decoration-break:clone;transition:background-size 1.2s var(--ease-out)}
+.swaps.in s{background-size:100% 1.5px}
+.swaps.in li:nth-child(1) s{transition-delay:.3s}
+.swaps.in li:nth-child(2) s{transition-delay:.5s}
+.swaps.in li:nth-child(3) s{transition-delay:.7s}
+.swaps .keep{font-size:clamp(1.1rem,1.7vw,1.45rem);font-weight:300}
+.calm{margin-top:48px;padding-top:28px;border-top:1px solid var(--hair);font:300 clamp(1.3rem,1.9vw,1.75rem)/1.3 var(--font);color:var(--text-primary);position:relative;max-width:100%}
+.swap .calm{border-top:0;margin-top:40px;padding-top:0;margin-left:calc((100% - clamp(20px,4vw,64px)) / 2.5 + clamp(20px,4vw,64px))}
+.calm::after{content:"";position:absolute;left:0;top:-1px;width:64px;height:1px;background:var(--accent);opacity:.5;animation:breathe 7s var(--ease-soft) -2s infinite alternate}
+.swap .calm::after{top:-20px}
+@keyframes breathe{to{opacity:1;width:120px}}
 .bubbles{position:absolute;inset:0;pointer-events:none}
 .bubbles i{position:absolute;bottom:-12px;width:var(--s,6px);height:var(--s,6px);left:var(--x,50%);border-radius:50%;border:1px solid var(--accent-soft);opacity:0;animation:rise var(--t,9s) linear var(--dl,-2s) infinite}
 @keyframes rise{0%{transform:translateY(0);opacity:0}15%{opacity:.8}100%{transform:translateY(-320px);opacity:0}}
-@media (max-width:1100px){.cards{grid-template-columns:repeat(3,minmax(0,1fr))}.card:nth-child(4){border-left:0;padding-left:0}.card{border-bottom:1px solid var(--hair)}}
 @media (max-width:860px){.waters .head{grid-template-columns:1fr}}
-@media (max-width:720px){.cards{grid-template-columns:1fr 1fr}.card,.card:nth-child(4){border-left:1px solid var(--hair);padding-left:22px}.card:nth-child(odd){border-left:0;padding-left:0}.card{min-height:250px}}
-@media (max-width:420px){.cards{grid-template-columns:1fr}.card,.card:nth-child(odd){border-left:0;padding-left:0;min-height:0;padding-bottom:30px}}
-
-/* what leaves your counter */
-.leaves .wrap{display:grid;grid-template-columns:1fr 1.4fr;gap:64px;align-items:start}
-.gone{list-style:none;margin:0;padding:0}
-.gone li{position:relative;font:200 clamp(2.2rem,4.6vw,4.2rem)/1.22 var(--font);color:var(--text-secondary);width:max-content;max-width:100%}
-.gone li svg{position:absolute;left:-2%;top:54%;width:104%;height:12px;overflow:visible;pointer-events:none}
-.gone li path{fill:none;stroke:var(--accent);stroke-width:1.5;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:1;transition:stroke-dashoffset 1.2s var(--ease-out)}
-.gone.in li:nth-child(1) path{transition-delay:.35s}
-.gone.in li:nth-child(2) path{transition-delay:.55s}
-.gone.in li:nth-child(3) path{transition-delay:.75s}
-.gone.in li:nth-child(4) path{transition-delay:.95s}
-.gone.in li path{stroke-dashoffset:0}
-.calm{margin-top:48px;padding-top:28px;border-top:1px solid var(--hair);font:300 clamp(1.3rem,1.9vw,1.75rem)/1.3 var(--font);color:var(--text-primary);position:relative;max-width:100%}
-.calm::after{content:"";position:absolute;left:0;top:-1px;width:64px;height:1px;background:var(--accent);opacity:.5;animation:breathe 7s var(--ease-soft) -2s infinite alternate}
-@keyframes breathe{to{opacity:1;width:120px}}
-@media (max-width:860px){.leaves .wrap{grid-template-columns:1fr}}
+@media (max-width:600px){
+  .swap-cols,.swaps li{grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:18px}
+  .swaps .w{flex-direction:column;align-items:flex-start;gap:12px}
+  .swaps svg.ic{width:30px;height:30px}
+  .swaps h3{font-size:.86rem;letter-spacing:.16em}
+  .swap .calm{margin-left:0}
+}
 
 /* safety: press the pin, then turn. Back for hot (the line warms to red), forward for sparkling (it cools
    to white). Every moving part is its own layer and only transform and opacity change, so it stays smooth. */
@@ -471,7 +491,7 @@ body.paused *, body.paused *::before, body.paused *::after{animation-play-state:
   html{scroll-behavior:auto}
   *,*::before,*::after{animation:none!important;transition:none!important;transition-delay:0s!important}
   [data-in] .part,.done .dial-done .dw{opacity:1!important;transform:none!important}
-  .gone li path{stroke-dashoffset:0!important}
+  .swaps s{background-size:100% 1.5px!important;transition:none!important}
   .seam{--d:1!important}
   .bubbles,.grain{display:none}
 }

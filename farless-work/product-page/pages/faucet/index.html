@@ -300,41 +300,43 @@ section.sec.tone{background:var(--canvas-2)}
 @media (max-width:860px){.feature{grid-template-columns:1fr}}
 @media (max-width:600px){.f-notes{grid-template-columns:1fr}}
 
-/* five waters: five columns divided by hairlines, no boxes */
+/* five waters: each water beside the thing it takes off the counter, one row each, hairlines between */
 .waters .head{display:grid;grid-template-columns:1.2fr 1fr;gap:48px;align-items:end}
-.cards{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));margin:88px 0 0;list-style:none;padding:0;border-top:1px solid var(--hair)}
-.card{position:relative;overflow:hidden;padding:34px 26px 10px;border-left:1px solid var(--hair);min-height:300px;display:flex;flex-direction:column}
-.card:first-child{border-left:0;padding-left:0}
-.card::before{content:"";position:absolute;left:0;right:0;top:-1px;height:1px;background:var(--accent);transform:scaleX(0);transform-origin:left;transition:transform .7s var(--ease-out)}
-.card:first-child::before{right:26px}
-.card:hover::before{transform:scaleX(1)}
-.card .label .n{margin:0}
-.card svg.ic{width:40px;height:40px;color:var(--text-primary);margin:34px 0 44px}
-.card h3{font:300 1.05rem/1.2 var(--font);letter-spacing:.2em;text-transform:uppercase}
-.card p{color:var(--text-secondary);font-size:.98rem;line-height:1.65;margin-top:12px}
+.swap{margin-top:clamp(64px,9vh,96px)}
+.swap-cols,.swaps li{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.5fr);gap:clamp(20px,4vw,64px);align-items:center}
+.swap-cols{padding-bottom:18px}
+.swaps{list-style:none;margin:0;padding:0;border-bottom:1px solid var(--hair)}
+.swaps li{position:relative;padding:clamp(26px,3.6vh,38px) 0;border-top:1px solid var(--hair)}
+.swaps li::before{content:"";position:absolute;left:0;right:0;top:-1px;height:1px;background:var(--accent);transform:scaleX(0);transform-origin:left;transition:transform .7s var(--ease-out)}
+.swaps li:hover::before{transform:scaleX(1)}
+.swaps .w{display:flex;align-items:center;gap:22px;min-width:0}
+.swaps .ics{display:flex;gap:6px;flex:none}
+.swaps svg.ic{width:36px;height:36px;color:var(--text-primary)}
+.swaps h3{font:300 1rem/1.3 var(--font);letter-spacing:.2em;text-transform:uppercase}
+.swaps .x{font:200 clamp(1.4rem,2.9vw,2.6rem)/1.2 var(--font);color:var(--text-secondary);min-width:0}
+/* the strike is drawn per line, so a name that wraps on a phone is crossed out on both lines */
+.swaps s{text-decoration:none;background:linear-gradient(var(--accent),var(--accent)) no-repeat 0 60%/0 1.5px;-webkit-box-decoration-break:clone;box-decoration-break:clone;transition:background-size 1.2s var(--ease-out)}
+.swaps.in s{background-size:100% 1.5px}
+.swaps.in li:nth-child(1) s{transition-delay:.3s}
+.swaps.in li:nth-child(2) s{transition-delay:.5s}
+.swaps.in li:nth-child(3) s{transition-delay:.7s}
+.swaps .keep{font-size:clamp(1.1rem,1.7vw,1.45rem);font-weight:300}
+.calm{margin-top:48px;padding-top:28px;border-top:1px solid var(--hair);font:300 clamp(1.3rem,1.9vw,1.75rem)/1.3 var(--font);color:var(--text-primary);position:relative;max-width:100%}
+.swap .calm{border-top:0;margin-top:40px;padding-top:0;margin-left:calc((100% - clamp(20px,4vw,64px)) / 2.5 + clamp(20px,4vw,64px))}
+.calm::after{content:"";position:absolute;left:0;top:-1px;width:64px;height:1px;background:var(--accent);opacity:.5;animation:breathe 7s var(--ease-soft) -2s infinite alternate}
+.swap .calm::after{top:-20px}
+@keyframes breathe{to{opacity:1;width:120px}}
 .bubbles{position:absolute;inset:0;pointer-events:none}
 .bubbles i{position:absolute;bottom:-12px;width:var(--s,6px);height:var(--s,6px);left:var(--x,50%);border-radius:50%;border:1px solid var(--accent-soft);opacity:0;animation:rise var(--t,9s) linear var(--dl,-2s) infinite}
 @keyframes rise{0%{transform:translateY(0);opacity:0}15%{opacity:.8}100%{transform:translateY(-320px);opacity:0}}
-@media (max-width:1100px){.cards{grid-template-columns:repeat(3,minmax(0,1fr))}.card:nth-child(4){border-left:0;padding-left:0}.card{border-bottom:1px solid var(--hair)}}
 @media (max-width:860px){.waters .head{grid-template-columns:1fr}}
-@media (max-width:720px){.cards{grid-template-columns:1fr 1fr}.card,.card:nth-child(4){border-left:1px solid var(--hair);padding-left:22px}.card:nth-child(odd){border-left:0;padding-left:0}.card{min-height:250px}}
-@media (max-width:420px){.cards{grid-template-columns:1fr}.card,.card:nth-child(odd){border-left:0;padding-left:0;min-height:0;padding-bottom:30px}}
-
-/* what leaves your counter */
-.leaves .wrap{display:grid;grid-template-columns:1fr 1.4fr;gap:64px;align-items:start}
-.gone{list-style:none;margin:0;padding:0}
-.gone li{position:relative;font:200 clamp(2.2rem,4.6vw,4.2rem)/1.22 var(--font);color:var(--text-secondary);width:max-content;max-width:100%}
-.gone li svg{position:absolute;left:-2%;top:54%;width:104%;height:12px;overflow:visible;pointer-events:none}
-.gone li path{fill:none;stroke:var(--accent);stroke-width:1.5;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:1;transition:stroke-dashoffset 1.2s var(--ease-out)}
-.gone.in li:nth-child(1) path{transition-delay:.35s}
-.gone.in li:nth-child(2) path{transition-delay:.55s}
-.gone.in li:nth-child(3) path{transition-delay:.75s}
-.gone.in li:nth-child(4) path{transition-delay:.95s}
-.gone.in li path{stroke-dashoffset:0}
-.calm{margin-top:48px;padding-top:28px;border-top:1px solid var(--hair);font:300 clamp(1.3rem,1.9vw,1.75rem)/1.3 var(--font);color:var(--text-primary);position:relative;max-width:100%}
-.calm::after{content:"";position:absolute;left:0;top:-1px;width:64px;height:1px;background:var(--accent);opacity:.5;animation:breathe 7s var(--ease-soft) -2s infinite alternate}
-@keyframes breathe{to{opacity:1;width:120px}}
-@media (max-width:860px){.leaves .wrap{grid-template-columns:1fr}}
+@media (max-width:600px){
+  .swap-cols,.swaps li{grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:18px}
+  .swaps .w{flex-direction:column;align-items:flex-start;gap:12px}
+  .swaps svg.ic{width:30px;height:30px}
+  .swaps h3{font-size:.86rem;letter-spacing:.16em}
+  .swap .calm{margin-left:0}
+}
 
 /* safety: press the pin, then turn. Back for hot (the line warms to red), forward for sparkling (it cools
    to white). Every moving part is its own layer and only transform and opacity change, so it stays smooth. */
@@ -471,7 +473,7 @@ body.paused *, body.paused *::before, body.paused *::after{animation-play-state:
   html{scroll-behavior:auto}
   *,*::before,*::after{animation:none!important;transition:none!important;transition-delay:0s!important}
   [data-in] .part,.done .dial-done .dw{opacity:1!important;transform:none!important}
-  .gone li path{stroke-dashoffset:0!important}
+  .swaps s{background-size:100% 1.5px!important;transition:none!important}
   .seam{--d:1!important}
   .bubbles,.grain{display:none}
 }
@@ -489,7 +491,7 @@ body.paused *, body.paused *::before, body.paused *::after{animation-play-state:
 /* a soft warm light behind the tap, so dark finishes still read against the page */
 .stage::before{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(46% 42% at 50% 52%,rgba(236,227,214,.085),rgba(236,227,214,0) 72%)}
 .tap{position:absolute;inset:0;margin:0;will-change:transform,opacity;backface-visibility:hidden}
-.tap + .tap{opacity:0}
+.tap:not(.is-on){opacity:0}
 .stage.single{cursor:auto}
 .tap .obj{position:absolute;left:50%;bottom:6%;height:86%;max-width:100%;aspect-ratio:var(--ar);translate:-50% 0}
 .tap img{display:block;width:100%;height:100%;max-width:none;object-fit:contain;-webkit-user-drag:none;pointer-events:none}
@@ -518,7 +520,14 @@ body.paused *, body.paused *::before, body.paused *::after{animation-play-state:
 .swatches button:active::before{transform:scale(.94)}
 .swatches button:focus-visible{outline:none}
 .swatches button:focus-visible::after{opacity:1;transform:none;border-color:var(--accent)}
+.opts{display:grid;gap:14px;margin-top:30px}
+.opt{display:grid;gap:10px}
+.opt select{font:300 1rem/1.4 var(--font);color:var(--text-primary);background:transparent;border:1px solid var(--hair-strong);padding:12px 14px;border-radius:0}
+.opt select:focus-visible{outline:1px solid var(--accent);outline-offset:3px}
 .buy-actions{display:grid;gap:14px;margin-top:34px}
+.buy-actions form{display:grid;gap:14px;margin:0}
+.buy-col .price{margin-top:18px;font:300 1.15rem/1 var(--font);letter-spacing:.06em}
+.buy-col .excerpt p + p{margin-top:1em}
 .buy-actions .btn{justify-content:center;cursor:pointer;font-family:var(--font)}
 .buy-note{min-height:1.6em;color:var(--text-secondary);font-size:.92rem;line-height:1.6}
 .buy-col .excerpt{margin-top:40px;color:var(--text-secondary);max-width:46ch}
@@ -574,7 +583,7 @@ body.paused *, body.paused *::before, body.paused *::after{animation-play-state:
     <div class="pdp-grid">
       <div class="stage-col" style="--n:4">
         <div class="stage" data-stage style="--ar:924/1416;--shadow-x:33.3%;--shadow-w:34%" aria-roledescription="carousel" aria-label="Farless 5-in-1 Tap in 4 colours">
-          <figure class="tap"><div class="obj"><img src="assets/tap-chrome.webp" alt="The Farless 5-in-1 Tap in polished chrome" width="924" height="1416" draggable="false"></div></figure>
+          <figure class="tap is-on"><div class="obj"><img src="assets/tap-chrome.webp" alt="The Farless 5-in-1 Tap in polished chrome" width="924" height="1416" draggable="false"></div></figure>
           <figure class="tap" aria-hidden="true"><div class="obj"><img src="assets/tap-brass.webp" alt="The Farless 5-in-1 Tap in satin brass" width="924" height="1416" draggable="false"></div></figure>
           <figure class="tap" aria-hidden="true"><div class="obj"><img src="assets/tap-copper.webp" alt="The Farless 5-in-1 Tap in warm copper" width="924" height="1416" draggable="false"></div></figure>
           <figure class="tap" aria-hidden="true"><div class="obj"><img src="assets/tap-black.webp" alt="The Farless 5-in-1 Tap in matte black" width="924" height="1416" draggable="false"></div></figure>
@@ -637,25 +646,19 @@ body.paused *, body.paused *::before, body.paused *::after{animation-play-state:
 
   /* ---------- colour picker: the tap slides sideways to the chosen colour ---------- */
   const stage = document.querySelector('[data-stage]');
-  const taps = [...stage.querySelectorAll('.tap')];
+  const taps = stage ? [...stage.querySelectorAll('.tap')] : [];
   const radios = [...document.querySelectorAll('.swatches [role="radio"]')];
   const nameEl = document.querySelector('[data-finish-name]');
   const countEl = document.querySelector('[data-count]');
   const rail = document.querySelector('.f-rail');
-  const note = document.querySelector('[data-buy-note]');
   const N = taps.length;
   const SHIFT = 55;                                   // how far a tap travels, in % of the stage width
   const MOVE = 'cubic-bezier(.45,0,.15,1)';            // eases off the mark, long soft landing
   const SETTLE = 'cubic-bezier(.22,.61,.36,1)';       // after a swipe the tap is already moving
   const still = matchMedia('(prefers-reduced-motion: reduce)');
-  let cur = 0, drag = null;
+  let cur = stage ? clamp(+stage.dataset.start || 0, 0, Math.max(N - 1, 0)) : 0, drag = null;
 
-  const add = document.querySelector('[data-add]');
-  add.addEventListener('click', () => {
-    const colour = radios[cur] ? ` in ${radios[cur].getAttribute('aria-label')}` : '';
-    note.textContent = `Preview only. In the shop this adds the ${add.dataset.title}${colour} to the cart.`;
-  });
-  if (N < 2) return;   // one colour: no picker, nothing to slide
+  if (N > 1){   // one colour: no picker, nothing to slide
 
   // only transform and opacity change, so the browser slides the taps on the compositor
   function place(el, d, opacity){
@@ -694,8 +697,8 @@ body.paused *, body.paused *::before, body.paused *::after{animation-play-state:
     rail.classList.toggle('live', still.matches);
     rail.style.setProperty('--pos', String(i));
     radios.forEach((r, k) => { r.setAttribute('aria-checked', String(k === i)); r.tabIndex = k === i ? 0 : -1; });
-    note.textContent = '';
     if (opts.focus) radios[i].focus();
+    stage.dispatchEvent(new CustomEvent('farless:colour', { detail: { index: i } }));
   }
 
   radios.forEach((r, k) => {
@@ -750,7 +753,16 @@ body.paused *, body.paused *::before, body.paused *::after{animation-play-state:
   stage.addEventListener('pointerup', release);
   stage.addEventListener('pointercancel', release);
 
-  taps.forEach((el, k) => { el.style.transition = 'none'; place(el, k, k === 0 ? 1 : 0); });
+  taps.forEach((el, k) => { el.style.transition = 'none'; place(el, k - cur, k === cur ? 1 : 0); });
+  }
+
+  // preview only: there is no store behind this page
+  const add = document.querySelector('[data-add]'), note = document.querySelector('[data-buy-note]');
+  add.addEventListener('click', () => {
+    const chosen = document.querySelector('.swatches [aria-checked="true"]');
+    note.textContent = `Preview only. In the shop this adds the ${add.dataset.title}${chosen ? ` in ${chosen.getAttribute('aria-label')}` : ''} to the cart.`;
+  });
+  if (stage) stage.addEventListener('farless:colour', () => { note.textContent = ''; });
 })();
 </script>
 </body>
