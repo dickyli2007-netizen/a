@@ -1,0 +1,1466 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Farless | Five waters. One tap.</title>
+<meta name="description" content="Farless is one quiet kitchen tap for boiling, filtered, sparkling, hot and cold water. Far less on your counter.">
+<meta name="theme-color" content="#14100D">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%2314100D'/%3E%3Cpath d='M22 52V27a11 11 0 0 1 22 0v7' fill='none' stroke='%23ECE3D6' stroke-width='3'/%3E%3Ccircle cx='44' cy='42' r='2.6' fill='%23C4A57D'/%3E%3C/svg%3E">
+<!-- DEPLOY STEP: patch og:url and og:image with the live absolute URL before zipping -->
+<meta property="og:title" content="Farless | Five waters. One tap.">
+<meta property="og:description" content="Boiling, filtered, sparkling, hot and cold water from one quiet tap.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://example.com/">
+<meta property="og:image" content="https://example.com/assets/hero-ending.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@200;300;400;500&display=swap" rel="stylesheet">
+<style>
+/* Farless, dark warm edition. One committed direction in the spirit of Gessi:
+   espresso darks sampled from the film's shadows, warm ivory type, brushed bronze in rare doses,
+   one light Italian-geometric family, hairlines instead of boxes, square edges throughout. */
+:root{
+  color-scheme:dark;
+  --canvas:#14100D;
+  --canvas-2:#1A1511;
+  --panel:#221B16;
+  --hair:rgba(236,227,214,.14);
+  --hair-strong:rgba(236,227,214,.32);
+  --text-primary:#ECE3D6;
+  --text-secondary:#A69A8C;
+  --accent:#C4A57D;
+  --accent-soft:rgba(196,165,125,.35);
+  --hot:#D9573F;
+  --cool:#F6F1EA;
+  --on-accent:#14100D;
+  --film-ink:#F3ECE2;
+  --film-shade:20,15,11;
+  --film-shadow:0 1px 2px rgba(12,9,7,.6),0 6px 28px rgba(12,9,7,.5);
+  --ease-out:cubic-bezier(.22,.61,.36,1);
+  --ease-soft:cubic-bezier(.45,0,.2,1);
+  --font:"Jost","Futura","Century Gothic",system-ui,sans-serif;
+  --gutter:max(5vw,24px);
+}
+*,*::before,*::after{box-sizing:border-box}
+html{overflow-x:hidden;overflow-x:clip;scroll-behavior:smooth;background:var(--canvas)}
+body{margin:0;overflow-x:hidden;overflow-x:clip;background:var(--canvas);color:var(--text-primary);font:300 1.0625rem/1.75 var(--font);-webkit-font-smoothing:antialiased;animation:pagein 1.1s var(--ease-out) both}
+@keyframes pagein{from{opacity:0}to{opacity:1}}
+::selection{background:var(--accent-soft);color:var(--text-primary)}
+img{max-width:100%;display:block}
+a{color:inherit}
+h1,h2,h3{font-family:var(--font);font-weight:200;letter-spacing:-.005em;line-height:1.04;margin:0;text-wrap:balance}
+p{margin:0}
+.sr{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.skip{position:absolute;left:16px;top:-60px;z-index:100;background:var(--accent);color:var(--on-accent);padding:12px 18px;text-decoration:none;font:400 .72rem/1 var(--font);letter-spacing:.24em;text-transform:uppercase;transition:top .3s var(--ease-out)}
+.skip:focus{top:16px}
+:focus-visible{outline:1px solid var(--accent);outline-offset:4px}
+/* small spaced capitals: the house label */
+.label{display:block;font:400 .72rem/1.3 var(--font);letter-spacing:.28em;text-transform:uppercase;color:var(--text-secondary)}
+.label .n{color:var(--accent);margin-right:1.1em}
+
+/* ---------- one environment: warm dark with a slow bronze breath and fine grain ---------- */
+.env{position:fixed;inset:-20%;z-index:-1;pointer-events:none;background:
+  radial-gradient(38% 32% at 28% 30%,rgba(196,165,125,.07),rgba(196,165,125,0) 70%),
+  radial-gradient(34% 30% at 74% 70%,rgba(120,92,64,.08),rgba(120,92,64,0) 70%);
+  animation:drift 76s var(--ease-soft) -18s infinite alternate}
+@keyframes drift{0%{transform:translate3d(-3%,-2%,0) rotate(0deg)}100%{transform:translate3d(3%,2%,0) rotate(6deg)}}
+.grain{position:fixed;inset:0;z-index:60;pointer-events:none;opacity:.05;mix-blend-mode:overlay;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+@media (pointer:coarse){.grain{display:none}}   /* a full-screen blend layer costs phones a frame budget for barely visible texture */
+
+/* ---------- header: transparent over the film, solid once you leave it ---------- */
+nav.top{position:fixed;top:0;left:0;right:0;z-index:50;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:24px;padding:calc(22px + env(safe-area-inset-top, 0px)) var(--gutter) 22px;color:var(--film-ink);transition:background-color .6s var(--ease-out),padding .6s var(--ease-out),border-color .6s var(--ease-out);border-bottom:1px solid transparent}
+nav.top.solid{background:rgba(20,16,13,.86);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom-color:var(--hair);padding-top:calc(16px + env(safe-area-inset-top, 0px));padding-bottom:16px}
+nav.top ul{display:flex;gap:clamp(18px,2.4vw,36px);list-style:none;margin:0;padding:0}
+nav.top ul.r{justify-content:flex-end;align-items:center}
+nav.top ul a{text-decoration:none;font:400 .7rem/1 var(--font);letter-spacing:.24em;text-transform:uppercase;color:rgba(243,236,226,.78);transition:color .35s var(--ease-out);position:relative;padding:6px 0}
+nav.top ul a::after{content:"";position:absolute;left:0;right:0;bottom:0;height:1px;background:currentColor;transform:scaleX(0);transform-origin:left;transition:transform .45s var(--ease-out)}
+nav.top ul a:hover{color:var(--film-ink)}
+nav.top ul a:hover::after{transform:scaleX(1)}
+nav.top ul a.buy{color:var(--accent)}
+.brand{justify-self:center;text-decoration:none;font:400 1.02rem/1 var(--font);letter-spacing:.46em;text-transform:uppercase;margin-right:-.46em;color:var(--film-ink)}
+@media (max-width:900px){
+  nav.top{grid-template-columns:1fr auto}
+  nav.top ul.l,nav.top ul.r li:not(.keep){display:none}
+  .brand{justify-self:start}
+}
+
+/* ---------- buttons: square, outlined, a line that reaches out on hover ---------- */
+.btn{display:inline-flex;align-items:center;gap:16px;text-decoration:none;font:400 .72rem/1 var(--font);letter-spacing:.26em;text-transform:uppercase;color:var(--film-ink);border:1px solid rgba(243,236,226,.55);padding:18px 26px 18px 30px;background:transparent;transition:background-color .45s var(--ease-out),color .45s var(--ease-out),border-color .45s var(--ease-out);text-shadow:none}
+.btn::after{content:"";width:22px;height:1px;background:currentColor;transition:width .45s var(--ease-out)}
+.btn:hover{background:var(--film-ink);color:var(--on-accent);border-color:var(--film-ink)}
+.btn:hover::after{width:36px}
+.btn.solid{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.btn.solid:hover{background:var(--text-primary);border-color:var(--text-primary)}
+@media (pointer:coarse){.btn{min-height:48px}}
+
+/* ---------- hero: full screen, point to point ----------
+   The film fills the first screen. Each scroll gesture plays it on to the next point and
+   stops; the dots on the right show where you are. The words sit bottom-left over a soft
+   shade, clear of her face and the pour. */
+.hero{position:relative;height:100vh;height:100svh;min-height:520px;overflow:hidden;background:var(--canvas)}
+.stage{position:absolute;inset:0;overflow:hidden}
+.pan{position:absolute;inset:0}
+.poster,.poster-end{position:absolute;inset:0;background-size:cover;background-position:20% 50%}
+.poster-end{opacity:var(--pe,0);transition:opacity 1s var(--ease-soft)}
+#hero{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:20% 50%;opacity:0;transition:opacity .8s var(--ease-out);will-change:transform;transform:translateZ(0)}
+.video-ready #hero{opacity:1}
+.shade{position:absolute;inset:0;pointer-events:none;background:
+  radial-gradient(ellipse 62% 60% at 0% 100%,rgba(var(--film-shade),.78) 0%,rgba(var(--film-shade),.5) 42%,rgba(var(--film-shade),0) 78%),
+  linear-gradient(to top,rgba(var(--film-shade),.4),rgba(var(--film-shade),0) 34%),
+  linear-gradient(to bottom,rgba(var(--film-shade),.55),rgba(var(--film-shade),0) 20%),
+  linear-gradient(to left,rgba(var(--film-shade),.5),rgba(var(--film-shade),0) 12%)}
+.band{position:absolute;isolation:isolate;left:var(--gutter);bottom:clamp(64px,12vh,128px);width:min(27vw,420px);pointer-events:none;opacity:0;color:var(--film-ink);text-shadow:var(--film-shadow);transition:opacity .35s var(--ease-out)}
+.band.on{opacity:1;transition:opacity .8s var(--ease-out) .2s}
+.band::before{content:"";position:absolute;inset:-90% -70% -70% -60%;z-index:-1;pointer-events:none;background:radial-gradient(closest-side at 48% 54%,rgba(var(--film-shade),var(--sa,.78)) 0%,rgba(var(--film-shade),calc(var(--sa,.78)*.84)) 55%,rgba(var(--film-shade),0) 100%)}
+.band.settle{--sa:.84}
+.band.settle::before{inset:-70% -70% -55% -60%}
+.band .label{color:rgba(243,236,226,.82);margin-bottom:20px;display:flex;align-items:center;gap:14px}
+.band .label::after{content:"";width:40px;height:1px;background:currentColor;opacity:.6;transform:scaleX(var(--k,0));transform-origin:left}
+.band .btn{text-shadow:none}
+.band.on .btn{pointer-events:auto}
+.hx{font-size:clamp(3rem,6vw,6.4rem);font-weight:200;letter-spacing:-.01em}
+.hl{font-size:clamp(1.6rem,2.6vw,2.8rem);font-weight:200;letter-spacing:0;line-height:1.16}
+.band .hx + .hl{margin-top:12px;color:rgba(243,236,226,.9)}
+.hs{font-size:clamp(1.05rem,1.25vw,1.2rem);font-weight:300;margin-top:16px;max-width:34ch}
+.band .hs{color:rgba(243,236,226,.88)}
+/* point one: blur-to-sharp (two copies, static blur, opacity only) */
+.bts{position:relative;display:block}
+.bts .soft{position:absolute;inset:0;filter:blur(10px);opacity:calc(1 - var(--k,0))}
+.bts .sharp{display:block;opacity:var(--k,0)}
+/* drift-down per word, echoing the pour */
+.dd .w{display:inline-block;--kc:clamp(0,(var(--k,0) - var(--th,0))*2.8,1);opacity:var(--kc);transform:translateY(calc((1 - var(--kc))*-20px))}
+/* word rise into a staged settle */
+.rise .w{display:inline-block;--kc:clamp(0,(var(--k,0) - var(--th,0))*3,1);opacity:var(--kc);transform:translateY(calc((1 - var(--kc))*20px))}
+.settle .hs{opacity:clamp(0,(var(--k,0) - .66)*4,1);transform:translateY(calc((1 - clamp(0,(var(--k,0) - .66)*4,1))*10px))}
+.settle .cta-row{margin-top:30px;opacity:clamp(0,(var(--k,0) - .78)*5,1)}
+/* the point dots: quiet ivory points; the current one stretches into a short bar */
+.dots{position:absolute;right:max(2.4vw,16px);top:50%;transform:translateY(-50%);display:flex;flex-direction:column;align-items:center;z-index:2}
+.dots button{all:unset;position:relative;box-sizing:border-box;width:24px;height:22px;display:grid;place-items:center;cursor:pointer}
+.dots button::before{content:"";width:3px;height:3px;border-radius:2px;background:var(--film-ink);opacity:.42;box-shadow:0 0 6px rgba(var(--film-shade),.45);transition:height .7s var(--ease-out),opacity .5s var(--ease-out),transform .4s var(--ease-out)}
+.dots button[aria-current]{height:40px}
+.dots button[aria-current]::before{height:22px;opacity:1}
+.dots button{transition:height .7s var(--ease-out)}
+.dots button:not([aria-current]):hover::before{opacity:.9;transform:scale(1.5)}
+.dots button:focus-visible{outline:1px solid var(--film-ink);outline-offset:-3px}
+@media (pointer:coarse){.dots button{width:44px;height:30px}.dots button[aria-current]{height:44px}}
+/* scroll cue: a hairline that fills as the film loads, then a drop of light runs down it */
+.hero-note{position:absolute;left:50%;bottom:26px;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:12px;margin:0;color:var(--film-ink);font:400 .64rem/1 var(--font);letter-spacing:.32em;text-transform:uppercase;padding-left:.32em;transition:opacity .5s var(--ease-out)}
+.stage:not([data-point="0"]) .hero-note{opacity:0}
+.hero-note .t-swipe{display:none}
+@media (pointer:coarse){.hero-note .t-scroll{display:none}.hero-note .t-swipe{display:inline}}
+.hero-note .line{position:relative;width:1px;height:44px;background:rgba(243,236,226,.25);overflow:hidden}
+.hero-note .line::before{content:"";position:absolute;inset:0;background:var(--film-ink);transform:scaleY(var(--lp,0));transform-origin:top;transition:transform .2s linear}
+.hero-note .line::after{content:"";position:absolute;left:0;top:-14px;width:1px;height:14px;background:var(--accent);opacity:0}
+.video-ready .hero-note .line::before,.video-failed .hero-note .line::before{opacity:0;transition:opacity .6s}
+.video-ready .hero-note .line::after,.video-failed .hero-note .line::after{opacity:1;animation:drop 2.4s var(--ease-soft) -.4s infinite}
+@keyframes drop{0%{transform:translateY(0)}70%,100%{transform:translateY(60px)}}
+@media (max-height:560px){.hero-note{display:none}}
+
+/* ---------- portrait screens: the film fills the top and pans to follow the story ----------
+   A tall screen shows only a slice of the wide film, so the slice slides from the faucet and
+   glass, to the hand on the handle, the pour, and her smile. The words sit on the dark below. */
+@media (orientation: portrait){
+  .hero{--film:64%}
+  .pan{inset:auto;top:0;left:0;height:var(--film);width:auto;aspect-ratio:16/9;transform:translate3d(calc(-1 * var(--panx, 0px)),0,0);transition:transform 1.6s cubic-bezier(.45,0,.2,1);will-change:transform}
+  .pan.snap{transition:none}
+  .pan .poster,.pan .poster-end{background-position:50% 50%}
+  .pan #hero{object-position:50% 50%}
+  .shade{background:linear-gradient(to bottom,rgba(var(--film-shade),.55) 0%,rgba(var(--film-shade),0) 15%,rgba(var(--film-shade),0) calc(var(--film) - 22%),var(--canvas) calc(var(--film) - 1%))}
+  .band{left:24px;right:24px;width:auto;bottom:calc(40px + env(safe-area-inset-bottom, 0px));text-shadow:none}
+  .band[data-t="0"]{bottom:calc(122px + env(safe-area-inset-bottom, 0px))}
+  .hero-note .line{height:36px}
+  .band::before{display:none}
+  .band .label{color:var(--text-secondary);margin-bottom:16px}
+  .hx{font-size:clamp(2.8rem,12.5vw,3.8rem)}
+  .hl{font-size:clamp(1.5rem,6.8vw,2.1rem)}
+  .band .hx + .hl,.band .hs{color:rgba(243,236,226,.82)}
+  .band.settle h2{font-size:clamp(2.1rem,9.4vw,2.9rem)!important}
+  .settle .cta-row{margin-top:24px}
+  .dots{top:calc(var(--film) / 2);right:10px}
+  .hero-note{bottom:calc(20px + env(safe-area-inset-bottom, 0px))}
+}
+@media (orientation: portrait) and (max-height: 700px){
+  .hero{--film:56%}
+  .band[data-t="0"]{bottom:calc(104px + env(safe-area-inset-bottom, 0px))}
+  .hero-note .line{height:26px}
+}
+@media (orientation: portrait) and (min-width: 600px){
+  .band{left:7vw;right:7vw}
+  .hx{font-size:clamp(3.4rem,9vw,5.2rem)}
+  .hl{font-size:clamp(2rem,4.6vw,2.9rem)}
+  .band.settle h2{font-size:clamp(2.8rem,6.8vw,4.2rem)!important}
+  .band[data-t="0"]{bottom:calc(140px + env(safe-area-inset-bottom, 0px))}
+  .dots{right:3vw}
+}
+
+/* ---------- static hero: only where the film cannot fit (phones held sideways) or motion is reduced ---------- */
+.static-hero{display:none}
+@media (orientation: landscape) and (pointer: coarse) and (max-height: 560px), (prefers-reduced-motion: reduce){
+  .hero{display:none}
+  .static-hero{display:block;position:relative;height:100vh;height:100svh;min-height:520px;overflow:hidden;color:var(--film-ink);background:var(--canvas) url('assets/hero-ending.jpg') var(--shx,27%) 50%/cover no-repeat}
+  .static-hero::before{content:"";position:absolute;inset:0;background:linear-gradient(to top,rgba(var(--film-shade),.9) 0%,rgba(var(--film-shade),.62) 38%,rgba(var(--film-shade),0) 70%),linear-gradient(to bottom,rgba(var(--film-shade),.55),rgba(var(--film-shade),0) 22%)}
+  .static-hero .sh-img{position:absolute;inset:0}
+  .static-hero .sh-copy{position:absolute;isolation:isolate;left:16px;right:16px;bottom:calc(40px + env(safe-area-inset-bottom, 0px));text-shadow:var(--film-shadow)}
+  .static-hero .sh-copy::before{content:"";position:absolute;inset:-60% -40% -40% -40%;z-index:-1;pointer-events:none;background:radial-gradient(closest-side at 46% 52%,rgba(var(--film-shade),.8) 0%,rgba(var(--film-shade),.66) 55%,rgba(var(--film-shade),0) 100%)}
+  .static-hero .label{color:rgba(243,236,226,.82);margin-bottom:18px}
+  .static-hero .hx{font-size:clamp(2.5rem,10vw,4.6rem)}
+  .static-hero .hs{color:rgba(243,236,226,.88)}
+  .static-hero .cta-row{margin-top:28px}
+}
+@media (min-aspect-ratio: 4/3){
+  .static-hero{--shx:50%}
+  .static-hero .sh-copy{left:var(--gutter);right:auto;max-width:600px}
+}
+@media (orientation: landscape) and (pointer: coarse) and (max-height: 560px){
+  .static-hero{min-height:0}
+  .static-hero .sh-copy{bottom:calc(20px + env(safe-area-inset-bottom, 0px));max-width:36vw}
+  .static-hero .label{display:none}
+  .static-hero .hx{font-size:clamp(1.6rem,8.5vh,2.3rem)}
+  .static-hero .hs{font-size:.92rem;margin-top:10px}
+  .static-hero .cta-row{margin-top:16px}
+}
+
+/* ---------- sections ---------- */
+main{display:block}
+section.sec{position:relative;padding:clamp(110px,16vh,180px) var(--gutter)}
+section.sec.tone{background:var(--canvas-2)}
+.wrap{width:min(1240px,100%);margin:0 auto}
+.label.kicker{margin-bottom:26px}
+.h2{font-size:clamp(2.5rem,4.8vw,4.6rem)}
+.lede{color:var(--text-secondary);font-size:clamp(1.05rem,1.25vw,1.2rem);max-width:44ch;margin-top:22px}
+
+/* entrances */
+[data-in] .part{opacity:0;transform:translateY(18px);transition:opacity 1s var(--ease-out),transform 1s var(--ease-out)}
+[data-in].in .part{opacity:1;transform:none}
+[data-in].in .part:nth-child(2){transition-delay:.1s}
+[data-in].in .part:nth-child(3){transition-delay:.2s}
+[data-in].in .part:nth-child(4){transition-delay:.3s}
+[data-in].in .part:nth-child(5){transition-delay:.4s}
+[data-in].in.settled .part,[data-in].in.settled .part:nth-child(2),[data-in].in.settled .part:nth-child(3),[data-in].in.settled .part:nth-child(4),[data-in].in.settled .part:nth-child(5){transition-delay:0s}
+
+/* signature: the arc seam, the spout's curve drawn in a hairline */
+.seam{height:clamp(120px,18vh,200px);display:flex;justify-content:center;align-items:center}
+.seam svg{width:min(560px,80vw);height:100%;overflow:visible}
+.seam path{fill:none;stroke:var(--hair-strong);stroke-width:1;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:calc(1 - var(--d,0));vector-effect:non-scaling-stroke}
+.seam circle{fill:var(--accent);opacity:clamp(0,(var(--d,0) - .9)*10,1)}
+
+/* shop: the product first, then the collections */
+.shop .head{display:flex;justify-content:space-between;align-items:end;gap:32px;flex-wrap:wrap;margin-bottom:clamp(56px,8vh,88px)}
+.feature{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:clamp(40px,7vw,120px);align-items:center}
+.f-frame{position:relative;aspect-ratio:4/5;overflow:hidden;background:var(--panel)}
+.f-frame img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:opacity .45s var(--ease-out),transform 1.4s var(--ease-out)}
+.f-frame:hover img{transform:scale(1.025)}
+.f-frame img.swap{opacity:0}
+.f-thumbs{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
+.f-thumbs button{all:unset;box-sizing:border-box;cursor:pointer;position:relative;width:64px;height:64px;overflow:hidden;opacity:.5;transition:opacity .4s var(--ease-out)}
+.f-thumbs button::after{content:"";position:absolute;inset:0;border:1px solid var(--hair-strong);transition:border-color .4s var(--ease-out)}
+.f-thumbs button:hover,.f-thumbs button[aria-current]{opacity:1}
+.f-thumbs button[aria-current]::after{border-color:var(--text-primary)}
+.f-thumbs button:focus-visible{outline:1px solid var(--accent);outline-offset:3px}
+.f-thumbs img{width:100%;height:100%;object-fit:cover;display:block}
+.f-info .label{margin-bottom:24px}
+.f-info h3{font:200 clamp(2.2rem,3.6vw,3.6rem)/1.08 var(--font);letter-spacing:-.005em}
+.f-info .excerpt{color:var(--text-secondary);margin-top:22px;max-width:42ch}
+.f-info .price{margin-top:22px;font:300 1.15rem/1 var(--font);letter-spacing:.06em}
+.f-actions{display:flex;flex-wrap:wrap;align-items:center;gap:30px;margin-top:38px}
+.f-actions form{margin:0}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.btn[disabled]:hover{background:transparent;color:var(--film-ink);border-color:rgba(243,236,226,.55)}
+.link{text-decoration:none;font:400 .72rem/1 var(--font);letter-spacing:.26em;text-transform:uppercase;color:var(--text-secondary);position:relative;padding:8px 0;transition:color .35s var(--ease-out)}
+.link::after{content:"";position:absolute;left:0;right:0;bottom:0;height:1px;background:currentColor;transform:scaleX(.35);transform-origin:left;transition:transform .5s var(--ease-out)}
+.link:hover{color:var(--text-primary)}
+.link:hover::after{transform:scaleX(1)}
+.f-notes{list-style:none;margin:44px 0 0;padding:26px 0 0;border-top:1px solid var(--hair);display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.f-notes li{color:var(--text-secondary);font-size:.95rem;line-height:1.5}
+.f-notes .label{color:var(--text-primary);margin-bottom:8px}
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:56px 28px;list-style:none;margin:0;padding:0}
+.pcard a{display:block;text-decoration:none}
+.pcard .pimg{position:relative;aspect-ratio:4/5;overflow:hidden;background:var(--panel)}
+.pcard .pimg img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:opacity .7s var(--ease-out),transform 1.4s var(--ease-out)}
+.pcard .pimg img + img{opacity:0}
+.pcard a:hover .pimg img{transform:scale(1.03)}
+.pcard a:hover .pimg img + img{opacity:1}
+.pcard h3{font:300 .92rem/1.35 var(--font);letter-spacing:.2em;text-transform:uppercase;margin-top:20px}
+.pcard .price,.pcard .sold{display:block;margin-top:8px;color:var(--text-secondary);font-size:.95rem}
+.collections{margin-top:clamp(110px,16vh,170px)}
+.collections .chead{display:flex;justify-content:space-between;align-items:baseline;gap:20px;border-bottom:1px solid var(--hair);padding-bottom:18px;margin-bottom:34px}
+.ccards{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:28px;list-style:none;margin:0;padding:0}
+.ccard a{display:block;text-decoration:none}
+.ccard .cimg{position:relative;aspect-ratio:3/2;overflow:hidden;background:var(--panel)}
+.ccard .cimg img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform 1.4s var(--ease-out)}
+.ccard a:hover .cimg img{transform:scale(1.04)}
+.ccard .cimg.empty{display:grid;place-items:center;border:1px solid var(--hair)}
+.ccard .cimg.empty svg{width:42%;height:auto;overflow:visible}
+.ccard .cimg.empty path{fill:none;stroke:var(--hair-strong);stroke-width:1;vector-effect:non-scaling-stroke;transition:stroke .6s var(--ease-out)}
+.ccard .cimg.empty circle{fill:var(--accent);opacity:.6}
+.ccard a:hover .cimg.empty path{stroke:var(--accent)}
+.ccard .cmeta{display:flex;justify-content:space-between;align-items:baseline;gap:16px;margin-top:18px}
+.ccard h3{font:300 1.15rem/1.3 var(--font);letter-spacing:.02em}
+/* colour picker: the frame is a horizontal track of finishes, the picker sits in the info column */
+.f-frame.slides{touch-action:pan-y;cursor:grab;user-select:none;-webkit-user-select:none}
+.f-frame.slides.dragging{cursor:grabbing}
+.f-track{position:absolute;inset:0;display:flex;transform:translate3d(calc(var(--pos,0) * -100%),0,0);will-change:transform}
+.f-slide{position:relative;flex:0 0 100%;height:100%;margin:0;overflow:hidden}
+.f-frame.slides img{inset:0 auto 0 -7%;width:114%;max-width:none;translate:calc(var(--d,0) * -6.14%) 0;transition:scale 1.4s var(--ease-out);-webkit-user-drag:none;pointer-events:none}
+.f-frame.slides:hover img{transform:none;scale:1.025}
+.f-rail{display:flex;align-items:center;gap:22px;margin-top:20px}
+.f-rail .bar{position:relative;flex:1;height:1px;background:var(--hair)}
+.f-rail .bar i{position:absolute;left:0;top:0;height:1px;width:calc(100% / var(--n,4));background:var(--text-primary);transform:translate3d(calc(var(--pos,0) * 100%),0,0);will-change:transform}
+.f-rail .label{flex:none;font-variant-numeric:tabular-nums;letter-spacing:.2em}
+.f-rail .label b{font-weight:400;color:var(--text-primary)}
+.finish{margin-top:40px;padding-top:30px;border-top:1px solid var(--hair)}
+.finish-h{font:400 clamp(1.3rem,1.8vw,1.65rem)/1.25 var(--font);color:var(--text-primary)}
+.finish-h span{font-weight:300;color:var(--text-secondary)}
+.f-info .finish-name{display:flex;align-items:baseline;gap:14px;margin-top:20px;font:400 1rem/1.4 var(--font);letter-spacing:.02em}
+.f-info .finish-name .label{margin:0}
+.finish-name b{display:inline-block;font-weight:400}
+.swatches{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 0 -7px}
+.swatches button{all:unset;box-sizing:border-box;position:relative;width:48px;height:48px;border-radius:50%;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.swatches button::before{content:"";position:absolute;inset:7px;border-radius:50%;background:var(--sw);box-shadow:inset 0 0 0 1px rgba(255,255,255,.14),inset 0 -5px 9px rgba(0,0,0,.22);transition:transform .5s var(--ease-out)}
+.swatches button::after{content:"";position:absolute;inset:2px;border-radius:50%;border:1px solid var(--text-primary);opacity:0;transform:scale(.86);transition:opacity .45s var(--ease-out),transform .55s var(--ease-out),border-color .3s var(--ease-out)}
+.swatches button:hover::after{opacity:.35;transform:none}
+.swatches button[aria-checked="true"]::after{opacity:1;transform:none}
+.swatches button:active::before{transform:scale(.94)}
+.swatches button:focus-visible{outline:none}
+.swatches button:focus-visible::after{opacity:1;transform:none;border-color:var(--accent)}
+/* phones and tablets: name, then the photo with the picker right under it, so both stay in view */
+@media (max-width:860px){
+  .feature{row-gap:0}
+  .f-info{display:contents}
+  .f-info > .label{order:0}
+  .f-info > h3{order:1;margin-bottom:30px}
+  .f-media{order:2}
+  .finish{order:3;margin-top:22px;padding-top:0;border-top:0}
+  .f-info .excerpt{order:4;margin-top:34px}
+  .f-actions{order:5}
+  .f-notes{order:6}
+}
+@media (max-width:600px){
+  .f-frame.slides{aspect-ratio:5/6}
+  .f-rail{margin-top:16px}
+  .finish{margin-top:18px}
+  .f-info .finish-name{margin-top:12px}
+  .swatches{margin-top:8px}
+}
+@media (max-width:860px){.feature{grid-template-columns:1fr}}
+@media (max-width:600px){.f-notes{grid-template-columns:1fr}}
+
+/* five waters: five columns divided by hairlines, no boxes */
+.waters .head{display:grid;grid-template-columns:1.2fr 1fr;gap:48px;align-items:end}
+.cards{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));margin:88px 0 0;list-style:none;padding:0;border-top:1px solid var(--hair)}
+.card{position:relative;overflow:hidden;padding:34px 26px 10px;border-left:1px solid var(--hair);min-height:300px;display:flex;flex-direction:column}
+.card:first-child{border-left:0;padding-left:0}
+.card::before{content:"";position:absolute;left:0;right:0;top:-1px;height:1px;background:var(--accent);transform:scaleX(0);transform-origin:left;transition:transform .7s var(--ease-out)}
+.card:first-child::before{right:26px}
+.card:hover::before{transform:scaleX(1)}
+.card .label .n{margin:0}
+.card svg.ic{width:40px;height:40px;color:var(--text-primary);margin:34px 0 44px}
+.card h3{font:300 1.05rem/1.2 var(--font);letter-spacing:.2em;text-transform:uppercase}
+.card p{color:var(--text-secondary);font-size:.98rem;line-height:1.65;margin-top:12px}
+.bubbles{position:absolute;inset:0;pointer-events:none}
+.bubbles i{position:absolute;bottom:-12px;width:var(--s,6px);height:var(--s,6px);left:var(--x,50%);border-radius:50%;border:1px solid var(--accent-soft);opacity:0;animation:rise var(--t,9s) linear var(--dl,-2s) infinite}
+@keyframes rise{0%{transform:translateY(0);opacity:0}15%{opacity:.8}100%{transform:translateY(-320px);opacity:0}}
+@media (max-width:1100px){.cards{grid-template-columns:repeat(3,minmax(0,1fr))}.card:nth-child(4){border-left:0;padding-left:0}.card{border-bottom:1px solid var(--hair)}}
+@media (max-width:860px){.waters .head{grid-template-columns:1fr}}
+@media (max-width:720px){.cards{grid-template-columns:1fr 1fr}.card,.card:nth-child(4){border-left:1px solid var(--hair);padding-left:22px}.card:nth-child(odd){border-left:0;padding-left:0}.card{min-height:250px}}
+@media (max-width:420px){.cards{grid-template-columns:1fr}.card,.card:nth-child(odd){border-left:0;padding-left:0;min-height:0;padding-bottom:30px}}
+
+/* what leaves your counter */
+.leaves .wrap{display:grid;grid-template-columns:1fr 1.4fr;gap:64px;align-items:start}
+.gone{list-style:none;margin:0;padding:0}
+.gone li{position:relative;font:200 clamp(2.2rem,4.6vw,4.2rem)/1.22 var(--font);color:var(--text-secondary);width:max-content;max-width:100%}
+.gone li svg{position:absolute;left:-2%;top:54%;width:104%;height:12px;overflow:visible;pointer-events:none}
+.gone li path{fill:none;stroke:var(--accent);stroke-width:1.5;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:1;transition:stroke-dashoffset 1.2s var(--ease-out)}
+.gone.in li:nth-child(1) path{transition-delay:.35s}
+.gone.in li:nth-child(2) path{transition-delay:.55s}
+.gone.in li:nth-child(3) path{transition-delay:.75s}
+.gone.in li:nth-child(4) path{transition-delay:.95s}
+.gone.in li path{stroke-dashoffset:0}
+.calm{margin-top:48px;padding-top:28px;border-top:1px solid var(--hair);font:300 clamp(1.3rem,1.9vw,1.75rem)/1.3 var(--font);color:var(--text-primary);position:relative;max-width:100%}
+.calm::after{content:"";position:absolute;left:0;top:-1px;width:64px;height:1px;background:var(--accent);opacity:.5;animation:breathe 7s var(--ease-soft) -2s infinite alternate}
+@keyframes breathe{to{opacity:1;width:120px}}
+@media (max-width:860px){.leaves .wrap{grid-template-columns:1fr}}
+
+/* safety: press the pin, then turn. Back for hot (the line warms to red), forward for sparkling (it cools
+   to white). Every moving part is its own layer and only transform and opacity change, so it stays smooth. */
+.safety .wrap{display:grid;grid-template-columns:1fr 1fr;gap:clamp(40px,7vw,120px);align-items:center}
+.dial-col{display:flex;flex-direction:column;align-items:center}
+.dial-wrap{--ang:0;--pin:0;--m:0;--mh:0;--ms:0;--dir:1;position:relative;display:grid;place-items:center;aspect-ratio:1;max-width:440px;width:100%;margin:0 auto;border-radius:50%;border:1px solid var(--hair)}
+.dial-wrap::before{content:"";position:absolute;inset:16%;border-radius:50%;box-shadow:0 0 90px rgba(196,165,125,.16);opacity:.4;animation:glow 6s var(--ease-soft) -1.5s infinite alternate}
+@keyframes glow{to{opacity:1}}
+.dial{all:unset;cursor:grab;position:relative;width:56%;aspect-ratio:1;border-radius:50%;touch-action:none;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
+.grabbing .dial{cursor:grabbing}
+.dial:focus-visible{outline:1px solid var(--accent);outline-offset:10px}
+/* the knob's drop shadow: a resting and a pressed layer, crossfaded */
+.dial::before,.dial::after{content:"";position:absolute;inset:0;border-radius:50%;pointer-events:none;will-change:opacity}
+.dial::before{box-shadow:0 22px 44px rgba(0,0,0,.55);opacity:calc(1 - var(--pin))}
+.dial::after{box-shadow:0 11px 26px rgba(0,0,0,.6);opacity:var(--pin)}
+.dial .face{position:absolute;inset:0;border-radius:50%;will-change:transform;background:
+  repeating-conic-gradient(from 0deg,rgba(255,255,255,.035) 0deg 1.2deg,rgba(0,0,0,.05) 1.2deg 2.4deg),
+  radial-gradient(circle at 34% 28%,#8C8178 0%,#4A423B 38%,#2A2420 72%,#1C1714 100%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.12),inset 0 -10px 22px rgba(0,0,0,.45);
+  transform:scale(calc(1 - .03*var(--pin))) rotate(calc(var(--ang)*1deg))}
+/* the indicator line: bronze at rest, warming to red going back, cooling to white going forward */
+.dial .notch{position:absolute;left:50%;top:7%;width:2px;height:17%;margin-left:-1px}
+.notch i{position:absolute;inset:0;border-radius:1px;will-change:opacity}
+.notch .n0{background:var(--accent);opacity:calc(1 - var(--mh) - var(--ms))}
+.notch .n1{background:var(--hot);opacity:var(--mh);box-shadow:0 0 10px rgba(217,87,63,.7)}
+.notch .n2{background:var(--cool);opacity:var(--ms);box-shadow:0 0 10px rgba(246,241,234,.55)}
+/* the pin: a steel cap that presses down before the knob will turn */
+.pin{position:absolute;left:50%;top:50%;width:24%;aspect-ratio:1;margin:-12% 0 0 -12%;pointer-events:none}
+.pin::after{content:"";position:absolute;inset:-14%;border-radius:50%;border:1px solid rgba(236,227,214,.12)}
+.pin-shadow,.pin-cap,.pin-cap::before,.pin .g{position:absolute;border-radius:50%}
+.pin-shadow{inset:0;box-shadow:0 7px 12px rgba(0,0,0,.6),0 0 0 1px rgba(0,0,0,.35);opacity:calc(1 - .85*var(--pin));will-change:opacity}
+.pin-cap{inset:0;overflow:hidden;will-change:transform;
+  background:radial-gradient(circle at 36% 30%,#B3A89E 0%,#6A6058 42%,#3A322D 78%,#2A2420 100%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 0 0 1px rgba(0,0,0,.35);
+  transform:translateY(calc(1.5px*var(--pin))) scale(calc(1 - .1*var(--pin)))}
+.pin-cap::before{content:"";inset:0;background:radial-gradient(circle at 50% 30%,rgba(0,0,0,.05) 30%,rgba(0,0,0,.55) 100%);opacity:var(--pin);will-change:opacity}
+.pin .g{inset:38%;will-change:opacity}
+.pin .g0{background:var(--accent);box-shadow:0 0 12px rgba(196,165,125,.7);opacity:calc(.15 + .85*var(--pin)*(1 - var(--mh) - var(--ms)))}
+.pin .g1{background:var(--hot);box-shadow:0 0 12px rgba(217,87,63,.75);opacity:calc(var(--pin)*var(--mh))}
+.pin .g2{background:var(--cool);box-shadow:0 0 12px rgba(246,241,234,.6);opacity:calc(var(--pin)*var(--ms))}
+/* ring: ticks for off, hot and sparkling, and an arc that follows the turn in the line's colour */
+.dial-ring,.dial-arc{position:absolute;inset:6%;pointer-events:none;overflow:visible}
+.dial-ring line{stroke:var(--hair-strong);stroke-width:1;vector-effect:non-scaling-stroke}
+.dial-arc{transform:scaleX(var(--dir))}
+.dial-arc circle{fill:none;stroke-width:.35;stroke-dasharray:1;stroke-dashoffset:calc(1 - var(--m)*.25);transform:rotate(-90deg);transform-origin:50% 50%}
+.dial-arc .a1{stroke:var(--hot);opacity:clamp(0,var(--mh)*20,1)}
+.dial-arc .a2{stroke:var(--cool);opacity:clamp(0,var(--ms)*20,1)}
+.ind{position:absolute;top:50%;width:8%;aspect-ratio:1;transform:translateY(-50%);color:var(--text-secondary);opacity:.6;transition:color .6s var(--ease-out),opacity .6s var(--ease-out);pointer-events:none}
+.ind svg{width:100%;height:100%;display:block;overflow:visible}
+.ind-hot{left:9.5%}
+.ind-spark{right:9.5%}
+.is-hot .ind-hot{color:var(--hot);opacity:1}
+.is-spark .ind-spark{color:var(--cool);opacity:1}
+.ind.pulse svg{animation:detent .8s var(--ease-out)}
+@keyframes detent{35%{transform:scale(1.2)}}
+.dial-controls{display:flex;justify-content:center;align-items:center;gap:clamp(22px,4vw,44px);margin-top:30px;flex-wrap:wrap}
+.dc{all:unset;box-sizing:border-box;cursor:pointer;display:inline-flex;align-items:center;gap:10px;padding:10px 2px;position:relative;font:400 .72rem/1 var(--font);letter-spacing:.26em;text-transform:uppercase;color:var(--text-secondary);transition:color .35s var(--ease-out)}
+.dc::after{content:"";position:absolute;left:0;right:0;bottom:2px;height:1px;background:currentColor;transform:scaleX(0);transform-origin:left;transition:transform .45s var(--ease-out)}
+.dc:hover{color:var(--text-primary)}
+.dc:hover::after{transform:scaleX(1)}
+.dc:focus-visible{outline:1px solid var(--accent);outline-offset:4px}
+.dc .dot{width:5px;height:5px;border-radius:50%;background:currentColor;opacity:.45;transition:background-color .4s var(--ease-out),opacity .4s var(--ease-out)}
+.dc.on{color:var(--text-primary)}
+.dc.on .dot{opacity:1}
+.dc[data-set="-1"].on .dot{background:var(--hot);box-shadow:0 0 8px rgba(217,87,63,.6)}
+.dc[data-set="1"].on .dot{background:var(--cool);box-shadow:0 0 8px rgba(246,241,234,.45)}
+.dc.reset svg{width:13px;height:13px}
+.dc.reset[aria-disabled="true"]{opacity:.35;cursor:default}
+.dc.reset[aria-disabled="true"]:hover::after{transform:scaleX(0)}
+@media (pointer:coarse){.dc{min-height:44px}}
+.dial-state{margin-top:30px;min-height:1.6em;position:relative}
+.dial-state .hint{transition:opacity .4s var(--ease-out)}
+.dial-done .dw{opacity:0;transform:translateY(10px);transition:opacity .8s var(--ease-out),transform .8s var(--ease-out)}
+.done .dial-done .dw{opacity:1;transform:none}
+.done .dial-done .dw:nth-child(2){transition-delay:.18s}
+.done .dial-done .dw:nth-child(3){transition-delay:.36s}
+.done .dial-state .hint{opacity:0}
+.dial-done{display:flex;flex-wrap:wrap;gap:0 .4em;font:200 clamp(1.8rem,2.8vw,2.6rem)/1.15 var(--font);margin-top:8px}
+.dial-done .dw:last-child{color:var(--accent);transition:opacity .8s var(--ease-out),transform .8s var(--ease-out),color .6s var(--ease-out)}
+.res-hot .dial-done .dw:last-child{color:var(--hot)}
+.res-spark .dial-done .dw:last-child{color:var(--cool)}
+.hint.nudge{animation:nudge .9s var(--ease-out)}
+@keyframes nudge{30%{color:var(--text-primary)}}
+@media (max-width:860px){.safety .wrap{grid-template-columns:1fr}}
+
+/* design: text low on the left, the tall still on the right, square-cut */
+.design .wrap{display:grid;grid-template-columns:1fr minmax(0,1.05fr);gap:clamp(40px,7vw,120px);align-items:end}
+.design figure{margin:0;position:relative;overflow:hidden;aspect-ratio:880/1080;max-width:100%}
+.design figure img{width:100%;height:100%;object-fit:cover;animation:breath 22s var(--ease-soft) -5s infinite alternate}
+.design figcaption{position:absolute;left:0;right:0;bottom:0;padding:22px 24px;display:flex;justify-content:space-between;background:linear-gradient(to top,rgba(var(--film-shade),.7),rgba(var(--film-shade),0));color:rgba(243,236,226,.86)}
+@keyframes breath{from{transform:scale(1)}to{transform:scale(1.04)}}
+@media (max-width:860px){.design .wrap{grid-template-columns:1fr}.design figure{order:-1}}
+
+/* questions */
+.faq .wrap{display:grid;grid-template-columns:1fr 1.6fr;gap:64px}
+.faq .side{position:sticky;top:130px;align-self:start}
+.faq details{border-top:1px solid var(--hair);padding:28px 0}
+.faq details:last-child{border-bottom:1px solid var(--hair)}
+.faq summary{cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:baseline;gap:24px;font:300 clamp(1.15rem,1.55vw,1.4rem)/1.35 var(--font);transition:color .35s var(--ease-out)}
+.faq summary:hover{color:var(--accent)}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary span.pm{flex:none;width:13px;height:13px;position:relative}
+.faq summary span.pm::before,.faq summary span.pm::after{content:"";position:absolute;left:0;top:6px;width:13px;height:1px;background:currentColor;transition:transform .45s var(--ease-out)}
+.faq summary span.pm::after{transform:rotate(90deg)}
+.faq details[open] summary span.pm::after{transform:rotate(0)}
+.faq details p{color:var(--text-secondary);margin-top:14px;max-width:52ch}
+.faq .drop{display:block;width:1px;height:56px;background:linear-gradient(to bottom,var(--accent),rgba(196,165,125,0));margin-top:36px;transform-origin:top;animation:fall 6s var(--ease-soft) -1s infinite}
+@keyframes fall{0%{transform:scaleY(.2);opacity:0}40%{opacity:1}100%{transform:scaleY(1);opacity:0}}
+@media (max-width:860px){.faq .wrap{grid-template-columns:1fr}.faq .side{position:static}}
+
+/* final call to action */
+.final{text-align:center;overflow:hidden}
+.final .label{margin-bottom:30px}
+.final .h2{font-size:clamp(3.4rem,9vw,8.4rem);letter-spacing:-.015em}
+.final .lede{margin:26px auto 0}
+.final .btn{margin-top:44px}
+
+footer{padding:56px var(--gutter) 64px;border-top:1px solid var(--hair)}
+footer .wrap{display:grid;grid-template-columns:1fr auto 1fr;gap:24px;align-items:center}
+footer .brand{color:var(--text-primary);font-size:.92rem}
+footer ul{display:flex;gap:26px;list-style:none;margin:0;padding:0;flex-wrap:wrap}
+footer ul.r{justify-content:flex-end}
+footer a{text-decoration:none;color:var(--text-secondary);transition:color .35s var(--ease-out)}
+footer a:hover{color:var(--text-primary)}
+footer .label{color:var(--text-secondary)}
+@media (max-width:860px){footer .wrap{grid-template-columns:1fr;justify-items:start}footer .brand{justify-self:start;order:-1}footer ul.r{justify-content:flex-start}}
+
+/* pause loops off-screen and on hidden tabs */
+.loop-off *, .loop-off *::before, .loop-off *::after{animation-play-state:paused!important}
+body.paused *, body.paused *::before, body.paused *::after{animation-play-state:paused!important}
+
+/* reduced motion: everything final, nothing moving */
+@media (prefers-reduced-motion: reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation:none!important;transition:none!important;transition-delay:0s!important}
+  [data-in] .part,.done .dial-done .dw{opacity:1!important;transform:none!important}
+  .gone li path{stroke-dashoffset:0!important}
+  .seam{--d:1!important}
+  .bubbles,.grain{display:none}
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<div class="env" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
+
+<nav class="top" aria-label="Main">
+  <ul class="l">
+    <li><a href="#shop">Shop</a></li>
+    <li><a href="#waters">Five waters</a></li>
+    <li><a href="#safety">Safety</a></li>
+  </ul>
+  <a class="brand" href="#top" aria-label="Farless home">Farless</a>
+  <ul class="r">
+    <li><a href="#design">Design</a></li>
+    <li><a href="#questions">Questions</a></li>
+    <li class="keep"><a class="buy" href="#buy">Buy</a></li>
+  </ul>
+</nav>
+
+<header>
+  <section class="hero" id="top" aria-label="Farless introduction">
+    <div class="stage" id="stage" data-point="0">
+      <div class="pan">
+        <div class="poster" aria-hidden="true"></div>
+        <div class="poster-end" aria-hidden="true"></div>
+        <video id="hero" preload="none" muted playsinline aria-hidden="true" tabindex="-1"></video>
+      </div>
+      <div class="shade" aria-hidden="true"></div>
+
+      <div class="band" data-t="0" data-cx="760">
+        <span class="label" aria-hidden="true"><span class="n">01</span>Five waters</span>
+        <h1 class="hx"><span class="sr">Farless. Five waters. One tap.</span>
+          <span class="bts" aria-hidden="true"><span class="soft">Farless.</span><span class="sharp">Farless.</span></span>
+        </h1>
+        <p class="hl bts" aria-hidden="true"><span class="soft">Five waters. One tap.</span><span class="sharp">Five waters. One tap.</span></p>
+      </div>
+      <div class="band" data-t="2.8" data-cx="640">
+        <span class="label" aria-hidden="true"><span class="n">02</span>Push and turn</span>
+        <p class="hl dd split">Boiling. Filtered.</p>
+      </div>
+      <div class="band" data-t="4.6" data-cx="820">
+        <span class="label" aria-hidden="true"><span class="n">03</span>The pour</span>
+        <p class="hl dd split">Sparkling. Hot. Cold.</p>
+      </div>
+      <div class="band" data-t="6.4" data-cx="1100">
+        <span class="label" aria-hidden="true"><span class="n">04</span>Less</span>
+        <p class="hl dd split">No kettle. No bottles. No soda machine.</p>
+      </div>
+      <div class="band settle" data-t="end" data-cx="1120">
+        <span class="label" aria-hidden="true"><span class="n">05</span>Farless</span>
+        <h2 class="hx rise split" style="font-size:clamp(2.2rem,3.6vw,3.9rem)">Far less on your counter.</h2>
+        <p class="hs">Just one tap.</p>
+        <div class="cta-row"><a class="btn" href="#buy">Buy Farless</a></div>
+      </div>
+
+      <nav class="dots" aria-label="Film points">
+        <button type="button" aria-label="Point 1 of 5: Farless" aria-current="step"></button>
+        <button type="button" aria-label="Point 2 of 5: Boiling and filtered"></button>
+        <button type="button" aria-label="Point 3 of 5: Sparkling, hot and cold"></button>
+        <button type="button" aria-label="Point 4 of 5: No kettle, no bottles"></button>
+        <button type="button" aria-label="Point 5 of 5: Far less on your counter"></button>
+      </nav>
+      <p class="hero-note" aria-hidden="true"><span class="t-scroll">Scroll</span><span class="t-swipe">Swipe</span><span class="line"></span></p>
+    </div>
+  </section>
+
+  <section class="static-hero" aria-label="Farless introduction">
+    <div class="sh-img" role="img" aria-label="Sparkling water pouring from a Farless tap into a glass with ice and lime"></div>
+    <div class="sh-copy">
+      <span class="label" aria-hidden="true"><span class="n">Farless</span>Five waters. One tap.</span>
+      <h1 class="hx">Far less on your counter.</h1>
+      <p class="hs">Boiling, filtered, sparkling, hot and cold water. All from one quiet tap.</p>
+      <div class="cta-row"><a class="btn" href="#buy">Buy Farless</a></div>
+    </div>
+  </section>
+</header>
+
+<main id="main" tabindex="-1">
+
+  <!-- SHOP:START -->
+  <section class="sec shop tone" id="shop" aria-labelledby="shop-h">
+    <div class="wrap">
+      <div class="head" data-in>
+        <div>
+          <span class="label kicker part">Shop</span>
+          <h2 class="h2 part" id="shop-h">Bring Farless home.</h2>
+        </div>
+      </div>
+      <div class="feature" data-in>
+        <div class="f-media part" data-finishes style="--n:4">
+          <div class="f-frame slides" aria-roledescription="carousel" aria-label="Farless in 4 colours">
+            <div class="f-track">
+              <figure class="f-slide"><img src="assets/finish-chrome.jpg" alt="The Farless 5-in-1 tap in polished chrome, with its arched spout and push-and-turn handles" width="1319" height="1447" draggable="false" decoding="async"></figure>
+              <figure class="f-slide" aria-hidden="true"><img src="assets/finish-brass.jpg" alt="The Farless 5-in-1 tap in satin brass, with its arched spout and push-and-turn handles" width="1319" height="1447" draggable="false" decoding="async"></figure>
+              <figure class="f-slide" aria-hidden="true"><img src="assets/finish-copper.jpg" alt="The Farless 5-in-1 tap in warm copper, with its arched spout and push-and-turn handles" width="1319" height="1447" draggable="false" decoding="async"></figure>
+              <figure class="f-slide" aria-hidden="true"><img src="assets/finish-black.jpg" alt="The Farless 5-in-1 tap in matte black, with its arched spout and push-and-turn handles" width="1319" height="1447" draggable="false" decoding="async"></figure>
+            </div>
+          </div>
+          <div class="f-rail" aria-hidden="true"><span class="bar"><i></i></span><span class="label"><b data-count>01</b> / 04</span></div>
+        </div>
+        <div class="f-info">
+          <span class="label part">The tap</span>
+          <h3 class="part">Farless 5-in-1 Tap</h3>
+          <p class="excerpt part">Farless gives you boiling, filtered, sparkling, hot and cold water from one quiet tap. The kettle, the filter jug, the soda machine and the bottles can leave your counter.</p>
+          <div class="finish part" data-finish-picker>
+            <p class="finish-h">Colour. <span>Pick your favourite.</span></p>
+            <p class="finish-name"><span class="label">Colour</span><b data-finish-name>Polished Chrome</b></p>
+            <div class="swatches" role="radiogroup" aria-label="Colour">
+              <button type="button" role="radio" aria-checked="true" tabindex="0" aria-label="Polished Chrome" style="--sw:linear-gradient(135deg,#fbfbfc 0%,#c3c6ca 38%,#eef0f2 56%,#8c9095 100%)"></button>
+              <button type="button" role="radio" aria-checked="false" tabindex="-1" aria-label="Satin Brass" style="--sw:linear-gradient(135deg,#f6e4b0 0%,#c09a52 40%,#e3c682 58%,#7a5822 100%)"></button>
+              <button type="button" role="radio" aria-checked="false" tabindex="-1" aria-label="Warm Copper" style="--sw:linear-gradient(135deg,#f4d0bb 0%,#b5714f 40%,#dca184 58%,#6c3822 100%)"></button>
+              <button type="button" role="radio" aria-checked="false" tabindex="-1" aria-label="Matte Black" style="--sw:linear-gradient(135deg,#55514d 0%,#1c1a19 42%,#2c2a28 60%,#0c0b0a 100%)"></button>
+            </div>
+          </div>
+          <div class="f-actions part">
+            <a class="btn" href="#buy">Add to cart</a>
+            <a class="link" href="#buy">View details</a>
+          </div>
+          <ul class="f-notes part">
+            <li><span class="label">Five waters</span>Boiling, filtered, sparkling, hot and cold.</li>
+            <li><span class="label">Push and turn</span>Boiling only when you mean it.</li>
+            <li><span class="label">5-year warranty</span>On every Farless.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="collections" data-in>
+        <div class="chead part"><span class="label">Collections</span><a class="link" href="#shop">View all</a></div>
+        <ul class="ccards">
+          <li class="ccard part"><a href="#shop">
+            <div class="cimg empty" aria-hidden="true"><svg viewBox="0 0 200 120"><path d="M30 118 V58 C30 22 58 4 100 4 C142 4 170 22 170 58 V82"/><circle cx="170" cy="98" r="3"/></svg></div>
+            <div class="cmeta"><h3>Multi Function Faucets</h3><span class="label">Coming soon</span></div>
+          </a></li>
+          <li class="ccard part"><a href="#shop">
+            <div class="cimg empty" aria-hidden="true"><svg viewBox="0 0 200 120"><path d="M30 118 V58 C30 22 58 4 100 4 C142 4 170 22 170 58 V82"/><circle cx="170" cy="98" r="3"/></svg></div>
+            <div class="cmeta"><h3>Filtered Faucets</h3><span class="label">Coming soon</span></div>
+          </a></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+  <!-- SHOP:END -->
+
+  <section class="sec waters" id="waters" aria-labelledby="waters-h">
+    <div class="wrap" data-in>
+      <div class="head">
+        <div>
+          <span class="label kicker part">Five waters</span>
+          <h2 class="h2 part" id="waters-h">One tap does it all.</h2>
+        </div>
+        <p class="lede part">Every water your kitchen asks for, from one quiet tap.</p>
+      </div>
+      <ul class="cards">
+        <li class="card part"><span class="label"><span class="n">01</span></span>
+          <svg class="ic" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" aria-hidden="true"><path d="M16 22c-3-4 3-6 0-10M24 22c-3-4 3-6 0-10M32 22c-3-4 3-6 0-10"/><path d="M10 28h28v4a10 10 0 0 1-10 10h-8a10 10 0 0 1-10-10z"/></svg>
+          <h3>Boiling</h3><p>Tea in the time it takes to reach for a cup.</p></li>
+        <li class="card part"><span class="label"><span class="n">02</span></span>
+          <div class="bubbles" aria-hidden="true"><i style="--x:20%;--s:5px;--t:9s;--dl:-1s"></i><i style="--x:46%;--s:8px;--t:11s;--dl:-6s"></i><i style="--x:70%;--s:4px;--t:8s;--dl:-3s"></i><i style="--x:84%;--s:6px;--t:12s;--dl:-9s"></i></div>
+          <svg class="ic" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1" aria-hidden="true"><circle cx="18" cy="32" r="7"/><circle cx="31" cy="20" r="5"/><circle cx="22" cy="12" r="3"/><circle cx="35" cy="35" r="3"/></svg>
+          <h3>Sparkling</h3><p>Fresh bubbles every glass. No more flat bottles.</p></li>
+        <li class="card part"><span class="label"><span class="n">03</span></span>
+          <svg class="ic" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" aria-hidden="true"><path d="M24 6c7 9 12 15 12 22a12 12 0 0 1-24 0c0-7 5-13 12-22z"/><path d="M18 26h12M19 31h10M21 36h6"/></svg>
+          <h3>Filtered</h3><p>Clean drinking water, straight from the tap.</p></li>
+        <li class="card part"><span class="label"><span class="n">04</span></span>
+          <svg class="ic" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" aria-hidden="true"><path d="M24 6c7 9 12 15 12 22a12 12 0 0 1-24 0c0-7 5-13 12-22z"/><path d="M17 30c2.3-2 4.7-2 7 0s4.7 2 7 0"/></svg>
+          <h3>Hot</h3><p>For washing up and everyday cooking.</p></li>
+        <li class="card part"><span class="label"><span class="n">05</span></span>
+          <svg class="ic" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" aria-hidden="true"><path d="M24 6c7 9 12 15 12 22a12 12 0 0 1-24 0c0-7 5-13 12-22z"/><path d="M24 22v14M18 26l12 6M30 26l-12 6"/></svg>
+          <h3>Cold</h3><p>Just water, the way it should be.</p></li>
+      </ul>
+    </div>
+  </section>
+
+  <div class="seam" aria-hidden="true"><svg viewBox="0 0 560 160" preserveAspectRatio="xMidYMid meet"><path pathLength="1" d="M20 150 C 20 60, 100 12, 200 12 C 300 12, 380 60, 380 110 L 380 130"/><circle cx="380" cy="146" r="3"/></svg></div>
+
+  <section class="sec leaves" aria-labelledby="leaves-h">
+    <div class="wrap">
+      <div data-in>
+        <span class="label kicker part">What leaves your counter</span>
+        <h2 class="h2 part" id="leaves-h">One tap replaces</h2>
+      </div>
+      <div>
+        <ul class="gone" data-strike>
+          <li>The kettle.<svg viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M0 6 C 30 3, 70 8, 100 4"/></svg></li>
+          <li>The filter jug.<svg viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M0 5 C 35 8, 65 2, 100 6"/></svg></li>
+          <li>The soda machine.<svg viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M0 6 C 25 3, 75 7, 100 4"/></svg></li>
+          <li>The bottles.<svg viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M0 4 C 40 8, 60 3, 100 6"/></svg></li>
+        </ul>
+        <p class="calm">Fewer things. A calmer kitchen.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="seam" aria-hidden="true"><svg viewBox="0 0 560 160" preserveAspectRatio="xMidYMid meet"><path pathLength="1" d="M540 150 C 540 60, 460 12, 360 12 C 260 12, 180 60, 180 110 L 180 130"/><circle cx="180" cy="146" r="3"/></svg></div>
+
+  <section class="sec safety" id="safety" aria-labelledby="safety-h">
+    <div class="wrap">
+      <div class="dial-col">
+        <div class="dial-wrap" id="dialWrap">
+          <svg class="dial-ring" viewBox="0 0 100 100" aria-hidden="true"><line x1="50" y1="-3" x2="50" y2="3"/><line x1="-3" y1="50" x2="3" y2="50"/><line x1="97" y1="50" x2="103" y2="50"/></svg>
+          <svg class="dial-arc" viewBox="0 0 100 100" aria-hidden="true"><circle class="a1" cx="50" cy="50" r="50" pathLength="1"/><circle class="a2" cx="50" cy="50" r="50" pathLength="1"/></svg>
+          <span class="ind ind-hot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"><path d="M8 19c-2.4-3 2.4-5 0-8s2.4-5 0-8M12 19c-2.4-3 2.4-5 0-8s2.4-5 0-8M16 19c-2.4-3 2.4-5 0-8s2.4-5 0-8"/></svg></span>
+          <span class="ind ind-spark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="9" cy="16" r="4"/><circle cx="16" cy="9" r="2.6"/><circle cx="10" cy="5" r="1.6"/><circle cx="18" cy="17.5" r="1.6"/></svg></span>
+          <div class="dial" id="dial" role="slider" tabindex="0" aria-label="Water knob" aria-valuemin="-1" aria-valuemax="1" aria-valuenow="0" aria-valuetext="Off" aria-describedby="dial-help">
+            <span class="face" aria-hidden="true"><span class="notch"><i class="n0"></i><i class="n1"></i><i class="n2"></i></span></span>
+            <span class="pin" aria-hidden="true"><i class="pin-shadow"></i><i class="pin-cap"></i><i class="g g0"></i><i class="g g1"></i><i class="g g2"></i></span>
+          </div>
+        </div>
+        <div class="dial-controls" role="group" aria-label="Knob settings">
+          <button type="button" class="dc" data-set="-1"><span class="dot" aria-hidden="true"></span>Hot</button>
+          <button type="button" class="dc reset" data-set="0" aria-disabled="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" aria-hidden="true"><path d="M4.5 12a7.5 7.5 0 1 0 2.2-5.3"/><path d="M4.5 3.5v3.7h3.7"/></svg>Reset</button>
+          <button type="button" class="dc" data-set="1">Sparkling<span class="dot" aria-hidden="true"></span></button>
+        </div>
+      </div>
+      <div data-in id="safetyCopy">
+        <span class="label kicker part">Safety</span>
+        <h2 class="h2 part" id="safety-h">Press the pin. Then turn.</h2>
+        <p class="lede part">Back for hot, forward for sparkling. The knob only turns once the pin is pressed down, so small hands can't start it by accident.</p>
+        <div class="dial-state part">
+          <p class="label hint" id="dial-help">Try it. Hold the pin and turn the knob</p>
+          <p class="dial-done" aria-live="polite"><span class="dw">Press.</span><span class="dw">Turn forward.</span><span class="dw">Sparkling.</span></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec design tone" id="design" aria-labelledby="design-h">
+    <div class="wrap">
+      <div data-in>
+        <span class="label kicker part">Design</span>
+        <h2 class="h2 part" id="design-h">Made to be looked at.</h2>
+        <p class="lede part">Brushed steel and one clean arc. Nothing to hide, and nothing to add.</p>
+      </div>
+      <figure>
+        <img src="assets/design-faucet.jpg" alt="A hand turning the Farless handle as sparkling water starts to pour" loading="lazy" width="880" height="1080">
+        <figcaption class="label"><span>Push and turn</span><span>Farless</span></figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="sec faq" id="questions" aria-labelledby="faq-h">
+    <div class="wrap">
+      <div class="side" data-in>
+        <span class="label kicker part">Questions</span>
+        <h2 class="h2 part" id="faq-h">Good to know.</h2>
+        <span class="drop part" aria-hidden="true"></span>
+      </div>
+      <div>
+        <details><summary>Is it safe with children around?<span class="pm" aria-hidden="true"></span></summary><p>Yes. Boiling water needs a push and a turn at the same time, so it can't start by accident.</p></details>
+        <details><summary>What if something goes wrong?<span class="pm" aria-hidden="true"></span></summary><p>Every Farless comes with a 5-year warranty.</p></details>
+        <details><summary>Does it really replace the kettle?<span class="pm" aria-hidden="true"></span></summary><p>Yes. Boiling water is ready the moment you turn the dial. No waiting, no refilling.</p></details>
+        <details><summary>Will I run out of sparkling water bottles?<span class="pm" aria-hidden="true"></span></summary><p>There are no bottles to run out of. Sparkling water comes straight from the tap.</p></details>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec final tone" id="buy" aria-labelledby="buy-h">
+    <div class="bubbles" aria-hidden="true"><i style="--x:12%;--s:6px;--t:14s;--dl:-3s"></i><i style="--x:28%;--s:4px;--t:11s;--dl:-8s"></i><i style="--x:44%;--s:9px;--t:16s;--dl:-1s"></i><i style="--x:61%;--s:5px;--t:12s;--dl:-6s"></i><i style="--x:77%;--s:7px;--t:15s;--dl:-10s"></i><i style="--x:90%;--s:4px;--t:10s;--dl:-4s"></i></div>
+    <div class="wrap" data-in>
+      <span class="label part">Farless</span>
+      <h2 class="h2 part" id="buy-h">Make room.</h2>
+      <p class="lede part">Five waters. One tap. Far less on your counter.</p>
+      <!-- SHOP LINK: replace href with the Farless online shop URL -->
+      <a class="btn solid part" href="#buy" data-shop>Buy Farless</a>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <ul>
+      <li><a class="label" href="#shop">Shop</a></li>
+      <li><a class="label" href="#waters">Five waters</a></li>
+      <li><a class="label" href="#safety">Safety</a></li>
+    </ul>
+    <a class="brand" href="#top" aria-label="Farless home">Farless</a>
+    <ul class="r">
+      <li><a class="label" href="#design">Design</a></li>
+      <li><a class="label" href="#questions">Questions</a></li>
+      <li><span class="label">© Farless</span></li>
+    </ul>
+  </div>
+</footer>
+
+<script>
+(() => {
+  'use strict';
+  // VP9 WebM is half the size; Apple devices and browsers without it get the H.264 MP4 first,
+  // and whichever loads first falls back to the other if it cannot play
+  const ua = navigator.userAgent;
+  const apple = /iPad|iPhone|iPod/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1) || (/Safari\//.test(ua) && !/Chrome|Chromium|CriOS|FxiOS|Edg|Android/.test(ua));
+  const canWebm = document.createElement('video').canPlayType('video/webm; codecs="vp9"') === 'probably';
+  const WEBM = { url: 'assets/hero-scrub.webm', type: 'video/webm', bytes: 1644195 };   // real byte sizes: the fallback when Content-Length is missing
+  const MP4 = { url: 'assets/hero-scrub.mp4', type: 'video/mp4', bytes: 3186482 };
+  const SOURCES = canWebm && !apple ? [WEBM, MP4] : [MP4, WEBM];
+  const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
+  const smoothstep = (p, e0, e1) => { const t = clamp((p - e0) / (e1 - e0), 0, 1); return t * t * (3 - 2 * t); };
+  function rng(seed){ let s = seed >>> 0; return () => (s = (s * 1664525 + 1013904223) >>> 0) / 4294967296; }
+
+  /* ---------- split words once ---------- */
+  const r = rng(7);
+  document.querySelectorAll('.split').forEach(el => {
+    const text = el.textContent.trim();
+    el.setAttribute('aria-label', text);
+    el.textContent = '';
+    const words = text.split(' ');
+    words.forEach((w, i) => {
+      const s = document.createElement('span');
+      s.className = 'w'; s.setAttribute('aria-hidden', 'true');
+      s.textContent = w;
+      s.style.setProperty('--th', (i / words.length * 0.5 + r() * 0.04).toFixed(3));
+      el.appendChild(s);
+      if (i < words.length - 1) el.appendChild(document.createTextNode(' '));
+    });
+  });
+
+  /* ---------- hero: point to point ---------- */
+  const stage = document.getElementById('stage');
+  const video = document.getElementById('hero');
+  const loadLine = document.querySelector('.hero-note .line');
+  const posterLayer = document.querySelector('.poster');
+  const posterEnd = document.querySelector('.poster-end');
+  const bands = [...document.querySelectorAll('.band')].map(el => ({ el, t: el.dataset.t, raf: null }));
+  const dots = [...document.querySelectorAll('.dots button')];
+  const LAST = bands.length - 1;
+  const easeInOut = t => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+  let point = 0, videoReady = false, videoFailed = false, anim = null;
+
+  const timeOf = i => {
+    const d = video.duration || 8;
+    return Math.min(bands[i].t === 'end' ? d : +bands[i].t, d - 0.04);
+  };
+
+  // captions assemble on a time-based --k, the same entrance language as the rest of the page
+  function assemble(band){
+    cancelAnimationFrame(band.raf);
+    band.el.style.setProperty('--k', '0');
+    const t0 = performance.now() + 220;
+    const step = now => {
+      const k = smoothstep(Math.max(0, now - t0) / 1100, 0, 1);
+      band.el.style.setProperty('--k', k.toFixed(3));
+      if (k < 1) band.raf = requestAnimationFrame(step);
+    };
+    band.raf = requestAnimationFrame(step);
+  }
+
+  function render(prev){
+    stage.dataset.point = point;
+    bands.forEach((b, i) => {
+      const on = i === point;
+      b.el.classList.toggle('on', on);
+      if (b.el.classList.contains('settle')) b.el.inert = !on;
+      if (on && i !== prev) assemble(b);
+    });
+    dots.forEach((d, i) => {
+      if (i === point) d.setAttribute('aria-current', 'step'); else d.removeAttribute('aria-current');
+    });
+    if (videoFailed) stage.style.setProperty('--pe', (point / LAST).toFixed(3));
+  }
+
+  let seekBusy = false, pendingTime = null;
+  function requestSeek(t){
+    if (!video.duration || videoFailed) return;
+    if (seekBusy){ pendingTime = t; return; }
+    seekBusy = true;
+    video.currentTime = t;
+  }
+  video.addEventListener('seeked', () => {
+    seekBusy = false;
+    if (pendingTime !== null){ const t = pendingTime; pendingTime = null; requestSeek(t); }
+  });
+  // a format that downloads but cannot decode here gets one retry with the other format
+  video.addEventListener('error', () => { seekBusy = false; pendingTime = null; if (srcIndex >= 0 && srcIndex + 1 < SOURCES.length && !videoReady) tryLoad(srcIndex + 1); else failVideo(); });
+
+  function stopAnim(){
+    if (anim){ cancelAnimationFrame(anim.raf); anim = null; }
+    if (!video.paused) video.pause();
+  }
+  // forward: real playback, eased in and out with the playback rate; backward: eased seeks
+  function playTo(target){
+    stopAnim();
+    if (!videoReady) return;
+    const from = video.currentTime;
+    if (target <= from + 0.05){ seekTween(from, target); return; }
+    const a = anim = { raf: 0 };
+    let lastRate = 0;
+    const watch = () => {
+      if (anim !== a) return;
+      const ct = video.currentTime;
+      if (ct >= target - 0.03 || video.ended){
+        video.pause();
+        if (Math.abs(ct - target) > 0.06) requestSeek(target);
+        anim = null; return;
+      }
+      const p = clamp((ct - from) / (target - from), 0, 1);
+      const rate = clamp(0.55 + 1.25 * Math.sin(Math.PI * p), 0.5, 1.8);
+      if (Math.abs(rate - lastRate) > 0.05){ lastRate = rate; video.playbackRate = rate; }
+      a.raf = requestAnimationFrame(watch);
+    };
+    video.playbackRate = 0.6;
+    video.play().then(() => { if (anim === a) a.raf = requestAnimationFrame(watch); })
+      .catch(() => { if (anim === a){ anim = null; seekTween(from, target); } });
+  }
+  function seekTween(from, target){
+    const dur = clamp(Math.abs(target - from) / 2.4, 0.45, 1.6) * 1000;
+    const a = anim = { raf: 0 };
+    const t0 = performance.now();
+    const step = now => {
+      if (anim !== a) return;
+      const t = Math.min(1, (now - t0) / dur);
+      requestSeek(from + (target - from) * easeInOut(t));
+      if (t < 1) a.raf = requestAnimationFrame(step); else anim = null;
+    };
+    a.raf = requestAnimationFrame(step);
+  }
+
+  /* portrait screens: slide the wide film so the point's subject stays in view */
+  const pan = document.querySelector('.pan');
+  const portrait = matchMedia('(orientation: portrait)');
+  function panTo(i, ms){
+    if (!portrait.matches){ pan.style.removeProperty('--panx'); return; }
+    const h = pan.offsetHeight, w = stage.offsetWidth;
+    if (!h) return;
+    const sc = h / 1080, cx = +bands[i].el.dataset.cx || 960;
+    const x = clamp(cx * sc - w / 2, 0, Math.max(0, 1920 * sc - w));
+    if (ms === 0) pan.classList.add('snap');
+    else pan.style.transitionDuration = (ms / 1000).toFixed(2) + 's';
+    pan.style.setProperty('--panx', x.toFixed(1) + 'px');
+    if (ms === 0){ void pan.offsetWidth; pan.classList.remove('snap'); }
+  }
+  addEventListener('resize', () => panTo(point, 0));
+  portrait.addEventListener('change', () => panTo(point, 0));
+
+  function goTo(i, instant){
+    i = clamp(i, 0, LAST);
+    if (i === point) return;
+    const prev = point;
+    point = i;
+    render(prev);
+    const dt = Math.abs(timeOf(i) - timeOf(prev));
+    panTo(i, instant ? 0 : Math.round(clamp(i > prev ? dt / 1.25 : dt / 2.4, 0.6, 2.2) * 1000));
+    if (instant){ stopAnim(); requestSeek(timeOf(i)); }
+    else playTo(timeOf(i));
+  }
+
+  /* one scroll gesture moves one point; momentum in the same gesture never moves another */
+  const atTop = () => scrollY <= 1;
+  const canMove = dir => dir > 0 ? point < LAST : point > 0;
+  let lastWheel = 0, gTop = false, gUsed = false, acc = 0;
+  function onWheel(e){
+    if (e.ctrlKey) return;
+    const now = performance.now();
+    if (now - lastWheel > 220){ gTop = atTop(); gUsed = false; acc = 0; }
+    lastWheel = now;
+    if (!atTop()) return;
+    if (gUsed){ e.preventDefault(); return; }
+    const dy = e.deltaMode === 1 ? e.deltaY * 16 : e.deltaY;
+    const dir = Math.sign(dy);
+    if (!dir || !canMove(dir)) return;
+    e.preventDefault();
+    if (!gTop) return;
+    acc += dy;
+    if (Math.abs(acc) >= 18){ gUsed = true; goTo(point + dir); }
+  }
+  let ty = 0, tTop = false, tUsed = false;
+  function onTouchStart(e){ ty = e.touches[0].clientY; tTop = atTop(); tUsed = false; }
+  function onTouchMove(e){
+    if (!tTop || !atTop()) return;
+    if (tUsed){ e.preventDefault(); return; }
+    const dy = ty - e.touches[0].clientY;
+    const dir = Math.sign(dy);
+    if (!dir || !canMove(dir)) return;
+    e.preventDefault();
+    if (Math.abs(dy) > 36){ tUsed = true; goTo(point + dir); }
+  }
+  function onKey(e){
+    if (!atTop() || e.altKey || e.ctrlKey || e.metaKey) return;
+    const el = e.target;
+    if (el.closest && el.closest('input,textarea,select,[contenteditable]')) return;
+    if (e.key === ' ' && el.closest && el.closest('button,a,summary')) return;
+    let dir = 0;
+    if (e.key === 'ArrowDown' || e.key === 'PageDown' || (e.key === ' ' && !e.shiftKey)) dir = 1;
+    else if (e.key === 'ArrowUp' || e.key === 'PageUp' || (e.key === ' ' && e.shiftKey)) dir = -1;
+    if (!dir || !canMove(dir)) return;
+    e.preventDefault();
+    if (!e.repeat) goTo(point + dir);
+  }
+  // anyone who leaves the hero comes back to its resting point
+  function onScrollAway(){ if (scrollY > innerHeight * 0.6 && point !== LAST) goTo(LAST, true); }
+  dots.forEach((d, i) => d.addEventListener('click', () => goTo(i)));
+
+  let heroInit = false;
+  function initHeroOnce(){
+    if (heroInit) return; heroInit = true;
+    posterLayer.style.backgroundImage = "url('assets/hero-poster.jpg')";
+    let started = false;
+    const startBlobFetch = () => { if (started) return; started = true; tryLoad(0); };
+    const img = new Image();
+    img.onload = startBlobFetch; img.onerror = startBlobFetch;
+    img.src = 'assets/hero-poster.jpg';
+    setTimeout(startBlobFetch, 4000);
+  }
+  let srcIndex = -1;
+  function tryLoad(i){
+    if (i >= SOURCES.length){ failVideo(); return; }
+    srcIndex = i;
+    loadHeroBlob(SOURCES[i]).catch(() => tryLoad(i + 1));
+  }
+  async function loadHeroBlob(src){
+    const ctrl = new AbortController();
+    let watchdog = setTimeout(() => ctrl.abort(), 20000);
+    const res = await fetch(src.url, { priority: 'low', signal: ctrl.signal });
+    if (!res.ok) throw new Error('video ' + res.status);
+    const total = Number(res.headers.get('Content-Length')) || src.bytes;
+    const reader = res.body.getReader();
+    const chunks = []; let got = 0, lastRing = 0;
+    for (;;){
+      const { done, value } = await reader.read();
+      if (done) break;
+      clearTimeout(watchdog); watchdog = setTimeout(() => ctrl.abort(), 20000);
+      chunks.push(value); got += value.length;
+      const frac = Math.min(1, got / total), now = performance.now();
+      if (now - lastRing > 100 || frac === 1){ lastRing = now; loadLine.style.setProperty('--lp', frac.toFixed(3)); }
+    }
+    clearTimeout(watchdog);
+    loadLine.style.setProperty('--lp', '1');
+    video.src = URL.createObjectURL(new Blob(chunks, { type: src.type }));
+    video.load();
+    video.addEventListener('canplay', () => {
+      videoReady = true;
+      requestSeek(timeOf(point));
+      stage.classList.add('video-ready');
+    }, { once: true });
+  }
+  function failVideo(){
+    if (videoFailed) return;
+    videoFailed = true;
+    stopAnim();
+    stage.classList.add('video-failed');
+    video.style.display = 'none';
+    posterEnd.style.backgroundImage = "url('assets/hero-ending.jpg')";
+    render(point);
+  }
+
+  /* ---------- the static-hero gates, live (kept identical to the CSS query) ---------- */
+  const GATES = [
+    '(orientation: landscape) and (pointer: coarse) and (max-height: 560px)',
+    '(prefers-reduced-motion: reduce)'
+  ];
+  let stepperOn = false;
+  function enableStepper(){
+    if (stepperOn) return; stepperOn = true;
+    initHeroOnce();
+    addEventListener('wheel', onWheel, { passive: false });
+    addEventListener('touchstart', onTouchStart, { passive: true });
+    addEventListener('touchmove', onTouchMove, { passive: false });
+    addEventListener('keydown', onKey);
+    addEventListener('scroll', onScrollAway, { passive: true });
+    if (scrollY > innerHeight * 0.6) point = LAST;
+    render(-1);
+    panTo(point, 0);
+    if (videoReady) requestSeek(timeOf(point));
+  }
+  function disableStepper(){
+    if (!stepperOn) return; stepperOn = false;
+    removeEventListener('wheel', onWheel, { passive: false });
+    removeEventListener('touchstart', onTouchStart, { passive: true });
+    removeEventListener('touchmove', onTouchMove, { passive: false });
+    removeEventListener('keydown', onKey);
+    removeEventListener('scroll', onScrollAway, { passive: true });
+    stopAnim();
+  }
+  function applyHeroMode(){ GATES.some(q => matchMedia(q).matches) ? disableStepper() : enableStepper(); }
+  const MQLS = GATES.map(q => matchMedia(q));
+  MQLS.forEach(m => m.addEventListener('change', applyHeroMode));
+  applyHeroMode();
+
+  /* ---------- header: transparent over the film, solid below it ---------- */
+  const nav = document.querySelector('nav.top');
+  let navSolid = null;
+  function updateNav(){
+    // transparent only while the page rests at the very top; anything scrolling under it gets a solid bar
+    const solid = scrollY > 8;
+    if (solid !== navSolid){ navSolid = solid; nav.classList.toggle('solid', solid); }
+  }
+  addEventListener('scroll', updateNav, { passive: true });
+  addEventListener('resize', updateNav);
+  updateNav();
+
+  /* ---------- colour picker: the frame slides sideways to the chosen finish ---------- */
+  document.querySelectorAll('[data-finishes]').forEach(media => {
+    const frame = media.querySelector('.f-frame');
+    const slides = [...media.querySelectorAll('.f-slide')];
+    const picker = media.closest('.feature').querySelector('[data-finish-picker]');
+    const radios = [...picker.querySelectorAll('[role="radio"]')];
+    const nameEl = picker.querySelector('[data-finish-name]');
+    const countEl = media.querySelector('[data-count]');
+    const N = slides.length;
+    const still = matchMedia('(prefers-reduced-motion: reduce)');
+    const easeOut = t => 1 - Math.pow(1 - t, 3);
+    let pos = 0, cur = 0, raf = 0, drag = null;
+
+    const draw = () => {
+      media.style.setProperty('--pos', pos.toFixed(4));
+      slides.forEach((s, i) => s.style.setProperty('--d', clamp(i - pos, -1, 1).toFixed(4)));
+    };
+    function glide(to, ms, ease){
+      cancelAnimationFrame(raf);
+      const from = pos, t0 = performance.now();
+      if (still.matches || Math.abs(to - from) < 1e-3){ pos = to; draw(); return; }
+      const step = now => {
+        const p = Math.min(1, (now - t0) / ms);
+        pos = from + (to - from) * ease(p);
+        draw();
+        if (p < 1) raf = requestAnimationFrame(step);
+      };
+      raf = requestAnimationFrame(step);
+    }
+    // the finish name leaves the way the photo leaves and arrives the way the next one arrives
+    function rename(i, dir){
+      const text = radios[i].getAttribute('aria-label');
+      countEl.textContent = String(i + 1).padStart(2, '0');
+      if (still.matches || !nameEl.animate){ nameEl.textContent = text; return; }
+      nameEl.getAnimations().forEach(a => a.cancel());
+      nameEl.animate([{ opacity: 1, transform: 'none' }, { opacity: 0, transform: `translateX(${-dir * 12}px)` }],
+        { duration: 180, easing: 'cubic-bezier(.55,0,1,.45)', fill: 'forwards' }).finished.then(() => {
+        nameEl.textContent = text;
+        nameEl.animate([{ opacity: 0, transform: `translateX(${dir * 12}px)` }, { opacity: 1, transform: 'none' }],
+          { duration: 460, easing: 'cubic-bezier(.22,.61,.36,1)', fill: 'forwards' });
+      }, () => {});
+    }
+    function select(i, opts = {}){
+      const dir = Math.sign(i - cur) || Math.sign(i - pos) || 1;
+      if (i !== cur) rename(i, dir);
+      cur = i;
+      radios.forEach((r, k) => { r.setAttribute('aria-checked', String(k === i)); r.tabIndex = k === i ? 0 : -1; });
+      slides.forEach((s, k) => k === i ? s.removeAttribute('aria-hidden') : s.setAttribute('aria-hidden', 'true'));
+      const dist = Math.abs(i - pos);
+      if (opts.fling) glide(i, 420 + 160 * Math.min(dist, 2), easeOut);
+      else glide(i, 780 + 170 * Math.min(Math.max(dist - 1, 0), 2), easeInOut);
+      if (opts.focus) radios[i].focus();
+    }
+
+    radios.forEach((r, k) => {
+      r.addEventListener('click', () => select(k));
+      r.addEventListener('keydown', e => {
+        const step = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[e.key];
+        if (step){ e.preventDefault(); select((cur + step + N) % N, { focus: true }); }
+        else if (e.key === 'Home' || e.key === 'End'){ e.preventDefault(); select(e.key === 'Home' ? 0 : N - 1, { focus: true }); }
+      });
+    });
+
+    // swipe or drag the photo itself: it follows the finger, then settles on the nearest finish
+    frame.addEventListener('pointerdown', e => {
+      if (e.button !== 0) return;
+      drag = { id: e.pointerId, x: e.clientX, y: e.clientY, p: pos, on: false, v: 0, lx: e.clientX, lt: e.timeStamp };
+    });
+    frame.addEventListener('pointermove', e => {
+      if (!drag || e.pointerId !== drag.id) return;
+      if (!drag.on){
+        const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
+        if (Math.abs(dy) > 10 && Math.abs(dy) > Math.abs(dx)){ drag = null; return; }
+        if (Math.abs(dx) < 8) return;
+        cancelAnimationFrame(raf);
+        Object.assign(drag, { on: true, x: e.clientX, p: pos, lx: e.clientX, lt: e.timeStamp });
+        frame.setPointerCapture(e.pointerId);
+        frame.classList.add('dragging');
+      }
+      let p = drag.p - (e.clientX - drag.x) / frame.clientWidth;
+      if (p < 0) p *= 0.3;
+      else if (p > N - 1) p = N - 1 + (p - (N - 1)) * 0.3;
+      pos = p;
+      draw();
+      const dt = e.timeStamp - drag.lt;
+      if (dt > 0) drag.v = 0.7 * ((e.clientX - drag.lx) / dt) + 0.3 * drag.v;
+      drag.lx = e.clientX; drag.lt = e.timeStamp;
+    });
+    const release = e => {
+      if (!drag || e.pointerId !== drag.id) return;
+      const d = drag;
+      drag = null;
+      if (!d.on) return;
+      frame.classList.remove('dragging');
+      const v = e.timeStamp - d.lt > 90 ? 0 : d.v;
+      // a quarter of the way is enough to commit, a flick is enough on its own
+      const off = pos - cur;
+      let to = Math.abs(off) > 0.22 && Math.abs(off) < 1 ? cur + Math.sign(off) : Math.round(pos);
+      if (Math.abs(v) > 0.3) to = v < 0 ? Math.floor(pos) + 1 : Math.ceil(pos) - 1;
+      select(clamp(to, 0, N - 1), { fling: true });
+    };
+    frame.addEventListener('pointerup', release);
+    frame.addEventListener('pointercancel', release);
+
+    draw();
+  });
+
+  /* ---------- entrances ---------- */
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)');
+  const io = new IntersectionObserver(es => es.forEach(e => {
+    if (!e.isIntersecting) return;
+    e.target.classList.add('in');
+    io.unobserve(e.target);
+    setTimeout(() => e.target.classList.add('settled'), 1400);
+  }), { rootMargin: '0px 0px -12% 0px' });
+  document.querySelectorAll('[data-in],[data-strike]').forEach(el => io.observe(el));
+
+  /* ---------- pause loops off-screen and on hidden tabs ---------- */
+  const loopIO = new IntersectionObserver(es => es.forEach(e => e.target.classList.toggle('loop-off', !e.isIntersecting)));
+  document.querySelectorAll('section.sec').forEach(el => loopIO.observe(el));
+  document.addEventListener('visibilitychange', () => document.body.classList.toggle('paused', document.hidden));
+
+  /* ---------- the arc seams, drawn by scroll ---------- */
+  const seams = [...document.querySelectorAll('.seam')].map(el => ({ el, d: -1, on: false }));
+  const seamIO = new IntersectionObserver(es => es.forEach(e => { const s = seams.find(x => x.el === e.target); s.on = e.isIntersecting; }), { rootMargin: '10% 0px' });
+  seams.forEach(s => seamIO.observe(s.el));
+  let seamRaf = null;
+  function drawSeams(){
+    seamRaf = null;
+    if (reduce.matches) return;
+    const vh = innerHeight;
+    seams.forEach(s => {
+      if (!s.on) return;
+      const rect = s.el.getBoundingClientRect();
+      const d = clamp((vh - rect.top) / (vh * 0.6 + rect.height), 0, 1);
+      if (Math.abs(d - s.d) > 0.004 || (d === 1 && s.d !== 1)){ s.d = d; s.el.style.setProperty('--d', d.toFixed(3)); }
+    });
+  }
+  addEventListener('scroll', () => { if (seamRaf === null) seamRaf = requestAnimationFrame(drawSeams); }, { passive: true });
+  drawSeams();
+
+  /* ---------- the one interactive moment: press the pin, then turn ----------
+     Back (counter-clockwise) for hot, forward (clockwise) for sparkling. Drag the knob, tap the
+     settings underneath, or use the arrow keys; Reset turns it home and lets the pin spring up.
+     Button turns are eased tweens; a drag follows the finger smoothly and springs into its detent. */
+  const dialWrap = document.getElementById('dialWrap');
+  const dial = document.getElementById('dial');
+  const safetyCopy = document.getElementById('safetyCopy');
+  const doneLine = safetyCopy.querySelector('.dial-done');
+  const hint = safetyCopy.querySelector('.hint');
+  const ctrlBtns = [...document.querySelectorAll('.dial-controls .dc')];
+  const resetBtn = document.querySelector('.dial-controls .reset');
+  const inds = { '-1': dialWrap.querySelector('.ind-hot'), '1': dialWrap.querySelector('.ind-spark') };
+  const LINES = { '-1': ['Press.', 'Turn back.', 'Hot.'], '1': ['Press.', 'Turn forward.', 'Sparkling.'] };
+  const NAMES = { '-1': 'Hot', '0': 'Off', '1': 'Sparkling' };
+  const K = { ang: 0, pin: 0 };
+  let setting = 0, run = 0, drag = null;
+
+  function drawKnob(){
+    const m = Math.min(1, Math.abs(K.ang) / 90), st = dialWrap.style;
+    st.setProperty('--ang', K.ang.toFixed(2));
+    st.setProperty('--pin', K.pin.toFixed(3));
+    st.setProperty('--m', m.toFixed(3));
+    st.setProperty('--mh', (K.ang < 0 ? m : 0).toFixed(3));
+    st.setProperty('--ms', (K.ang > 0 ? m : 0).toFixed(3));
+    st.setProperty('--dir', K.ang < 0 ? '-1' : '1');
+  }
+  // cubic-bezier easing, solved numerically, for a soft start and a long glide into the detent
+  function bezier(x1, y1, x2, y2){
+    const cx = 3 * x1, bx = 3 * (x2 - x1) - cx, ax = 1 - cx - bx;
+    const cy = 3 * y1, by = 3 * (y2 - y1) - cy, ay = 1 - cy - by;
+    const X = t => ((ax * t + bx) * t + cx) * t, Y = t => ((ay * t + by) * t + cy) * t, dX = t => (3 * ax * t + 2 * bx) * t + cx;
+    return x => {
+      let t = x;
+      for (let i = 0; i < 6; i++){ const d = dX(t); if (Math.abs(d) < 1e-6) break; t -= (X(t) - x) / d; }
+      return Y(clamp(t, 0, 1));
+    };
+  }
+  const EASE_TURN = bezier(0.62, 0.02, 0.3, 1);
+  const EASE_PRESS = t => 1 - Math.pow(1 - t, 3);
+  const EASE_RISE = t => { const c = 1.35; return 1 + (c + 1) * Math.pow(t - 1, 3) + c * Math.pow(t - 1, 2); };
+
+  // one tween per property, so the pin and the turn can overlap
+  const tw = {};
+  function stopKey(key){ const a = tw[key]; if (!a) return; tw[key] = null; cancelAnimationFrame(a.raf); a.settle(false); }
+  function animateKey(key, to, ms, ease, delay){
+    stopKey(key);
+    return new Promise(settle => {
+      if (reduce.matches || ms <= 0){ K[key] = to; drawKnob(); settle(true); return; }
+      const from = K[key], t0 = performance.now() + (delay || 0);
+      const a = tw[key] = { raf: 0, settle };
+      const step = now => {
+        if (tw[key] !== a) return;
+        const t = clamp((now - t0) / ms, 0, 1);
+        K[key] = from + (to - from) * ease(t);
+        drawKnob();
+        if (t < 1) a.raf = requestAnimationFrame(step); else { tw[key] = null; settle(true); }
+      };
+      a.raf = requestAnimationFrame(step);
+    });
+  }
+  // a gently under-damped spring for the angle, carrying the velocity of a flick
+  let springId = 0;
+  function springAngle(target, v0){
+    stopKey('ang');
+    const id = ++springId;
+    return new Promise(settle => {
+      if (reduce.matches){ K.ang = target; drawKnob(); settle(true); return; }
+      let x = K.ang, v = v0 || 0, last = performance.now();
+      const w = 14, z = 0.82;
+      const step = now => {
+        if (id !== springId) return settle(false);
+        const dt = Math.min(32, now - last) / 1000; last = now;
+        v += (-2 * z * w * v - w * w * (x - target)) * dt;
+        x += v * dt;
+        K.ang = clamp(x, -96, 96);
+        drawKnob();
+        if (Math.abs(x - target) < 0.05 && Math.abs(v) < 1.5){ K.ang = target; drawKnob(); settle(true); }
+        else requestAnimationFrame(step);
+      };
+      requestAnimationFrame(step);
+    });
+  }
+  function stopAll(){ springId++; stopKey('ang'); }
+
+  function showSetting(next){
+    setting = next;
+    dialWrap.classList.toggle('is-hot', next === -1);
+    dialWrap.classList.toggle('is-spark', next === 1);
+    dial.setAttribute('aria-valuenow', String(next));
+    dial.setAttribute('aria-valuetext', NAMES[next]);
+    ctrlBtns.forEach(b => b.classList.toggle('on', next !== 0 && +b.dataset.set === next));
+    resetBtn.setAttribute('aria-disabled', next === 0 ? 'true' : 'false');
+    safetyCopy.classList.remove('done');
+    if (next !== 0){
+      [...doneLine.children].forEach((w, i) => { w.textContent = LINES[next][i]; });
+      safetyCopy.classList.toggle('res-hot', next === -1);
+      safetyCopy.classList.toggle('res-spark', next === 1);
+      void doneLine.offsetWidth;   // restart the staged entrance
+      safetyCopy.classList.add('done');
+      const ind = inds[next];
+      ind.classList.remove('pulse'); void ind.offsetWidth; ind.classList.add('pulse');
+    }
+  }
+  // the full sequence: the pin presses, and the turn begins as it bottoms out
+  async function goSetting(next){
+    const id = ++run;
+    stopAll();
+    if (next === 0){
+      showSetting(0);
+      if (!(await animateKey('ang', 0, 420 + Math.abs(K.ang) * 6, EASE_TURN)) || id !== run) return;
+      await animateKey('pin', 0, 520, EASE_RISE);
+      return;
+    }
+    if (setting === next && Math.abs(K.ang - 90 * next) < 1) return;
+    if (setting !== 0 || Math.abs(K.ang) > 1){
+      showSetting(0);
+      if (!(await animateKey('ang', 0, 380 + Math.abs(K.ang) * 5, EASE_TURN)) || id !== run) return;
+    }
+    const wasDown = K.pin > 0.98;
+    if (!wasDown) animateKey('pin', 1, 340, EASE_PRESS);
+    if (!(await animateKey('ang', 90 * next, 1200, EASE_TURN, wasDown ? 0 : 210)) || id !== run) return;
+    showSetting(next);
+  }
+
+  const angleAt = (x, y) => {
+    const r = dial.getBoundingClientRect();
+    return Math.atan2(y - (r.top + r.height / 2), x - (r.left + r.width / 2)) * 180 / Math.PI;
+  };
+  // while dragging, the knob eases after the finger instead of jumping to it
+  function follow(){
+    let last = performance.now();
+    const step = now => {
+      if (!drag) return;
+      const dt = Math.min(50, now - last); last = now;
+      const prev = K.ang;
+      K.ang += (drag.target - K.ang) * (1 - Math.exp(-dt / 55));
+      drag.v = drag.v * 0.6 + ((K.ang - prev) / Math.max(1, dt)) * 1000 * 0.4;
+      drawKnob();
+      requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  }
+  dial.addEventListener('pointerdown', e => {
+    e.preventDefault();
+    dial.setPointerCapture?.(e.pointerId);
+    run++; stopAll();
+    drag = { a0: angleAt(e.clientX, e.clientY), start: K.ang, target: K.ang, v: 0, x: e.clientX, y: e.clientY, moved: false };
+    dialWrap.classList.add('grabbing');
+    animateKey('pin', 1, 260, EASE_PRESS);
+    follow();
+  });
+  dial.addEventListener('pointermove', e => {
+    if (!drag) return;
+    if (!drag.moved && Math.hypot(e.clientX - drag.x, e.clientY - drag.y) > 4) drag.moved = true;
+    if (!drag.moved) return;
+    const d = ((angleAt(e.clientX, e.clientY) - drag.a0 + 540) % 360) - 180;
+    drag.target = clamp(drag.start + d, -90, 90);
+  });
+  function endDrag(){
+    if (!drag) return;
+    const { moved, v } = drag;
+    drag = null;
+    dialWrap.classList.remove('grabbing');
+    const id = ++run;
+    if (!moved){
+      // a tap: the pin presses and springs back up, the knob stays where it is
+      if (setting === 0){
+        hint.classList.remove('nudge'); void hint.offsetWidth; hint.classList.add('nudge');
+        animateKey('pin', 1, 140, EASE_PRESS).then(ok => { if (ok && id === run) animateKey('pin', 0, 520, EASE_RISE); });
+      } else animateKey('pin', 1, 140, EASE_PRESS);
+      return;
+    }
+    // where the knob would coast to decides the detent, so a quick flick counts
+    const coast = K.ang + v * 0.12;
+    const next = coast >= 50 ? 1 : coast <= -50 ? -1 : 0;
+    if (next === 0){
+      showSetting(0);
+      springAngle(0, v).then(ok => { if (ok && id === run) animateKey('pin', 0, 520, EASE_RISE); });
+    } else {
+      springAngle(90 * next, v).then(ok => { if (ok && id === run) showSetting(next); });
+    }
+  }
+  ['pointerup', 'pointercancel', 'lostpointercapture'].forEach(t => dial.addEventListener(t, endDrag));
+  dial.addEventListener('contextmenu', e => e.preventDefault());
+  dial.addEventListener('keydown', e => {
+    let next = null;
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') next = Math.max(-1, setting - 1);
+    else if (e.key === 'ArrowRight' || e.key === 'ArrowUp') next = Math.min(1, setting + 1);
+    else if (e.key === 'Escape' || e.key === 'Home') next = 0;
+    if (next === null) return;
+    e.preventDefault();
+    goSetting(next);
+  });
+  ctrlBtns.forEach(b => b.addEventListener('click', () => {
+    if (b.getAttribute('aria-disabled') === 'true') return;
+    goSetting(+b.dataset.set);
+  }));
+  drawKnob();
+
+  /* ---------- reduced motion, live in both directions ---------- */
+  function pinToFinalStates(){
+    seams.forEach(s => { s.d = 1; s.el.style.setProperty('--d', '1'); });
+    document.querySelectorAll('[data-in],[data-strike]').forEach(el => el.classList.add('in', 'settled'));
+  }
+  function unpinFinalStates(){ drawSeams(); }
+  if (reduce.matches) pinToFinalStates();
+  reduce.addEventListener('change', e => { if (e.matches) pinToFinalStates(); else { unpinFinalStates(); applyHeroMode(); } });
+})();
+</script>
+</body>
+</html>
