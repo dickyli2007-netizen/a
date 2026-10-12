@@ -1,5 +1,6 @@
 {%- comment -%}
-  The shop on the home page: one featured product (or a grid when several are picked), then collections.
+  The shop on the home page: one featured product (or a grid when several are picked) and the collections,
+  above it or below it as the editor sets.
   The colour cut-outs belong to the product page, so the photos here skip variant images.
 {%- endcomment -%}
 {%- liquid
@@ -16,9 +17,37 @@
 -%}
 {%- capture nl %}
 {% endcapture -%}
+{%- capture collections_html -%}
+    {%- if section.settings.collections != blank -%}
+    <div class="collections" data-in>
+      <div class="chead part"><span class="label">{{ section.settings.collections_label | escape }}</span><a class="link" href="{{ routes.collections_url }}">{{ section.settings.view_all_label | escape }}</a></div>
+      <ul class="ccards">
+        {%- for c in section.settings.collections -%}
+        {%- liquid
+          assign cimg = c.featured_image
+          if cimg == blank and c.products.first.featured_media
+            assign cimg = c.products.first.featured_media.preview_image
+          endif
+        -%}
+        <li class="ccard part"><a href="{{ c.url }}">
+          {%- if cimg -%}
+          <div class="cimg">{{ cimg | image_url: width: 1000 | image_tag: widths: '500, 750, 1000', sizes: '(min-width: 990px) 33vw, 100vw', loading: 'lazy', alt: c.title }}</div>
+          {%- else -%}
+          <div class="cimg empty" aria-hidden="true"><svg viewBox="0 0 200 120"><path d="M30 118 V58 C30 22 58 4 100 4 C142 4 170 22 170 58 V82"/><circle cx="170" cy="98" r="3"/></svg></div>
+          {%- endif -%}
+          <div class="cmeta"><h3>{{ c.title }}</h3><span class="label">{% if c.products_count == 0 %}{{ section.settings.coming_soon_label | escape }}{% elsif c.products_count == 1 %}1 {{ section.settings.piece_label | escape }}{% else %}{{ c.products_count }} {{ section.settings.pieces_label | escape }}{% endif %}</span></div>
+        </a></li>
+        {%- endfor -%}
+      </ul>
+    </div>
+    {%- endif -%}
+{%- endcapture -%}
 {%- render 'farless-arc', arc: section.settings.arc -%}
 <section class="sec shop{% if section.settings.tone %} tone{% endif %}" id="{{ section.settings.anchor | default: 'shop' | handleize }}" aria-labelledby="h-{{ section.id }}">
   <div class="wrap">
+    {%- if section.settings.collections_position == 'above' %}
+{{ collections_html }}
+    {%- endif %}
     <div class="head" data-in>
       <div>
         <span class="label kicker part">{{ section.settings.kicker | escape }}</span>
@@ -114,30 +143,9 @@
       </div>
     </div>
     {%- endif -%}
-
-    {%- if section.settings.collections != blank -%}
-    <div class="collections" data-in>
-      <div class="chead part"><span class="label">{{ section.settings.collections_label | escape }}</span><a class="link" href="{{ routes.collections_url }}">{{ section.settings.view_all_label | escape }}</a></div>
-      <ul class="ccards">
-        {%- for c in section.settings.collections -%}
-        {%- liquid
-          assign cimg = c.featured_image
-          if cimg == blank and c.products.first.featured_media
-            assign cimg = c.products.first.featured_media.preview_image
-          endif
-        -%}
-        <li class="ccard part"><a href="{{ c.url }}">
-          {%- if cimg -%}
-          <div class="cimg">{{ cimg | image_url: width: 1000 | image_tag: widths: '500, 750, 1000', sizes: '(min-width: 990px) 33vw, 100vw', loading: 'lazy', alt: c.title }}</div>
-          {%- else -%}
-          <div class="cimg empty" aria-hidden="true"><svg viewBox="0 0 200 120"><path d="M30 118 V58 C30 22 58 4 100 4 C142 4 170 22 170 58 V82"/><circle cx="170" cy="98" r="3"/></svg></div>
-          {%- endif -%}
-          <div class="cmeta"><h3>{{ c.title }}</h3><span class="label">{% if c.products_count == 0 %}{{ section.settings.coming_soon_label | escape }}{% elsif c.products_count == 1 %}1 {{ section.settings.piece_label | escape }}{% else %}{{ c.products_count }} {{ section.settings.pieces_label | escape }}{% endif %}</span></div>
-        </a></li>
-        {%- endfor -%}
-      </ul>
-    </div>
-    {%- endif -%}
+    {%- if section.settings.collections_position != 'above' %}
+{{ collections_html }}
+    {%- endif %}
   </div>
 </section>
 
@@ -154,6 +162,7 @@
     { "type": "product_list", "id": "shop_products", "label": "Or show several products", "limit": 8, "info": "Leave empty to feature the product above. Two or more show as a grid." },
     { "type": "checkbox", "id": "show_prices", "default": false, "label": "Show prices" },
     { "type": "collection_list", "id": "collections", "label": "Collections to show", "limit": 6 },
+    { "type": "select", "id": "collections_position", "label": "Show collections", "default": "above", "options": [ { "value": "above", "label": "Above the product" }, { "value": "below", "label": "Below the product" } ] },
     { "type": "header", "content": "Labels" },
     { "type": "text", "id": "product_kicker", "label": "Label above the product name", "default": "The tap", "info": "Used when the product has no Small heading field of its own." },
     { "type": "text", "id": "add_label", "label": "Add to cart button", "default": "Add to cart" },

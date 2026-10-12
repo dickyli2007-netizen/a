@@ -261,7 +261,7 @@ section.sec.tone{background:var(--canvas-2)}
 .seam path{fill:none;stroke:var(--hair-strong);stroke-width:1;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:calc(1 - var(--d,0));vector-effect:non-scaling-stroke}
 .seam circle{fill:var(--accent);opacity:clamp(0,(var(--d,0) - .9)*10,1)}
 
-/* shop: the product first, then the collections */
+/* shop: the collections first, then the product (the editor can put them below it) */
 .shop .head{display:flex;justify-content:space-between;align-items:end;gap:32px;flex-wrap:wrap;margin-bottom:clamp(56px,8vh,88px)}
 .feature{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:clamp(40px,7vw,120px);align-items:center}
 .f-frame{position:relative;aspect-ratio:4/5;overflow:hidden;background:var(--panel)}
@@ -300,6 +300,7 @@ section.sec.tone{background:var(--canvas-2)}
 .pcard h3{font:300 .92rem/1.35 var(--font);letter-spacing:.2em;text-transform:uppercase;margin-top:20px}
 .pcard .price,.pcard .sold{display:block;margin-top:8px;color:var(--text-secondary);font-size:.95rem}
 .collections{margin-top:clamp(110px,16vh,170px)}
+.collections:first-child{margin:0 0 clamp(110px,16vh,170px)}
 .collections .chead{display:flex;justify-content:space-between;align-items:baseline;gap:20px;border-bottom:1px solid var(--hair);padding-bottom:18px;margin-bottom:34px}
 .ccards{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:28px;list-style:none;margin:0;padding:0}
 .ccard a{display:block;text-decoration:none}

@@ -136,7 +136,7 @@ async function page(file, templateFile, template, scope, designMode){
   await page('index.html', T('index.json'), { name: 'index', suffix: null }, {});
   await page('design/index.html', T('index.json'), { name: 'index', suffix: null }, {}, true);
   await page('products/faucet/index.html', T('product.json'), { name: 'product', suffix: null }, { product: faucet, page_title: 'Farless 5-in-1 Tap', page_description: 'Five waters. One tap.' });
-  // the owner's edits: new words, a question added, a water row removed, sections reordered, a picture link
+  // the owner's edits: new words, a question added, a water row removed, sections reordered, collections moved below the product, a picture link
   const edited = JSON.parse(fs.readFileSync(T('index.json'), 'utf8'));
   edited.sections.hero.blocks.caption_2.settings.line = 'Boiling. Filtered. Edited.';
   edited.sections.waters.settings.heading = 'Edited heading.';
@@ -144,6 +144,7 @@ async function page(file, templateFile, template, scope, designMode){
   edited.sections.questions.blocks.question_5 = { type: 'question', settings: { question: 'Can I add my own question?', answer: '<p>Yes, from the theme editor.</p>' } };
   edited.sections.questions.block_order.push('question_5');
   edited.sections.safety.settings.result_hot = 'Push. Twist back. Hot water.';
+  edited.sections.shop.settings.collections_position = 'below';
   edited.order = ['hero', 'waters', 'shop', 'safety', 'design', 'questions', 'final'];
   fs.writeFileSync(path.join(__dirname, 'edited.json'), JSON.stringify(edited));
   await page('edited/index.html', path.join(__dirname, 'edited.json'), { name: 'index', suffix: null }, {});

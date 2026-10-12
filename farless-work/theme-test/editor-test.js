@@ -20,6 +20,7 @@ const BASE = 'http://localhost:8083';
       watersHeading: document.querySelector('#waters h2').textContent, rows: document.querySelectorAll('.swaps li').length,
       questions: [...document.querySelectorAll('#questions summary')].map(s => s.textContent.trim()),
       order: [...document.querySelectorAll('section[id]')].map(s => s.id),
+      shopOrder: [...document.querySelector('#shop .wrap').children].map(e => e.className.split(' ')[0]),
       hotData: document.getElementById('safetyCopy').dataset.hot,
     }));
     await p.evaluate(() => document.getElementById('safety').scrollIntoView({ block: 'center' })); await sleep(1200);
