@@ -9,9 +9,11 @@ and no prices shown anywhere ("keep it exclusive").
 - `farless/index.html`: the main landing page, one self-contained file. Its `:root` tokens, nav, footer,
   buttons and labels are the house style for everything else.
 - `farless-work/design-package.md`: the brand plan (palette, type, copy decisions, confirmed facts).
-- `farless-work/build_shopify.py`: builds the Shopify theme add-on from the landing page into `shopify/`
-  and `farless-shopify-addon.zip`.
-- `farless-work/product-page/`: the product page template (below).
+- `farless-work/build_shopify.py`: builds the Shopify theme files into `shopify/` and
+  `farless-shopify-addon.zip`: the layout and landing section from the landing page, and the product
+  section from the product page template (`farless-work/shopify-product.liquid` plus the template's
+  styles and script). Run it after changing either, then run Theme Check.
+- `farless-work/product-page/`: the product page template and its preview builder (below).
 
 ## Product pages: always use the approved template
 
@@ -34,7 +36,22 @@ Keep these, they are what the owner approved:
   screen together.
 - A product with one colour gets the same page without the picker.
 
-### Adding a product
+### Adding a product to the store
+
+The Shopify product page (`sections/farless-product.liquid`, used by `templates/product.json` for every
+product) builds itself from the product, so a new product needs no new code:
+1. Cut out a photo of each colour with `cutout.py` (below) and upload them to the product.
+2. Give the product an option named Colour (Color or Finish also work), one variant per colour, and set
+   each variant's image to its cut-out. The swatch fill comes from the colour's name (chrome, steel,
+   nickel, brass, gold, copper, rose, bronze, black, graphite, white), or from Shopify's own swatch colour
+   when one is set.
+3. Fill in the product's Farless fields in the admin: Small heading, Tagline, Notes (one per line,
+   "Label | text") and Shadow position (where the foot is, % from the left of the cut-out).
+4. The first paragraph of the description shows under the button, so open the description with it.
+A product with one colour gets the page without the picker. Other options (a size, say) get a plain
+select under the swatches.
+
+### Previewing a product before it goes live
 
 1. Get a studio photo of each colour on a plain, evenly lit backdrop, or the maker's transparent PNGs.
 2. Cut each one out:
@@ -57,11 +74,17 @@ copper and black are stand-ins: in Shopify it has one variant and no colour opti
 
 ## Store
 
-- Shopify, reached through the Shopify connector. Product "Farless 5-in-1 Tap" (handle `faucet`, one
-  variant), collection "Multi Function Faucets". Prices stay hidden on the site.
-- The landing page runs as a theme add-on (`layout/farless.liquid`, `sections/farless-landing.liquid`).
-  The connector cannot write to the live theme, so uploads go to an unpublished theme copy and the owner
-  previews and publishes it.
-- The product page template is not in Shopify yet. Taking it live means a Farless product template
-  (a section that renders any product, with each colour as a variant option and that variant's cut-out
-  as its image). Do that only when the owner asks.
+- Shopify (farless.store), reached through the Shopify connector. Product "Farless 5-in-1 Tap" (handle
+  `faucet`) has a Colour option with four variants at the same price: Polished Chrome, Satin Brass,
+  Warm Copper, Matte Black. Brass, copper and black use the recoloured stand-in cut-outs until real
+  photos exist; all four have 0 stock, so they show Sold out. Collection "Multi Function Faucets".
+  Prices stay hidden on the site.
+- The Farless fields on products are metafields in the `farless` namespace with definitions:
+  `kicker`, `lede`, `notes`, `foot_x`.
+- Theme files: `layout/farless.liquid`, `sections/farless-landing.liquid` (home page),
+  `sections/farless-product.liquid` with `templates/product.json` (every product page). The theme's
+  original product page is kept as the alternate template `templates/product.atelier.json`.
+- The connector cannot write to the live theme or publish one, so uploads go to an unpublished copy
+  (duplicate the live theme, upload with `themeFilesUpsert` from raw GitHub URLs pinned to a commit,
+  check the checksums) and the owner previews and publishes it. The landing shop section skips variant
+  images, so colour cut-outs never show as photos there.

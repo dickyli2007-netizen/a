@@ -103,10 +103,18 @@ Blob fetch with the loading ring (plain Blob if under 8 MB), the dt-normalized l
 
 Every viewer-facing line above ships verbatim. The built page must pass the Phase 9 grep gate (zero em dashes, zero stock words) and the body-copy sweep for AI tells before anyone sees it. Deliberate brand devices here ("Five waters. One tap.", "Push. Turn. Boiling.", the "The kettle. The filter jug." staccato) are craft and stay.
 
-## 10. Product pages
+## 10. Five waters, one section
+
+The five water columns and the "what leaves your counter" list are one section now: each water sits
+beside the thing it replaces, struck through in bronze. Boiling replaces the kettle, sparkling the soda
+machine, filtered the filter jug and bottles; hot and cold stay "Still your everyday tap." Headline
+"One tap does it all.", line "Five waters from one quiet tap, and four fewer things on your counter.",
+closing "Fewer things. A calmer kitchen."
+
+## 11. Product pages
 
 Approved by the owner as the template for every product: the product cut out alone on the dark page,
 the colour picker beside it ("Colour. Pick your favourite." with round swatches), and a sideways slide
 between colours. The picker lives on product pages only; the main page's shop section stays as it is.
-The template, its cut-out tool and the steps for adding a product are in `farless-work/product-page/`
-and `CLAUDE.md`.
+It is the Shopify product page for every product (`sections/farless-product.liquid`). The template,
+its cut-out tool and the steps for adding a product are in `farless-work/product-page/` and `CLAUDE.md`.
