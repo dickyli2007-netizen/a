@@ -1,0 +1,35 @@
+{
+  "handle": "arc-duo-filter-tap",
+  "title": "Farless Arc Duo Filter Tap",
+  "kicker": "Filtered tap",
+  "lede": "Filtered water. Two levers. One arc.",
+  "collection": "Filtered Faucets",
+  "description": "A filtered tap in brushed steel with a high arched spout and a ribbed spray head that pulls down. Two slim levers sit on one quiet body.",
+  "notes": [
+    [
+      "Filtered",
+      "Clean drinking water, straight from the tap."
+    ],
+    [
+      "Pull-down spray",
+      "The ribbed head draws down on its hose."
+    ],
+    [
+      "Brushed steel",
+      "One clean arc."
+    ]
+  ],
+  "shadow": {
+    "x": 73.4,
+    "width": 34
+  },
+  "finishes": [
+    {
+      "key": "steel",
+      "name": "Brushed Steel",
+      "image": "arc-duo-filter-tap-steel.webp",
+      "swatch": "linear-gradient(135deg,#fbfbfc 0%,#c3c6ca 38%,#eef0f2 56%,#8c9095 100%)"
+    }
+  ],
+  "to_confirm": "Name, copy and price are working choices from the maker's photos; the owner confirms them."
+}

@@ -1,0 +1,35 @@
+{
+  "handle": "arc-filter-tap",
+  "title": "Farless Arc Filter Tap",
+  "kicker": "Filtered tap",
+  "lede": "Filtered water from one clean arc.",
+  "collection": "Filtered Faucets",
+  "description": "A filtered tap in brushed steel with a high arched spout, a pull-down spray head and an open loop lever.",
+  "notes": [
+    [
+      "Filtered",
+      "Clean drinking water, straight from the tap."
+    ],
+    [
+      "Pull-down spray",
+      "The head draws down from the spout on its hose."
+    ],
+    [
+      "Brushed steel",
+      "With an open loop lever."
+    ]
+  ],
+  "shadow": {
+    "x": 64.6,
+    "width": 34
+  },
+  "finishes": [
+    {
+      "key": "steel",
+      "name": "Brushed Steel",
+      "image": "arc-filter-tap-steel.webp",
+      "swatch": "linear-gradient(135deg,#fbfbfc 0%,#c3c6ca 38%,#eef0f2 56%,#8c9095 100%)"
+    }
+  ],
+  "to_confirm": "Name, copy and price are working choices from the maker's photos; the owner confirms them."
+}
