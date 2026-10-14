@@ -43,6 +43,20 @@ class SchemaTag extends Tag {
   * render(){}
 }
 engine.registerTag('schema', SchemaTag);
+// one page of results: the samples never fill more than one
+class PaginateTag extends Tag {
+  constructor(token, remain, liquid){
+    super(token, remain, liquid); this.tpls = [];
+    while (remain.length){ const t = remain.shift(); if (t.name === 'endpaginate') return; this.tpls.push(liquid.parser.parseToken(t, remain)); }
+    throw new Error('paginate not closed');
+  }
+  * render(ctx, emitter){
+    ctx.push({ paginate: { pages: 1, current_page: 1, previous: null, next: null } });
+    yield this.liquid.renderer.renderTemplates(this.tpls, ctx, emitter);
+    ctx.pop();
+  }
+}
+engine.registerTag('paginate', PaginateTag);
 
 // ---------- sample store ----------
 const img = (name, w, h, alt) => ({ src: `/img/${name}`, width: w, height: h, aspect_ratio: +(w / h).toFixed(4), alt });
@@ -63,11 +77,28 @@ const faucet = {
   metafields: { farless: { kicker: { value: 'The tap' }, lede: { value: 'Five waters. One tap.' }, foot_x: { value: 33.3 },
     notes: { value: 'Five waters | Boiling, filtered, sparkling, hot and cold.\r\nPush and turn | Boiling only when you mean it.\r\n5-year warranty | On every Farless.' } } },
 };
+// the filtered taps, from their product files: one colour each, a cut-out as the colour's picture
+const PP = path.join(REPO, 'farless-work', 'product-page');
+const FILTERED = ['flex-duo-filter-tap', 'flex-square-filter-tap', 'flex-angle-filter-tap', 'arc-duo-filter-tap', 'arc-filter-tap'];
+const filtered = FILTERED.map((h, i) => {
+  const d = JSON.parse(fs.readFileSync(path.join(PP, 'products', `${h}.json`), 'utf8'));
+  const f = d.finishes[0];
+  const [w, hgt] = (() => { const b = fs.readFileSync(path.join(PP, 'assets', h, f.image)); return [b.readUIntLE(24, 3) + 1, b.readUIntLE(27, 3) + 1]; })();   // VP8X canvas size
+  const cut = media(200 + i, img(f.image, w, hgt, `The ${d.title} in ${f.name.toLowerCase()}`));
+  const v = { id: 300 + i, title: f.name, options: [f.name], available: false, price: 0, featured_media: cut };
+  return { id: 20 + i, title: d.title, handle: h, url: `/products/${h}`, description: `<p>${d.lede}</p><p>${d.description}</p>`, featured_media: cut,
+    media: [cut], variants: [v], available: false, price: 0, has_only_default_variant: false, selected_or_first_available_variant: v,
+    options_with_values: [{ name: 'Colour', position: 1, values: [{ name: f.name, selected: true, swatch: null }] }],
+    collections: [{ handle: 'filtered-faucets', title: 'Filtered Faucets', url: '/collections/filtered-faucets' }],
+    metafields: { farless: { kicker: { value: d.kicker }, lede: { value: d.lede }, foot_x: { value: d.shadow.x }, notes: { value: d.notes.map(n => n.join(' | ')).join('\r\n') } } } };
+});
 const COLLECTIONS = {
-  'multi-function-faucets': { title: 'Multi Function Faucets', url: '/collections/multi-function-faucets', products_count: 1, featured_image: null, products: [faucet] },
-  'filtered-faucets': { title: 'Filtered Faucets', url: '/collections/filtered-faucets', products_count: 0, featured_image: null, products: [] },
+  'multi-function-faucets': { title: 'Multi Function Faucets', handle: 'multi-function-faucets', url: '/collections/multi-function-faucets', description: '', products_count: 1, featured_image: null, products: [faucet] },
+  'filtered-faucets': { title: 'Filtered Faucets', handle: 'filtered-faucets', url: '/collections/filtered-faucets', description: '', products_count: filtered.length,
+    featured_image: img('filtered-faucets.jpg', 2400, 1600, 'Filtered Faucets'), products: filtered },
+  'coming-soon': { title: 'Coming Soon', handle: 'coming-soon', url: '/collections/coming-soon', description: '<p>New pieces are on their way.</p>', products_count: 0, featured_image: null, products: [] },
 };
-const PRODUCTS = { faucet };
+const PRODUCTS = { faucet, ...Object.fromEntries(filtered.map(p => [p.handle, p])) };
 
 const globals = { routes: { root_url: '/', cart_url: '/cart', all_products_collection_url: '/collections/all', collections_url: '/collections' },
   shop: { name: 'Farless', policies: [{ title: 'Refund policy', url: '/policies/refund-policy' }] }, request: { locale: { iso_code: 'en' } }, content_for_header: '' };
@@ -132,10 +163,14 @@ async function page(file, templateFile, template, scope, designMode){
   fs.copyFileSync(`${REPO}/farless/assets/design-faucet.jpg`, `${OUT}/img/design.jpg`);
   fs.copyFileSync(`${REPO}/farless/assets/hero-ending.jpg`, `${OUT}/img/ending.jpg`);
   for (const f of fs.readdirSync(`${THEME}/assets`)) fs.copyFileSync(`${THEME}/assets/${f}`, `${OUT}/cdn/${f}`);
+  for (const p of filtered) fs.copyFileSync(path.join(PP, 'assets', p.handle, p.featured_media.preview_image.src.split('/').pop()), `${OUT}/img/${p.featured_media.preview_image.src.split('/').pop()}`);
+  fs.copyFileSync(path.join(PP, 'assets', 'collections', 'filtered-faucets.jpg'), `${OUT}/img/filtered-faucets.jpg`);
   const T = n => path.join(THEME, 'templates', n);
   await page('index.html', T('index.json'), { name: 'index', suffix: null }, {});
   await page('design/index.html', T('index.json'), { name: 'index', suffix: null }, {}, true);
   await page('products/faucet/index.html', T('product.json'), { name: 'product', suffix: null }, { product: faucet, page_title: 'Farless 5-in-1 Tap', page_description: 'Five waters. One tap.' });
+  for (const p of filtered) await page(`products/${p.handle}/index.html`, T('product.json'), { name: 'product', suffix: null }, { product: p, page_title: p.title });
+  for (const [h, c] of Object.entries(COLLECTIONS)) await page(`collections/${h}/index.html`, T('collection.json'), { name: 'collection', suffix: null }, { collection: c, page_title: c.title });
   // the owner's edits: new words, a question added, a water row removed, sections reordered, collections moved below the product, a picture link
   const edited = JSON.parse(fs.readFileSync(T('index.json'), 'utf8'));
   edited.sections.hero.blocks.caption_2.settings.line = 'Boiling. Filtered. Edited.';
@@ -148,5 +183,5 @@ async function page(file, templateFile, template, scope, designMode){
   edited.order = ['hero', 'waters', 'shop', 'safety', 'design', 'questions', 'final'];
   fs.writeFileSync(path.join(__dirname, 'edited.json'), JSON.stringify(edited));
   await page('edited/index.html', path.join(__dirname, 'edited.json'), { name: 'index', suffix: null }, {});
-  console.log('rendered home, design mode, product, edited home');
+  console.log('rendered home, design mode, products, collections, edited home');
 })().catch(e => { console.error(e); process.exit(1); });
