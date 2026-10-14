@@ -11,8 +11,8 @@ and no prices shown anywhere ("keep it exclusive").
   house style for everything else.
 - `farless-work/theme/`: the Shopify theme's own source. Every page's words, pictures, links and film
   are section settings and blocks there, so the owner edits them in Online Store > Customize:
-  `sections/` (film hero, shop, five waters, safety knob, design, questions, final call, product, menu bar
-  and footer, plus the header and footer groups), `snippets/`, `templates/` (which sections each page
+  `sections/` (film hero, shop, five waters, safety knob, design, questions, final call, product,
+  collection, menu bar and footer, plus the header and footer groups), `snippets/`, `templates/` (which sections each page
   shows, with today's content) and `assets/farless.src.js` (the shared script; each part starts per
   section and restarts when the editor reloads a section).
 - `farless-work/build_shopify.py`: builds `shopify/` and `farless-shopify-addon.zip` from those pieces,
@@ -20,7 +20,8 @@ and no prices shown anywhere ("keep it exclusive").
 - `farless-work/theme-test/`: renders the theme like Shopify does with sample data and tests it in a
   browser (against the static page, with edited content, with theme editor events). See render.js.
 - `farless-work/design-package.md`: the brand plan (palette, type, copy decisions, confirmed facts).
-- `farless-work/product-page/`: the product page template and its preview builder (below).
+- `farless-work/product-page/`: the product page template and its preview builder (below), the cut-out
+  tool, and `collection_image.py`, which composes a collection's picture from its products' cut-outs.
 
 ## Changing the site
 
@@ -62,6 +63,10 @@ product) builds itself from the product, so a new product needs no new code:
 3. Fill in the product's Farless fields in the admin: Small heading, Tagline, Notes (one per line,
    "Label | text") and Shadow position (where the foot is, % from the left of the cut-out).
 4. The first paragraph of the description shows under the button, so open the description with it.
+5. Put it in its collection. Collection pages (`sections/farless-collection.liquid`, used by
+   `templates/collection.json`) show each product as its first colour's cut-out with the same light and
+   shadow. Give the collection a picture for the home page's 3:2 card:
+   `python3 farless-work/product-page/collection_image.py OUT.jpg HANDLE HANDLE ...`
 A product with one colour gets the page without the picker. Other options (a size, say) get a plain
 select under the swatches.
 
@@ -70,9 +75,10 @@ select under the swatches.
 1. Get a studio photo of each colour on a plain, evenly lit backdrop, or the maker's transparent PNGs.
 2. Cut each one out:
    `python3 farless-work/product-page/cutout.py PHOTO HANDLE --name NAME-COLOUR`
-   This writes `assets/HANDLE/NAME-COLOUR.webp` and `assets/HANDLE/mask.png`. Look at the cut-out on the
-   dark page. If an edge is wrong, fix `mask.png` and rerun with `--mask`; `--floor ROW` drops a floor
-   reflection under the product.
+   This writes `assets/HANDLE/NAME-COLOUR.webp` and `assets/HANDLE/mask.png` and prints where the foot is
+   (`shadow.x`). A photo that is already transparent keeps its own edge and is only cropped. Look at the
+   cut-out on the dark page. If an edge is wrong, fix `mask.png` and rerun with `--mask`; `--floor ROW`
+   drops a floor reflection under the product.
 3. Write `products/HANDLE.json` by copying `products/faucet.json`. Use the Shopify product handle and
    real copy from the owner: title, kicker, lede, collection, description, notes, the finishes in order,
    and `shadow.x`, which is where the product's foot is, as a % of the image width. Chrome, brass, copper and black
@@ -93,12 +99,21 @@ copper and black are stand-ins until real photos exist.
   Warm Copper, Matte Black. Brass, copper and black use the recoloured stand-in cut-outs until real
   photos exist; all four have 0 stock, so they show Sold out. Collection "Multi Function Faucets".
   Prices stay hidden on the site.
+- Collection "Filtered Faucets" (manual order, picture composed from the cut-outs) holds five filtered
+  taps from the maker's photos, one colour each: Farless Flex Duo Filter Tap (Polished Gold), Flex Square
+  (Brushed Gold), Flex Angle (Rose Gold), Arc Duo (Brushed Steel) and Arc (Brushed Steel); handles
+  `flex-duo-filter-tap` and so on, files in `farless-work/product-page/products/`. Their names and copy
+  are working choices from the photos (visible features only) and their price is a 0.00 placeholder until
+  the owner gives real ones; all have 0 stock, so they show Sold out, and they are on the Online Store
+  only, not Shop or Point of Sale.
 - The Farless fields on products are metafields in the `farless` namespace with definitions:
   `kicker`, `lede`, `notes`, `foot_x`.
 - Theme files: `layout/farless.liquid` (loads `farless-header-group`, the page, `farless-footer-group`
   and `assets/farless.js`), the `farless-*` sections and snippets, `templates/index.json` and
-  `templates/page.farless.json` (home page), `templates/product.json` (every product page). The theme's
-  original product page is kept as the alternate template `templates/product.atelier.json`. Buttons that
+  `templates/page.farless.json` (home page), `templates/product.json` (every product page),
+  `templates/collection.json` (every collection page). The theme's original product and collection pages
+  are kept as the alternate templates `templates/product.atelier.json` and `collection.atelier.json`;
+  the list of all collections (`/collections`) still uses the theme's original page. Buttons that
   buy link to `shopify://products/faucet` in the templates; the owner can repoint them in the editor.
 - The connector cannot write to the live theme, publish one or delete theme files, so uploads go to an
   unpublished copy (duplicate the newest theme, upload with `themeFilesUpsert` from raw GitHub URLs
