@@ -1,0 +1,95 @@
+{%- comment -%}
+  The search results page in the Farless style: the words searched for, large on a hairline, then the
+  pieces that match as cards with hearts, and any pages or articles as plain links.
+{%- endcomment -%}
+{%- paginate search.results by section.settings.per_page -%}
+{%- liquid
+  assign product_hits = 0
+  for item in search.results
+    if item.object_type == 'product'
+      assign product_hits = product_hits | plus: 1
+    endif
+  endfor
+-%}
+<section class="cl srch{% if section.settings.tone %} tone{% endif %}" aria-labelledby="h-{{ section.id }}">
+  <div class="wrap">
+    <nav class="crumbs label" aria-label="Breadcrumb"><a href="{{ routes.root_url }}#shop">{{ section.settings.shop_crumb | escape }}</a><span aria-hidden="true">/</span><span aria-current="page">{{ section.settings.heading | escape }}</span></nav>
+    <div class="cl-head">
+      <div>
+        <span class="label kicker">{{ section.settings.heading | escape }}</span>
+        {%- comment -%} once something is searched, the words searched for stand large in the box below {%- endcomment -%}
+        <h1 class="h2{% if search.performed and search.terms != blank %} sr{% endif %}" id="h-{{ section.id }}">{% if search.performed and search.terms != blank %}{{ section.settings.heading | escape }}: {{ search.terms | escape }}{% else %}{{ section.settings.empty_heading | escape }}{% endif %}</h1>
+      </div>
+      {%- if search.performed %}
+      <span class="label">{% if search.results_count == 1 %}1 {{ section.settings.result_label | escape }}{% else %}{{ search.results_count }} {{ section.settings.results_label | escape }}{% endif %}</span>
+      {%- endif %}
+    </div>
+    <form class="sp-form" action="{{ routes.search_url }}" method="get" role="search">
+      <label class="sr" for="q-{{ section.id }}">{{ section.settings.placeholder | escape }}</label>
+      <input id="q-{{ section.id }}" type="search" name="q" value="{{ search.terms | escape }}" placeholder="{{ section.settings.placeholder | escape }}" autocomplete="off" spellcheck="false">
+      <input type="hidden" name="type" value="product">
+      <button type="submit" class="sp-go" aria-label="{{ section.settings.heading | escape }}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h15M14 7l5 5-5 5"/></svg></button>
+    </form>
+
+    {%- if search.performed and search.results_count > 0 %}
+      {%- if product_hits > 0 %}
+    <ul class="cl-grid">
+      {%- for item in search.results -%}
+        {%- if item.object_type == 'product' -%}
+          {%- render 'farless-card', product: item, pictures: 'cutout', show_prices: section.settings.show_prices, sold_out_label: section.settings.sold_out_label, colours_label: section.settings.colours_label, save_label: section.settings.save_label -%}
+        {%- endif -%}
+      {%- endfor %}
+    </ul>
+      {%- endif -%}
+      {%- if product_hits < search.results.size %}
+    <ul class="cl-links">
+      {%- for item in search.results -%}
+        {%- unless item.object_type == 'product' %}<li><a href="{{ item.url }}">{{ item.title | escape }}</a></li>{% endunless -%}
+      {%- endfor %}
+    </ul>
+      {%- endif -%}
+      {%- if paginate.pages > 1 %}
+    <nav class="cl-pages" aria-label="{{ section.settings.pages_label | escape }}">
+      {%- if paginate.previous %}<a class="link" href="{{ paginate.previous.url }}">{{ section.settings.previous_label | escape }}</a>{% endif -%}
+      {%- if paginate.next %}<a class="link" href="{{ paginate.next.url }}">{{ section.settings.next_label | escape }}</a>{% endif -%}
+    </nav>
+      {%- endif -%}
+    {%- elsif search.performed %}
+    <div class="cl-empty">
+      <p>{{ section.settings.none_text | escape }}</p>
+      <a class="link" href="{{ routes.root_url }}#shop">{{ section.settings.back_label | escape }}</a>
+    </div>
+    {%- endif %}
+  </div>
+</section>
+{%- endpaginate -%}
+
+{% schema %}
+{
+  "name": "Farless search",
+  "tag": "div",
+  "class": "farless-search",
+  "disabled_on": { "groups": ["header", "footer"] },
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Small label", "default": "Search" },
+    { "type": "text", "id": "empty_heading", "label": "Heading before anything is searched", "default": "Find a piece." },
+    { "type": "text", "id": "placeholder", "label": "Search box", "default": "Search the pieces" },
+    { "type": "checkbox", "id": "show_prices", "default": false, "label": "Show prices" },
+    { "type": "range", "id": "per_page", "label": "Results per page", "min": 6, "max": 48, "step": 6, "default": 24 },
+    { "type": "header", "content": "Labels" },
+    { "type": "text", "id": "shop_crumb", "label": "First link in the trail", "default": "Shop" },
+    { "type": "text", "id": "result_label", "label": "One result", "default": "result" },
+    { "type": "text", "id": "results_label", "label": "Several results", "default": "results" },
+    { "type": "text", "id": "colours_label", "label": "Colours", "default": "colours" },
+    { "type": "text", "id": "sold_out_label", "label": "Sold out", "default": "Sold out" },
+    { "type": "text", "id": "save_label", "label": "Heart button, for screen readers", "default": "Save to favourites" },
+    { "type": "text", "id": "none_text", "label": "Nothing found", "default": "Nothing matches that yet. Try another word, or look through the collections." },
+    { "type": "text", "id": "back_label", "label": "Link from nothing found", "default": "Back to the shop" },
+    { "type": "text", "id": "pages_label", "label": "Page links name", "default": "More results" },
+    { "type": "text", "id": "previous_label", "label": "Previous page", "default": "Previous" },
+    { "type": "text", "id": "next_label", "label": "Next page", "default": "Next" },
+    { "type": "header", "content": "Layout" },
+    { "type": "checkbox", "id": "tone", "label": "Slightly lighter background", "default": false }
+  ]
+}
+{% endschema %}

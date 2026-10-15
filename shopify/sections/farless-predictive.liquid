@@ -1,0 +1,27 @@
+{%- comment -%}
+  Search suggestions for the search sheet in the menu bar, fetched as the shopper types
+  (/search/suggest?q=...&section_id=farless-predictive): the pieces as cards with hearts, then collections.
+  The sheet's script adds the headings and the words from the menu bar's settings.
+{%- endcomment -%}
+{%- if predictive_search.performed -%}
+  {%- assign found = predictive_search.resources -%}
+  {%- if found.products.size > 0 %}
+<ul class="sp-grid" data-results="products">
+    {%- for product in found.products %}{% render 'farless-card', product: product, sizes: '(min-width: 600px) 180px, 46vw' %}{% endfor %}
+</ul>
+  {%- endif -%}
+  {%- if found.collections.size > 0 %}
+<ul class="sp-links" data-results="collections">
+    {%- for c in found.collections %}<li><a href="{{ c.url }}">{{ c.title | escape }}</a></li>{% endfor %}
+</ul>
+  {%- endif -%}
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Farless suggestions",
+  "tag": "div",
+  "class": "farless-predictive",
+  "settings": []
+}
+{% endschema %}

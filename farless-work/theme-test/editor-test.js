@@ -96,8 +96,8 @@ const BASE = 'http://localhost:8083';
   }
   { // the side menu: picking the menu bar or a link in the editor opens it, deselecting closes it; a reloaded bar starts closed
     const { c, p, errs } = await open('/design/');
-    const st = () => p.evaluate(() => ({ open: document.documentElement.classList.contains('menu-open'), expanded: document.querySelector('[data-menu-open]').getAttribute('aria-expanded'), mainInert: !!document.querySelector('main').inert }));
-    const header = () => document.querySelector('[data-menu-open]').closest('.shopify-section');
+    const st = () => p.evaluate(() => ({ open: document.documentElement.classList.contains('menu-open'), expanded: document.querySelector('[data-open="menu"]').getAttribute('aria-expanded'), mainInert: !!document.querySelector('main').inert }));
+    const header = () => document.querySelector('[data-open="menu"]').closest('.shopify-section');
     await p.evaluate(h => { (0, eval)('(' + h + ')')().dispatchEvent(new CustomEvent('shopify:section:select', { bubbles: true, detail: { load: false } })); }, header.toString());
     await sleep(900); const selected = await st();
     await p.evaluate(h => { (0, eval)('(' + h + ')')().dispatchEvent(new CustomEvent('shopify:section:deselect', { bubbles: true })); }, header.toString());
@@ -107,7 +107,7 @@ const BASE = 'http://localhost:8083';
     await p.evaluate(h => { const sec = (0, eval)('(' + h + ')')(); sec.dispatchEvent(new CustomEvent('shopify:section:unload', { bubbles: true }));
       const fresh = sec.cloneNode(true); sec.replaceWith(fresh); fresh.dispatchEvent(new CustomEvent('shopify:section:load', { bubbles: true })); }, header.toString());
     await sleep(700); const reloaded = await st();
-    await p.click('[data-menu-open]'); await sleep(900); const clickedAfterReload = await st();
+    await p.click('[data-open="menu"]'); await sleep(900); const clickedAfterReload = await st();
     out.menu = { selected, deselected, blockSelected, reloaded, clickedAfterReload, errs }; await c.close();
   }
   console.log(JSON.stringify(out, null, 1));

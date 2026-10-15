@@ -146,11 +146,19 @@
         <div class="opts">{{ other_options }}</div>
           {%- endif -%}
         {%- endunless %}
-        <div class="buy-actions" id="buy">
+        {%- liquid
+          assign heart_media = current.featured_media | default: product.featured_media
+          assign heart_image = ''
+          if heart_media
+            assign heart_image = heart_media.preview_image | image_url: width: 300
+          endif
+        -%}
+        <div class="buy-actions has-fav" id="buy">
           {%- form 'product', product, class: 'buy-form' -%}
             <input type="hidden" name="id" value="{{ current.id }}">
             <button class="btn solid" type="submit" name="add" data-add data-label-add="{{ section.settings.add_label | escape }}" data-label-sold="{{ section.settings.sold_out_label | escape }}" data-label-none="{{ section.settings.unavailable_label | escape }}"{% unless current.available %} disabled{% endunless %}>{% if current.available %}{{ section.settings.add_label | escape }}{% else %}{{ section.settings.sold_out_label | escape }}{% endif %}</button>
           {%- endform -%}
+          <button type="button" class="fav big" data-fav="{{ product.handle }}" data-fav-title="{{ product.title | escape }}" data-fav-url="{{ product.url }}" data-fav-image="{{ heart_image }}" data-fav-sub="{{ lede | escape }}" aria-pressed="false" aria-label="{{ section.settings.save_label | escape }}: {{ product.title | escape }}">{% render 'farless-heart' %}</button>
         </div>
         {%- if excerpt != blank %}
         <p class="excerpt">{{ excerpt | escape }}</p>
@@ -196,6 +204,7 @@
     { "type": "header", "content": "Labels" },
     { "type": "text", "id": "add_label", "label": "Add to cart button", "default": "Add to cart" },
     { "type": "text", "id": "sold_out_label", "label": "Sold out button", "default": "Sold out" },
+    { "type": "text", "id": "save_label", "label": "Heart button, for screen readers", "default": "Save to favourites", "info": "The heart beside the button saves the piece to favourites in the shopper's browser." },
     { "type": "text", "id": "unavailable_label", "label": "Unavailable button", "default": "Unavailable", "info": "Shown when the chosen combination of options doesn't exist." },
     { "type": "text", "id": "shop_crumb", "label": "First link in the path above the product", "default": "Shop" }
   ]

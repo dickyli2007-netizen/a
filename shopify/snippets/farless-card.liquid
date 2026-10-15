@@ -1,0 +1,57 @@
+{%- comment -%}
+  One product as a card: its cut-out (the first colour's picture) in the soft light and contact shadow of
+  its product page, or with pictures: 'photo' its first picture filling the card; its name, Sold out, its
+  price or how many colours, its tagline, and a heart that saves it to favourites in this browser.
+  product, pictures ('cutout' or 'photo'), show_prices, sold_out_label, colours_label, save_label, sizes,
+  item_class (an extra class on the card, such as part for the entrances).
+{%- endcomment -%}
+{%- liquid
+  assign colour_count = 0
+  for option in product.options_with_values
+    assign oname = option.name | downcase | strip
+    if oname == 'colour' or oname == 'color' or oname == 'finish' or oname == 'colours' or oname == 'colors'
+      assign colour_count = option.values.size
+      break
+    endif
+  endfor
+  assign pic = product.featured_media
+  if pictures != 'photo'
+    assign v = product.selected_or_first_available_variant
+    if v.featured_media
+      assign pic = v.featured_media
+    else
+      for fv in product.variants
+        if fv.featured_media
+          assign pic = fv.featured_media
+          break
+        endif
+      endfor
+    endif
+  endif
+  assign foot_x = product.metafields.farless.foot_x.value
+  assign lede = product.metafields.farless.lede.value
+  assign card_sizes = sizes | default: '(min-width: 1100px) 31vw, (min-width: 600px) 46vw, 46vw'
+  assign heart_image = ''
+  if pic
+    assign heart_image = pic.preview_image | image_url: width: 300
+  endif
+-%}
+<li class="cl-card{% if item_class != blank %} {{ item_class }}{% endif %}"><a href="{{ product.url }}">
+  {%- if pictures != 'photo' %}
+  <div class="cl-pic">
+    {%- if pic %}<div class="cl-obj" style="--ar:{{ pic.preview_image.aspect_ratio | default: 0.65 }};--shadow-x:{{ foot_x | default: 50 }}%;--shadow-w:{% if foot_x != blank %}34{% else %}0{% endif %}%">{{ pic.preview_image | image_url: width: 900 | image_tag: widths: '360, 540, 720, 900', sizes: card_sizes, loading: 'lazy', alt: '' }}</div>{% endif -%}
+  </div>
+  {%- else %}
+  <div class="cl-pic photo">
+    {%- if pic %}{{ pic.preview_image | image_url: width: 900 | image_tag: widths: '360, 540, 720, 900', sizes: card_sizes, loading: 'lazy', alt: '' }}{% endif -%}
+  </div>
+  {%- endif %}
+  <div class="cl-meta"><h2>{{ product.title | escape }}</h2>
+    {%- if product.available == false %}<span class="label" data-sold>{{ sold_out_label | default: 'Sold out' | escape }}</span>
+    {%- elsif show_prices %}<span class="label">{{ product.price | money }}</span>
+    {%- elsif colour_count > 1 %}<span class="label">{{ colour_count }} {{ colours_label | default: 'colours' | escape }}</span>{% endif -%}
+  </div>
+  {%- if lede != blank %}
+  <p class="sub">{{ lede | escape }}</p>
+  {%- endif %}
+</a><button type="button" class="fav" data-fav="{{ product.handle }}" data-fav-title="{{ product.title | escape }}" data-fav-url="{{ product.url }}" data-fav-image="{{ heart_image }}" data-fav-sub="{{ lede | escape }}" aria-pressed="false" aria-label="{{ save_label | default: 'Save to favourites' | escape }}: {{ product.title | escape }}">{% render 'farless-heart' %}</button></li>

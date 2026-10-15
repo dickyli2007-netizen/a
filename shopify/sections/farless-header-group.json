@@ -5,17 +5,12 @@
     "menu": {
       "type": "farless-header",
       "settings": {
-        "buy_link": "shopify://products/faucet"
+        "buy_link": "shopify://products/faucet",
+        "buy_label": "",
+        "menu_buy_label": "",
+        "all_collections_label": ""
       },
       "blocks": {
-        "link_1": {
-          "type": "link",
-          "settings": {
-            "label": "Shop",
-            "side": "left",
-            "anchor": "shop"
-          }
-        },
         "link_2": {
           "type": "link",
           "settings": {
@@ -36,7 +31,7 @@
           "type": "link",
           "settings": {
             "label": "Design",
-            "side": "right",
+            "side": "left",
             "anchor": "design"
           }
         },
@@ -44,7 +39,7 @@
           "type": "link",
           "settings": {
             "label": "Questions",
-            "side": "right",
+            "side": "left",
             "anchor": "questions"
           }
         },
@@ -57,7 +52,6 @@
         }
       },
       "block_order": [
-        "link_1",
         "link_2",
         "link_3",
         "link_4",

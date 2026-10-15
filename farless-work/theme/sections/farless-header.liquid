@@ -1,8 +1,10 @@
 {%- comment -%}
-  The menu bar and its side menu, after Gessi's. The bar: the Menu button, the name, and the links set to
-  show on the bar, with a Buy link that stays on phones. The side menu slides in from the left: Collections
-  (a second layer listing the collections with their pictures), every link, the small links and the store
-  policies, and a Buy button. A link either picks a page, or names a section on the home page.
+  The menu bar and its panels, after Gessi's. The bar: the Menu button, the name, then search, account and
+  favourites icons (and any links set to show on the bar). The side menu slides in from the left with
+  Collections (a second layer listing the collections with their pictures), every link, and the small links
+  and store policies. Search drops a sheet from the top with pieces that match as you type; the heart
+  slides favourites in from the right, kept in the shopper's browser. A link either picks a page, or names
+  a section on the home page.
 {%- endcomment -%}
 {%- liquid
   assign on_home = false
@@ -41,21 +43,30 @@
   assign i = 0
 -%}
 <nav class="top" aria-label="Main">
-  <div class="l"><button type="button" class="menu-btn" aria-expanded="false" aria-controls="side-menu-{{ section.id }}" data-menu-open><span class="bars" aria-hidden="true"><i></i><i></i></span>{{ section.settings.menu_label | escape }}</button></div>
+  <div class="l"><button type="button" class="menu-btn" aria-expanded="false" aria-controls="side-menu-{{ section.id }}" data-open="menu"><span class="bars" aria-hidden="true"><i></i><i></i></span><span class="mt">{{ section.settings.menu_label | escape }}</span></button></div>
   <a class="brand" href="{{ brand_href }}" aria-label="{{ section.settings.brand | escape }} home">{{ section.settings.brand | escape }}</a>
-  <ul class="r">
+  <ul class="r icons">
     {%- for block in section.blocks -%}
       {%- if block.type == 'link' and block.settings.side == 'right' %}{% render 'farless-link', block: block, on_home: on_home %}{% endif -%}
     {%- endfor -%}
     {%- if section.settings.buy_label != blank %}
     <li class="keep"><a class="buy" href="{{ buy_href }}">{{ section.settings.buy_label | escape }}</a></li>
+    {%- endif -%}
+    {%- if section.settings.show_search %}
+    <li class="keep"><button type="button" class="ico" aria-label="{{ section.settings.search_label | escape }}" aria-expanded="false" aria-controls="search-panel-{{ section.id }}" data-open="search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L21 21"/></svg></button></li>
+    {%- endif -%}
+    {%- if section.settings.show_account and shop.customer_accounts_enabled %}
+    <li class="keep"><a class="ico" href="{% if customer %}{{ routes.account_url }}{% else %}{{ routes.account_login_url }}{% endif %}" aria-label="{% if customer %}{{ section.settings.account_label | escape }}{% else %}{{ section.settings.login_label | escape }}{% endif %}"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8.5" r="4"/><path d="M4 20.5c1.2-3.8 4.3-5.5 8-5.5s6.8 1.7 8 5.5"/></svg></a></li>
+    {%- endif -%}
+    {%- if section.settings.show_favourites %}
+    <li class="keep"><button type="button" class="ico" aria-label="{{ section.settings.favourites_label | escape }}" aria-expanded="false" aria-controls="fav-panel-{{ section.id }}" data-open="favourites">{% render 'farless-heart' %}<span class="count" data-fav-count hidden>0</span></button></li>
     {%- endif %}
   </ul>
 </nav>
-<div class="menu-scrim" data-menu-close aria-hidden="true"></div>
-<div class="side-menu" id="side-menu-{{ section.id }}" role="dialog" aria-modal="true" aria-label="{{ section.settings.menu_label | default: 'Menu' | escape }}">
+<div class="menu-scrim" data-close aria-hidden="true"></div>
+<div class="side-menu" id="side-menu-{{ section.id }}" data-panel="menu" role="dialog" aria-modal="true" aria-label="{{ section.settings.menu_label | default: 'Menu' | escape }}">
   <div class="sm-pane sm-main">
-    <div class="sm-top"><button type="button" class="sm-close" data-menu-close><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><path d="M2 2l12 12M14 2L2 14"/></svg>{{ section.settings.close_label | escape }}</button></div>
+    <div class="sm-top"><button type="button" class="sm-close" data-close><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><path d="M2 2l12 12M14 2L2 14"/></svg>{{ section.settings.close_label | escape }}</button></div>
     <ul class="sm-list">
       {%- if show_collections %}
       <li class="sm-in" style="--i:0"><button type="button" aria-expanded="false" aria-controls="sm-collections-{{ section.id }}" data-sub-open>{{ section.settings.collections_label | escape }}<svg class="chev" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><path d="M4 1.5L8.5 6 4 10.5"/></svg></button></li>
@@ -92,7 +103,7 @@
       {%- for c in menu_collections -%}
         {%- if c.handle == 'frontpage' or c.handle == 'all' %}{% continue %}{% endif -%}
         {%- liquid
-          assign cimg = c.featured_image
+          assign cimg = c.image
           assign cut = false
           if cimg == blank
             assign first = c.products.first
@@ -123,6 +134,42 @@
   </div>
   {%- endif %}
 </div>
+{%- if section.settings.show_search %}
+<div class="search-panel" id="search-panel-{{ section.id }}" data-panel="search" role="dialog" aria-modal="true" aria-label="{{ section.settings.search_label | escape }}"
+  data-suggest-url="{{ routes.predictive_search_url }}" data-search-page="{{ routes.search_url }}"
+  data-label-products="{{ section.settings.search_products_label | escape }}" data-label-collections="{{ section.settings.collections_label | default: 'Collections' | escape }}"
+  data-label-none="{{ section.settings.search_none | escape }}" data-label-all="{{ section.settings.search_all_label | escape }}"
+  data-label-save="{{ section.settings.save_label | escape }}" data-label-sold="{{ section.settings.sold_out_label | escape }}">
+  <div class="sp-inner"><div class="wrap">
+    <div class="sp-top"><span class="label">{{ section.settings.search_label | escape }}</span><button type="button" class="sm-close" data-close><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><path d="M2 2l12 12M14 2L2 14"/></svg>{{ section.settings.close_label | escape }}</button></div>
+    <form class="sp-form" action="{{ routes.search_url }}" method="get" role="search" data-search-form>
+      <label class="sr" for="sp-q-{{ section.id }}">{{ section.settings.search_placeholder | escape }}</label>
+      <input id="sp-q-{{ section.id }}" type="search" name="q" placeholder="{{ section.settings.search_placeholder | escape }}" autocomplete="off" spellcheck="false" data-autofocus>
+      <input type="hidden" name="type" value="product">
+      <button type="submit" class="sp-go" aria-label="{{ section.settings.search_label | escape }}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h15M14 7l5 5-5 5"/></svg></button>
+    </form>
+    {%- if show_collections %}
+    <div class="sp-idle" data-search-idle><span class="label">{{ section.settings.collections_label | escape }}</span>
+      {%- for c in menu_collections -%}
+        {%- if c.handle == 'frontpage' or c.handle == 'all' %}{% continue %}{% endif %}<a href="{{ c.url }}">{{ c.title | escape }}</a>
+      {%- endfor -%}
+    </div>
+    {%- else %}
+    <div class="sp-idle" data-search-idle hidden></div>
+    {%- endif %}
+    <div class="sp-results" data-search-results aria-live="polite"></div>
+  </div></div>
+</div>
+{%- endif -%}
+{%- if section.settings.show_favourites %}
+<div class="fav-panel" id="fav-panel-{{ section.id }}" data-panel="favourites" role="dialog" aria-modal="true" aria-labelledby="fav-h-{{ section.id }}">
+  <div class="sm-pane">
+    <div class="sm-top fp-top"><h2 class="label" id="fav-h-{{ section.id }}">{{ section.settings.favourites_label | escape }}</h2><button type="button" class="sm-close" data-close><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><path d="M2 2l12 12M14 2L2 14"/></svg>{{ section.settings.close_label | escape }}</button></div>
+    <ul class="fp-list" data-fav-list data-remove-label="{{ section.settings.remove_label | escape }}" hidden></ul>
+    <p class="fp-empty" data-fav-empty>{{ section.settings.favourites_empty | escape }}</p>
+  </div>
+</div>
+{%- endif %}
 
 {% schema %}
 {
@@ -133,20 +180,38 @@
   "max_blocks": 20,
   "settings": [
     { "type": "text", "id": "brand", "label": "Name in the middle", "default": "Farless" },
-    { "type": "text", "id": "buy_label", "label": "Buy link label", "default": "Buy", "info": "Stays visible on phones. On product pages it jumps to the Add to cart button." },
+    { "type": "text", "id": "buy_label", "label": "Buy link on the bar", "default": "", "info": "Leave empty for none. When set, it stays visible on phones; on product pages it jumps to the Add to cart button." },
     { "type": "url", "id": "buy_link", "label": "Buy link" },
+    { "type": "header", "content": "Icons on the bar" },
+    { "type": "checkbox", "id": "show_search", "label": "Search", "default": true },
+    { "type": "checkbox", "id": "show_account", "label": "Account (log in or sign up)", "default": true, "info": "Shows when customer accounts are on in Settings > Customer accounts." },
+    { "type": "checkbox", "id": "show_favourites", "label": "Favourites", "default": true, "info": "A heart on every piece saves it here, in the shopper's own browser." },
+    { "type": "text", "id": "search_label", "label": "Search, for screen readers and the sheet", "default": "Search" },
+    { "type": "text", "id": "login_label", "label": "Account icon before logging in, for screen readers", "default": "Log in or sign up" },
+    { "type": "text", "id": "account_label", "label": "Account icon once logged in, for screen readers", "default": "Account" },
+    { "type": "text", "id": "favourites_label", "label": "Favourites", "default": "Favourites" },
+    { "type": "header", "content": "Search sheet" },
+    { "type": "text", "id": "search_placeholder", "label": "Search box", "default": "Search the pieces" },
+    { "type": "text", "id": "search_products_label", "label": "Heading over the pieces found", "default": "Pieces" },
+    { "type": "text", "id": "search_none", "label": "Nothing found", "default": "Nothing matches that yet." },
+    { "type": "text", "id": "search_all_label", "label": "Link to all results", "default": "See all results" },
+    { "type": "header", "content": "Favourites panel" },
+    { "type": "text", "id": "favourites_empty", "label": "Nothing saved yet", "default": "Nothing saved yet. Tap the heart on any piece to keep it here." },
+    { "type": "text", "id": "remove_label", "label": "Remove button, for screen readers", "default": "Remove" },
+    { "type": "text", "id": "save_label", "label": "Heart buttons, for screen readers", "default": "Save to favourites" },
+    { "type": "text", "id": "sold_out_label", "label": "Sold out", "default": "Sold out" },
     { "type": "header", "content": "Side menu" },
     { "type": "text", "id": "menu_label", "label": "Menu button", "default": "Menu" },
     { "type": "text", "id": "close_label", "label": "Close button", "default": "Close" },
     { "type": "text", "id": "collections_label", "label": "Collections", "default": "Collections", "info": "Opens a second layer listing the collections. Leave empty to leave it out." },
     { "type": "collection_list", "id": "collections", "label": "Collections in the menu", "limit": 12, "info": "Leave empty to list every collection." },
     { "type": "text", "id": "back_label", "label": "Back button", "default": "Back" },
-    { "type": "text", "id": "all_collections_label", "label": "Link to all collections", "default": "All collections", "info": "Leave empty to hide it." },
+    { "type": "text", "id": "all_collections_label", "label": "Link to all collections", "default": "", "info": "Leave empty for none." },
     { "type": "text", "id": "coming_soon_label", "label": "Empty collection", "default": "Coming soon" },
     { "type": "text", "id": "piece_label", "label": "One product", "default": "piece" },
     { "type": "text", "id": "pieces_label", "label": "Several products", "default": "pieces" },
     { "type": "checkbox", "id": "show_policies", "label": "Show the store policies with the small links", "default": true },
-    { "type": "text", "id": "menu_buy_label", "label": "Button at the bottom", "default": "Buy Farless", "info": "Goes where the Buy link goes. Leave empty to hide it." }
+    { "type": "text", "id": "menu_buy_label", "label": "Button at the bottom", "default": "", "info": "Goes where the Buy link goes. Leave empty for none." }
   ],
   "blocks": [
     {
@@ -154,7 +219,7 @@
       "name": "Link",
       "settings": [
         { "type": "text", "id": "label", "label": "Label", "default": "Shop" },
-        { "type": "select", "id": "side", "label": "Where it shows", "default": "left", "options": [ { "value": "left", "label": "In the side menu" }, { "value": "right", "label": "In the side menu and on the bar" } ] },
+        { "type": "select", "id": "side", "label": "Where it shows", "default": "left", "options": [ { "value": "left", "label": "In the side menu" }, { "value": "right", "label": "In the side menu and on the bar, before the icons" } ] },
         { "type": "text", "id": "anchor", "label": "Section on the home page", "default": "shop", "info": "The link name of a home page section: shop, waters, safety, design, questions or buy." },
         { "type": "url", "id": "link", "label": "Or link to a page", "info": "Used instead of the section above when set." }
       ]
@@ -173,11 +238,10 @@
     {
       "name": "Farless menu bar",
       "blocks": [
-        { "type": "link", "settings": { "label": "Shop", "side": "left", "anchor": "shop" } },
         { "type": "link", "settings": { "label": "Five waters", "side": "left", "anchor": "waters" } },
         { "type": "link", "settings": { "label": "Safety", "side": "left", "anchor": "safety" } },
-        { "type": "link", "settings": { "label": "Design", "side": "right", "anchor": "design" } },
-        { "type": "link", "settings": { "label": "Questions", "side": "right", "anchor": "questions" } },
+        { "type": "link", "settings": { "label": "Design", "side": "left", "anchor": "design" } },
+        { "type": "link", "settings": { "label": "Questions", "side": "left", "anchor": "questions" } },
         { "type": "small_link", "settings": { "label": "5-year warranty", "anchor": "questions" } }
       ]
     }

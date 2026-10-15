@@ -1,5 +1,5 @@
-/* Farless theme script: the film hero, the safety knob, the shop gallery, the product picker, the
-   entrances and the arcs. Every part starts per section and can be stopped again, so when the theme
+/* Farless theme script: the film hero, the menu bar's panels (side menu, search, favourites), the
+   safety knob, the shop gallery, the product picker, the entrances and the arcs. Every part starts per section and can be stopped again, so when the theme
    editor reloads a section after an edit, that section starts afresh.
    build_shopify.py copies this to assets/farless.js and fills in the product picker from the
    product page template (farless-work/product-page/build.py, JS_PICKER). */
@@ -331,16 +331,107 @@
   addEventListener('scroll', updateNav, { passive: true });
   addEventListener('resize', updateNav);
 
-  /* ---------- side menu: opens from the Menu button, closes with Close, the shade, Escape or a link ---------- */
-  function initMenu(root){
-    const menu = root.querySelector('.side-menu');
-    const opener = root.querySelector('[data-menu-open]');
-    if (!menu || !opener) return null;
+  /* ---------- favourites: kept in this browser; every heart and the bar's count follow them ---------- */
+  const FAV_KEY = 'farless:favourites';
+  let favMem = null;
+  function favList(){
+    if (favMem) return favMem;
+    try { const v = JSON.parse(localStorage.getItem(FAV_KEY) || '[]'); favMem = Array.isArray(v) ? v.filter(x => x && x.handle) : []; }
+    catch (err){ favMem = []; }
+    return favMem;
+  }
+  function favWrite(list){
+    favMem = list;
+    try { localStorage.setItem(FAV_KEY, JSON.stringify(list)); } catch (err){}
+    syncFavs();
+  }
+  const X_ICON = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><path d="M2 2l12 12M14 2L2 14"/></svg>';
+  function renderFavList(ul){
+    const list = favList();
+    const panel = ul.closest('[data-panel]');
+    const empty = panel && panel.querySelector('[data-fav-empty]');
+    if (empty) empty.hidden = list.length > 0;
+    ul.hidden = !list.length;
+    const removeLabel = ul.dataset.removeLabel || 'Remove';
+    ul.replaceChildren(...list.map(item => {
+      const li = document.createElement('li');
+      const a = document.createElement('a');
+      a.className = 'fp-item'; a.href = item.url || '#';
+      const thumb = document.createElement('span'); thumb.className = 'fp-thumb';
+      if (item.image){ const img = document.createElement('img'); img.src = item.image; img.alt = ''; img.loading = 'lazy'; thumb.append(img); }
+      const text = document.createElement('span');
+      const h = document.createElement('h3'); h.textContent = item.title; text.append(h);
+      if (item.sub){ const sub = document.createElement('span'); sub.className = 'fp-sub'; sub.textContent = item.sub; text.append(sub); }
+      a.append(thumb, text);
+      const rm = document.createElement('button');
+      rm.type = 'button'; rm.className = 'fp-remove'; rm.dataset.favRemove = item.handle;
+      rm.setAttribute('aria-label', `${removeLabel}: ${item.title}`); rm.innerHTML = X_ICON;
+      li.append(a, rm);
+      return li;
+    }));
+  }
+  function syncFavs(){
+    const list = favList();
+    const saved = new Set(list.map(x => x.handle));
+    document.querySelectorAll('[data-fav]').forEach(b => b.setAttribute('aria-pressed', saved.has(b.dataset.fav) ? 'true' : 'false'));
+    document.querySelectorAll('[data-fav-count]').forEach(c => { c.textContent = list.length; c.hidden = !list.length; });
+    document.querySelectorAll('[data-fav-list]').forEach(renderFavList);
+  }
+  document.addEventListener('click', e => {
+    const heart = e.target.closest('[data-fav]');
+    if (heart){
+      e.preventDefault();
+      const d = heart.dataset, list = favList();
+      favWrite(list.some(x => x.handle === d.fav) ? list.filter(x => x.handle !== d.fav)
+        : [{ handle: d.fav, title: d.favTitle || '', url: d.favUrl || '', image: d.favImage || '', sub: d.favSub || '' }, ...list]);
+      heart.classList.remove('beat'); void heart.offsetWidth; heart.classList.add('beat');
+      return;
+    }
+    const rm = e.target.closest('[data-fav-remove]');
+    if (rm){
+      const ul = rm.closest('[data-fav-list]');
+      const items = [...ul.querySelectorAll('[data-fav-remove]')];
+      const at = items.indexOf(rm);
+      favWrite(favList().filter(x => x.handle !== rm.dataset.favRemove));
+      // keep focus in the list: the next piece's remove button, or the panel's close button once it is empty
+      const left = [...ul.querySelectorAll('[data-fav-remove]')];
+      (left[Math.min(at, left.length - 1)] || ul.closest('[data-panel]').querySelector('[data-close]'))?.focus({ preventScroll: true });
+    }
+  });
+  addEventListener('storage', e => { if (e.key === FAV_KEY){ favMem = null; syncFavs(); } });
+  // on the store, drop saved pieces that are gone and pick up renamed ones
+  let favChecked = false;
+  async function refreshFavs(){
+    if (favChecked || !(window.Shopify && window.Shopify.routes)) return;
+    favChecked = true;
+    const root = window.Shopify.routes.root || '/';
+    const list = favList().slice();
+    let changed = false;
+    const gone = new Set();
+    await Promise.all(list.map(async item => {
+      try {
+        const r = await fetch(`${root}products/${encodeURIComponent(item.handle)}.js`);
+        if (r.status === 404){ gone.add(item.handle); changed = true; return; }
+        if (!r.ok) return;
+        const p = await r.json();
+        if (p.title && p.title !== item.title){ item.title = p.title; changed = true; }
+        if (p.url && p.url !== item.url){ item.url = p.url; changed = true; }
+      } catch (err){}
+    }));
+    if (changed) favWrite(list.filter(x => !gone.has(x.handle)));
+  }
+
+  /* ---------- panels: the side menu (left), search (top) and favourites (right), one open at a time;
+     Close, the shade, Escape or a link close them, focus stays inside, the page behind is out of reach ---------- */
+  const HEART_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.3s-7.4-4.5-9.1-9.1C1.7 7.8 3.9 4.6 7.3 4.6c2 0 3.5 1 4.7 2.7 1.2-1.7 2.7-2.7 4.7-2.7 3.4 0 5.6 3.2 4.4 6.6-1.7 4.6-9.1 9.1-9.1 9.1z"/></svg>';
+  function initPanels(root){
+    const panels = [...root.querySelectorAll('[data-panel]')];
+    if (!panels.length) return null;
     const html = document.documentElement;
-    const main = menu.querySelector('.sm-main'), sub = menu.querySelector('.sm-sub'), subOpener = menu.querySelector('[data-sub-open]');
-    let shut = [];
-    const isOpen = () => html.classList.contains('menu-open') && opener.getAttribute('aria-expanded') === 'true';
-    const focusables = () => [...menu.querySelectorAll('a[href],button')].filter(el => !el.closest('[inert]') && el.getClientRects().length && getComputedStyle(el).visibility !== 'hidden');
+    let current = null, opener = null, shut = [];
+    const menu = root.querySelector('[data-panel="menu"]');
+    const main = menu && menu.querySelector('.sm-main'), sub = menu && menu.querySelector('.sm-sub'), subOpener = menu && menu.querySelector('[data-sub-open]');
+    const focusables = () => [...current.querySelectorAll('a[href],button,input,select,textarea')].filter(el => !el.disabled && !el.closest('[inert]') && el.getClientRects().length && getComputedStyle(el).visibility !== 'hidden');
     function setSub(on, focus){
       if (!sub) return;
       menu.classList.toggle('sub', on);
@@ -350,53 +441,143 @@
       if (focus) (on ? sub.querySelector('[data-sub-close]') : subOpener)?.focus({ preventScroll: true });
     }
     // quiet: opened by the theme editor, so focus stays with the editor and the page stays reachable
-    function open(quiet){
-      if (isOpen()) return;
-      setSub(false);
+    function open(name, from, quiet){
+      const panel = panels.find(p => p.dataset.panel === name);
+      if (!panel || panel === current) return;
+      if (current) close(false);
+      current = panel;
+      opener = from || root.querySelector(`[data-open="${name}"]`);
+      if (panel === menu) setSub(false);
+      panel.classList.add('open');
       html.classList.add('menu-open');
-      opener.setAttribute('aria-expanded', 'true');
+      root.querySelectorAll(`[data-open="${name}"]`).forEach(b => b.setAttribute('aria-expanded', 'true'));
+      if (name === 'favourites') refreshFavs();
       if (quiet === true) return;
-      // everything outside the panel stays out of reach while it is open
-      shut = [...document.body.children].filter(el => !el.contains(menu) && !el.inert && !el.matches('.menu-scrim'));
-      const bar = opener.closest('nav');
-      if (bar && !bar.contains(menu)) shut.push(bar);
+      shut = [...document.body.children].filter(el => !el.contains(panel) && !el.inert && !el.matches('.menu-scrim'));
+      const bar = root.querySelector('nav.top');
+      if (bar && !bar.contains(panel)) shut.push(bar);
       shut.forEach(el => { el.inert = true; });
-      setTimeout(() => menu.querySelector('.sm-close')?.focus({ preventScroll: true }), 60);
+      const first = panel.querySelector('[data-autofocus]') || panel.querySelector('.sm-close');
+      setTimeout(() => first && first.focus({ preventScroll: true }), 60);
     }
     function close(returnFocus){
-      if (!isOpen()) return;
+      if (!current) return;
+      const name = current.dataset.panel, back = opener;
+      current.classList.remove('open');
       html.classList.remove('menu-open');
-      opener.setAttribute('aria-expanded', 'false');
+      root.querySelectorAll(`[data-open="${name}"]`).forEach(b => b.setAttribute('aria-expanded', 'false'));
       shut.forEach(el => { el.inert = false; });
-      shut = [];
-      if (returnFocus !== false) opener.focus({ preventScroll: true });
+      shut = []; current = null; opener = null;
+      if (returnFocus !== false && back) back.focus({ preventScroll: true });
     }
     function onClick(e){
-      const t = e.target.closest('[data-menu-open],[data-menu-close],[data-sub-open],[data-sub-close],.side-menu a[href]');
+      const t = e.target.closest('[data-open],[data-close],[data-sub-open],[data-sub-close],[data-panel] a[href]');
       if (!t || !root.contains(t)) return;
-      if (t.matches('[data-menu-open]')) open();
-      else if (t.matches('[data-menu-close]')) close();
+      if (t.matches('[data-open]')){ e.preventDefault(); if (current && current.dataset.panel === t.dataset.open) close(); else open(t.dataset.open, t); }
+      else if (t.matches('[data-close]')) close();
       else if (t.matches('[data-sub-open]')) setSub(true, true);
       else if (t.matches('[data-sub-close]')) setSub(false, true);
       else close(false);   // a link: the panel closes and the page follows it
     }
     function onKeyDown(e){
-      if (!isOpen()) return;
+      if (!current) return;
       if (e.key === 'Escape'){
         e.preventDefault();
-        if (menu.classList.contains('sub')) setSub(false, true); else close();
+        if (current === menu && menu.classList.contains('sub')) setSub(false, true); else close();
       } else if (e.key === 'Tab'){
         const f = focusables();
         if (!f.length) return;
         const first = f[0], last = f[f.length - 1];
-        if (e.shiftKey && (document.activeElement === first || !menu.contains(document.activeElement))){ e.preventDefault(); last.focus(); }
-        else if (!e.shiftKey && (document.activeElement === last || !menu.contains(document.activeElement))){ e.preventDefault(); first.focus(); }
+        if (e.shiftKey && (document.activeElement === first || !current.contains(document.activeElement))){ e.preventDefault(); last.focus(); }
+        else if (!e.shiftKey && (document.activeElement === last || !current.contains(document.activeElement))){ e.preventDefault(); first.focus(); }
       }
     }
     if (sub) sub.inert = true;
+    const stopSearch = initSearch(root.querySelector('[data-panel="search"]'));
     root.addEventListener('click', onClick);
     document.addEventListener('keydown', onKeyDown);
-    return { open, close, destroy(){ close(false); root.removeEventListener('click', onClick); document.removeEventListener('keydown', onKeyDown); } };
+    syncFavs();
+    return { open, close, destroy(){ close(false); stopSearch(); root.removeEventListener('click', onClick); document.removeEventListener('keydown', onKeyDown); } };
+  }
+
+  /* ---------- search: the pieces that match appear as you type; Enter opens the full results page ---------- */
+  function initSearch(panel){
+    if (!panel) return () => {};
+    const form = panel.querySelector('[data-search-form]'), input = form.querySelector('input[name="q"]');
+    const out = panel.querySelector('[data-search-results]'), idle = panel.querySelector('[data-search-idle]');
+    const local = panel.querySelector('[data-search-local]');
+    const items = local ? JSON.parse(local.textContent) : null;
+    const L = panel.dataset;
+    let timer = 0, ctrl = null, last = null;
+    const heading = text => { const p = document.createElement('p'); p.className = 'label'; p.textContent = text; return p; };
+    function card(it){
+      const li = document.createElement('li'); li.className = 'cl-card';
+      const a = document.createElement('a'); a.href = it.url;
+      const pic = document.createElement('div'); pic.className = 'cl-pic';
+      const obj = document.createElement('div'); obj.className = 'cl-obj';
+      obj.style.cssText = `--ar:${it.ar};--shadow-x:${it.foot}%;--shadow-w:34%`;
+      const img = document.createElement('img'); img.src = it.image; img.alt = ''; img.loading = 'lazy';
+      obj.append(img); pic.append(obj);
+      const meta = document.createElement('div'); meta.className = 'cl-meta';
+      const h = document.createElement('h2'); h.textContent = it.title; meta.append(h);
+      const lab = document.createElement('span'); lab.className = 'label';
+      lab.textContent = it.colours > 1 ? `${it.colours} ${L.labelColours || 'colours'}` : (L.labelSold || 'Sold out');
+      meta.append(lab);
+      a.append(pic, meta);
+      const fav = document.createElement('button');
+      fav.type = 'button'; fav.className = 'fav';
+      Object.assign(fav.dataset, { fav: it.handle, favTitle: it.title, favUrl: it.url, favImage: it.image, favSub: it.sub || '' });
+      fav.setAttribute('aria-label', `${L.labelSave || 'Save to favourites'}: ${it.title}`);
+      fav.innerHTML = HEART_ICON;
+      li.append(a, fav);
+      return li;
+    }
+    function show(nodes, q){
+      idle.hidden = true;
+      out.replaceChildren(...nodes);
+      if (!nodes.length){ const p = document.createElement('p'); p.className = 'sp-none'; p.textContent = L.labelNone || 'Nothing matches that yet.'; out.append(p); }
+      if (L.searchPage){
+        const all = document.createElement('a'); all.className = 'link sp-all';
+        all.href = `${L.searchPage}?q=${encodeURIComponent(q)}&type=product`; all.textContent = L.labelAll || 'See all results';
+        out.append(all);
+      }
+      // the words on fetched cards follow the menu bar's settings
+      if (L.labelSave) out.querySelectorAll('[data-fav]').forEach(f => f.setAttribute('aria-label', `${L.labelSave}: ${f.dataset.favTitle}`));
+      if (L.labelSold) out.querySelectorAll('[data-sold]').forEach(x => { x.textContent = L.labelSold; });
+      syncFavs();
+    }
+    async function run(){
+      const q = input.value.trim();
+      if (q === last) return;
+      last = q;
+      if (ctrl) ctrl.abort();
+      if (!q){ out.replaceChildren(); idle.hidden = false; return; }
+      if (items){
+        const words = q.toLowerCase().split(/\s+/);
+        const hits = items.filter(it => words.every(w => `${it.title} ${it.sub || ''} ${it.colour || ''}`.toLowerCase().includes(w)));
+        const nodes = [];
+        if (hits.length){ const ul = document.createElement('ul'); ul.className = 'sp-grid'; ul.append(...hits.map(card)); nodes.push(heading(L.labelProducts || 'Pieces'), ul); }
+        show(nodes, q);
+        return;
+      }
+      ctrl = new AbortController();
+      try {
+        const r = await fetch(`${L.suggestUrl}?q=${encodeURIComponent(q)}&resources[type]=product,collection&resources[limit]=8&resources[options][unavailable_products]=last&section_id=farless-predictive`, { signal: ctrl.signal });
+        const doc = new DOMParser().parseFromString(await r.text(), 'text/html');
+        const nodes = [];
+        const products = doc.querySelector('[data-results="products"]'), cols = doc.querySelector('[data-results="collections"]');
+        if (products){ nodes.push(heading(L.labelProducts || 'Pieces'), products); }
+        if (cols){ nodes.push(heading(L.labelCollections || 'Collections'), cols); }
+        show(nodes, q);
+      } catch (err){ if (err.name !== 'AbortError') show([], q); }
+    }
+    const onInput = () => { clearTimeout(timer); timer = setTimeout(run, 180); };
+    const onSubmit = e => {
+      if (!L.searchPage || !input.value.trim()){ e.preventDefault(); clearTimeout(timer); last = null; run(); }
+    };
+    input.addEventListener('input', onInput);
+    form.addEventListener('submit', onSubmit);
+    return () => { clearTimeout(timer); if (ctrl) ctrl.abort(); input.removeEventListener('input', onInput); form.removeEventListener('submit', onSubmit); };
   }
 
   /* ---------- shop gallery: thumbnails swap the main image ---------- */
@@ -718,12 +899,13 @@
     const cleanups = [];
     const hero = initHero(root);
     if (hero){ cleanups.push(hero.destroy); heroes.set(root, hero); }
-    const menu = initMenu(root);
-    if (menu){ cleanups.push(menu.destroy); menus.set(root, menu); }
+    const panels = initPanels(root);
+    if (panels){ cleanups.push(panels.destroy); menus.set(root, panels); }
     initKnob(root);
     initGallery(root);
     initPicker(root);
     observeEntrances(root);
+    syncFavs();
     addSeams(root);
     watchLoops(root);
     running.set(root, cleanups);
@@ -744,12 +926,12 @@
   document.addEventListener('shopify:section:unload', e => stop(e.target));
   // picking a film point or a question in the editor shows it
   // picking the menu bar, or one of its links, in the editor opens the side menu
-  document.addEventListener('shopify:section:select', e => { const m = menus.get(e.target); if (m) m.open(true); });
+  document.addEventListener('shopify:section:select', e => { const m = menus.get(e.target); if (m) m.open('menu', null, true); });
   document.addEventListener('shopify:section:deselect', e => { const m = menus.get(e.target); if (m) m.close(false); });
   document.addEventListener('shopify:block:select', e => {
     const block = e.target;
     const menu = menus.get(sectionOf(block));
-    if (menu) menu.open(true);
+    if (menu) menu.open('menu', null, true);
     const hero = heroes.get(sectionOf(block));
     if (hero && block.classList.contains('band')) hero.goTo(hero.indexOf(block), true);
     if (block.tagName === 'DETAILS') block.open = true;

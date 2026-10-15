@@ -93,18 +93,21 @@ const filtered = FILTERED.map((h, i) => {
     metafields: { farless: { kicker: { value: d.kicker }, lede: { value: d.lede }, foot_x: { value: d.shadow.x }, notes: { value: d.notes.map(n => n.join(' | ')).join('\r\n') } } } };
 });
 const COLLECTIONS = {
-  'multi-function-faucets': { title: 'Multi Function Faucets', handle: 'multi-function-faucets', url: '/collections/multi-function-faucets', description: '', products_count: 1, featured_image: null, products: [faucet] },
+  // as on Shopify: image is the collection's own picture; featured_image falls back to the first product's photo
+  'multi-function-faucets': { title: 'Multi Function Faucets', handle: 'multi-function-faucets', url: '/collections/multi-function-faucets', description: '', products_count: 1,
+    image: null, featured_image: photo.preview_image, products: [faucet] },
   'filtered-faucets': { title: 'Filtered Faucets', handle: 'filtered-faucets', url: '/collections/filtered-faucets', description: '', products_count: filtered.length,
-    featured_image: img('filtered-faucets.jpg', 2400, 1600, 'Filtered Faucets'), products: filtered },
-  'coming-soon': { title: 'Coming Soon', handle: 'coming-soon', url: '/collections/coming-soon', description: '<p>New pieces are on their way.</p>', products_count: 0, featured_image: null, products: [] },
+    image: img('filtered-faucets.jpg', 2400, 1600, 'Filtered Faucets'), featured_image: img('filtered-faucets.jpg', 2400, 1600, 'Filtered Faucets'), products: filtered },
+  'coming-soon': { title: 'Coming Soon', handle: 'coming-soon', url: '/collections/coming-soon', description: '<p>New pieces are on their way.</p>', products_count: 0, image: null, featured_image: null, products: [] },
 };
 const PRODUCTS = { faucet, ...Object.fromEntries(filtered.map(p => [p.handle, p])) };
 
 // every collection in the store, as the side menu lists them when none are picked (it skips the home page one)
 const ALL_COLLECTIONS = [{ title: 'Home page', handle: 'frontpage', url: '/collections/frontpage', products_count: 1, featured_image: null, products: [faucet] },
   COLLECTIONS['multi-function-faucets'], COLLECTIONS['filtered-faucets']];
-const globals = { routes: { root_url: '/', cart_url: '/cart', all_products_collection_url: '/collections/all', collections_url: '/collections' },
-  shop: { name: 'Farless', policies: [{ title: 'Refund policy', url: '/policies/refund-policy' }] }, request: { locale: { iso_code: 'en' } }, content_for_header: '',
+const globals = { routes: { root_url: '/', cart_url: '/cart', all_products_collection_url: '/collections/all', collections_url: '/collections',
+    search_url: '/search', predictive_search_url: '/search/suggest', account_url: '/account', account_login_url: '/account/login' },
+  shop: { name: 'Farless', customer_accounts_enabled: true, policies: [{ title: 'Refund policy', url: '/policies/refund-policy' }] }, request: { locale: { iso_code: 'en' } }, content_for_header: '',
   collections: ALL_COLLECTIONS };
 // Shopify's global objects are visible inside rendered snippets too
 engine.options.globals = { routes: globals.routes, shop: globals.shop, request: globals.request, collections: ALL_COLLECTIONS };
@@ -175,6 +178,12 @@ async function page(file, templateFile, template, scope, designMode){
   await page('products/faucet/index.html', T('product.json'), { name: 'product', suffix: null }, { product: faucet, page_title: 'Farless 5-in-1 Tap', page_description: 'Five waters. One tap.' });
   for (const p of filtered) await page(`products/${p.handle}/index.html`, T('product.json'), { name: 'product', suffix: null }, { product: p, page_title: p.title });
   for (const [h, c] of Object.entries(COLLECTIONS)) await page(`collections/${h}/index.html`, T('collection.json'), { name: 'collection', suffix: null }, { collection: c, page_title: c.title });
+  // search for "arc": the results page, and the suggestions the search sheet fetches as you type
+  const arcs = filtered.filter(p => p.handle.startsWith('arc')).map(p => ({ ...p, object_type: 'product' }));
+  await page('search/index.html', T('search.json'), { name: 'search', suffix: null }, { search: { performed: true, terms: 'arc', results_count: arcs.length, results: arcs }, page_title: 'Search' });
+  fs.mkdirSync(path.join(OUT, 'search', 'suggest'), { recursive: true });
+  fs.writeFileSync(path.join(OUT, 'search', 'suggest', 'index.html'), await renderSection('farless-predictive', 'farless-predictive',
+    { settings: {} }, { predictive_search: { performed: true, terms: 'arc', resources: { products: arcs, collections: [COLLECTIONS['filtered-faucets']] } } }, 'suggest'));
   // the owner's edits: new words, a question added, a water row removed, sections reordered, collections moved below the product, a picture link
   const edited = JSON.parse(fs.readFileSync(T('index.json'), 'utf8'));
   edited.sections.hero.blocks.caption_2.settings.line = 'Boiling. Filtered. Edited.';
