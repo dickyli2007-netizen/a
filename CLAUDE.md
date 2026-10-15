@@ -23,14 +23,24 @@ and no prices shown anywhere ("keep it exclusive").
 - `farless-work/product-page/`: the product page template and its preview builder (below), the cut-out
   tool, and `collection_image.py`, which composes a collection's picture from its products' cut-outs.
 
-## The menu
+## The menu bar
 
-After Gessi's: the left of the bar is a Menu button; Design, Questions and Buy sit on the right (only Buy
-on phones). The button slides a side menu in from the left: Collections (a second layer listing each
-collection with its picture and piece count; every collection when none are picked), the links in large
-type, small links and the store policies near the bottom, and a Buy Farless button. Link blocks show in
-the menu, or in the menu and on the bar. Escape, Close, the shade or a link close it; focus stays inside
-while it is open and the film ignores scrolling meanwhile. Picking the menu bar in the editor opens it.
+After Gessi's: the Menu button on the left, the name in the middle, and three thin outline icons on the
+right: search, account and favourites. No Buy on the bar or in the menu: the owner does not want the buy
+button pushed (keep it to the hero's close, the shop section and the final call).
+- Menu slides a side menu in from the left: Collections (a second layer listing each collection with its
+  own picture, else its first piece's cut-out, and its piece count; every collection when none are
+  picked), the links in large type (Five waters, Safety, Design, Questions), and small links with the
+  store policies near the bottom.
+- Search drops a sheet from the top; pieces that match appear as you type (Shopify's predictive search
+  through `sections/farless-predictive.liquid`), and Enter opens the Farless search page
+  (`templates/search.json`, `sections/farless-search.liquid`).
+- Account goes to Shopify's log in or sign up (new customer accounts are on).
+- The heart opens favourites from the right. Every piece has a heart: collection and search cards
+  (`snippets/farless-card.liquid`) and beside Add to cart on product pages. Favourites are kept in the
+  shopper's browser (localStorage), not in their account, and pieces that are gone drop out.
+One panel is open at a time; Escape, Close, the shade or a link close it, focus stays inside, and the
+film ignores scrolling meanwhile. Picking the menu bar in the editor opens the side menu.
 
 ## Changing the site
 
@@ -120,8 +130,9 @@ copper and black are stand-ins until real photos exist.
 - Theme files: `layout/farless.liquid` (loads `farless-header-group`, the page, `farless-footer-group`
   and `assets/farless.js`), the `farless-*` sections and snippets, `templates/index.json` and
   `templates/page.farless.json` (home page), `templates/product.json` (every product page),
-  `templates/collection.json` (every collection page). The theme's original product and collection pages
-  are kept as the alternate templates `templates/product.atelier.json` and `collection.atelier.json`;
+  `templates/collection.json` (every collection page), `templates/search.json` (search results). The
+  theme's original product, collection and search pages are kept as the alternate templates
+  `templates/product.atelier.json`, `collection.atelier.json` and `search.atelier.json`;
   the list of all collections (`/collections`) still uses the theme's original page. Buttons that
   buy link to `shopify://products/faucet` in the templates; the owner can repoint them in the editor.
 - The connector cannot write to the live theme, publish one or delete theme files, so uploads go to an
@@ -132,3 +143,7 @@ copper and black are stand-ins until real photos exist.
   URL upload runs as a background job, so check the checksums after it finishes. The retired
   `sections/farless-landing.liquid` is an empty stub with no preset; the owner can delete it.
 - The landing shop section skips variant images, so colour cut-outs never show as photos there.
+- Shopify's `collection.featured_image` falls back to the first product's photo; use `collection.image`
+  for the collection's own picture.
+- Shopify refuses a section whose text setting has `"default": ""` (Theme Check passes it); leave the
+  default out for a setting that starts empty.
