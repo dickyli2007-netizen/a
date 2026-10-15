@@ -3,9 +3,6 @@
   "sections": {
     "hero": {
       "type": "farless-hero",
-      "settings": {
-        "still_button_link": "shopify://products/faucet"
-      },
       "blocks": {
         "opening_1": {
           "type": "opening",
@@ -14,7 +11,7 @@
             "title": "Farless.",
             "line": "Five waters. One tap.",
             "time": "0",
-            "focus": 40
+            "focus": 23
           }
         },
         "caption_2": {
@@ -41,7 +38,7 @@
             "label": "Less",
             "line": "No kettle. No bottles. No soda machine.",
             "time": "6.4",
-            "focus": 57
+            "focus": 54
           }
         },
         "closing_5": {
@@ -53,7 +50,7 @@
             "button_label": "Buy Farless",
             "button_link": "shopify://products/faucet",
             "time": "end",
-            "focus": 58
+            "focus": 54
           }
         }
       },
@@ -63,22 +60,49 @@
         "caption_3",
         "caption_4",
         "closing_5"
-      ]
+      ],
+      "settings": {
+        "ending_alt": "Sparkling water pouring from a Farless tap into a glass with ice and lime",
+        "scroll_hint": "Scroll",
+        "swipe_hint": "Swipe",
+        "label": "Farless introduction",
+        "still_kicker": "Farless",
+        "still_tagline": "Five waters. One tap.",
+        "still_heading": "Far less on your counter.",
+        "still_text": "Boiling, filtered, sparkling, hot and cold water. All from one quiet tap.",
+        "still_button_label": "Buy Farless",
+        "still_button_link": "shopify://products/faucet"
+      }
     },
     "shop": {
       "type": "farless-shop",
       "settings": {
+        "kicker": "Shop",
+        "heading": "Bring Farless home.",
         "product": "faucet",
+        "shop_products": [],
+        "show_prices": false,
         "collections": [
           "multi-function-faucets",
           "filtered-faucets"
         ],
-        "show_prices": false
+        "collections_position": "above",
+        "product_kicker": "The tap",
+        "add_label": "Add to cart",
+        "sold_out_label": "Sold out",
+        "details_label": "View details",
+        "collections_label": "Collections",
+        "view_all_label": "View all",
+        "coming_soon_label": "Coming soon",
+        "piece_label": "piece",
+        "pieces_label": "pieces",
+        "anchor": "shop",
+        "tone": true,
+        "arc": "none"
       }
     },
     "waters": {
       "type": "farless-waters",
-      "settings": {},
       "blocks": {
         "row_1": {
           "type": "row",
@@ -122,48 +146,139 @@
         "row_2",
         "row_3",
         "row_4"
-      ]
+      ],
+      "settings": {
+        "kicker": "Five waters",
+        "heading": "One tap does it all.",
+        "lede": "Five waters from one quiet tap, and four fewer things on your counter.",
+        "left_label": "From the tap",
+        "right_label": "Off your counter",
+        "closing": "Fewer things. A calmer kitchen.",
+        "replaces_label": "Replaces",
+        "anchor": "waters",
+        "tone": false,
+        "arc": "none"
+      }
     },
     "safety": {
       "type": "farless-safety",
       "settings": {
+        "kicker": "Safety",
+        "heading": "Press the pin. Then turn.",
+        "lede": "Back for hot, forward for sparkling. The knob only turns once the pin is pressed down, so small hands can't start it by accident.",
+        "hint": "Try it. Hold the pin and turn the knob",
+        "result_hot": "Press. Turn back. Hot.",
+        "result_spark": "Press. Turn forward. Sparkling.",
+        "hot_label": "Hot",
+        "reset_label": "Reset",
+        "spark_label": "Sparkling",
+        "off_label": "Off",
+        "knob_label": "Water knob",
+        "controls_label": "Knob settings",
+        "anchor": "safety",
+        "tone": false,
         "arc": "right"
       }
     },
     "design": {
       "type": "farless-design",
-      "settings": {}
+      "settings": {
+        "kicker": "Design",
+        "heading": "Made to be looked at.",
+        "lede": "Brushed steel and one clean arc. Nothing to hide, and nothing to add.",
+        "image_alt": "A hand turning the Farless handle as sparkling water starts to pour",
+        "caption_left": "Push and turn",
+        "caption_right": "Farless",
+        "anchor": "design",
+        "tone": true,
+        "arc": "none"
+      }
     },
     "questions": {
       "type": "farless-questions",
-      "settings": {},
       "blocks": {
         "question_1": {
           "type": "question",
           "settings": {
-            "question": "Is it safe with children around?",
-            "answer": "<p>Yes. Boiling water needs a push and a turn at the same time, so it can't start by accident.</p>"
+            "question": "What makes Farless different?",
+            "answer": "<p>Five waters from one beautifully made tap: hot, cold, filtered, boiling and sparkling.</p><p>From washing up to your favourite drinks, Farless makes the kitchen simpler without giving up an ounce of style.</p>"
           }
         },
         "question_2": {
           "type": "question",
           "settings": {
-            "question": "What if something goes wrong?",
-            "answer": "<p>Every Farless comes with a 5-year warranty.</p>"
+            "question": "What comes with my Farless?",
+            "answer": "<p>Your Farless 5-in-1 Tap, plus everything it needs to pour boiling and sparkling water.</p><p>Filtered water runs through a separate filtration system, which isn't included.</p>"
           }
         },
         "question_3": {
           "type": "question",
           "settings": {
-            "question": "Does it really replace the kettle?",
-            "answer": "<p>Yes. Boiling water is ready the moment you turn the dial. No waiting, no refilling.</p>"
+            "question": "Can I use my own water filter?",
+            "answer": "<p>Yes. Farless connects to a separate filtration system, so the choice of filter is yours.</p><p>Compatibility depends on your filter's specifications and connections, so please check before you buy.</p>"
           }
         },
         "question_4": {
           "type": "question",
           "settings": {
-            "question": "Will I run out of sparkling water bottles?",
-            "answer": "<p>There are no bottles to run out of. Sparkling water comes straight from the tap.</p>"
+            "question": "Do I need Farless replacement filters?",
+            "answer": "<p>No. There are no Farless-only filters to buy.</p><p>Choose a compatible system from the brand you trust, and keep to the maintenance schedule that suits your home.</p>"
+          }
+        },
+        "question_5": {
+          "type": "question",
+          "settings": {
+            "question": "How clean is the filtered water?",
+            "answer": "<p>That depends on the filtration system you choose, as each one is designed to reduce different contaminants.</p><p>We recommend a certified system that matches your household's water.</p>"
+          }
+        },
+        "question_6": {
+          "type": "question",
+          "settings": {
+            "question": "Can I adjust the boiling water temperature?",
+            "answer": "<p>Yes. Adjustable temperature settings let you pour exactly what you need, from tea and coffee to water for cooking.</p>"
+          }
+        },
+        "question_7": {
+          "type": "question",
+          "settings": {
+            "question": "Is boiling water safe with children around?",
+            "answer": "<p>Safety is built in. Boiling water only flows once the pin is pressed and the handle turned, and a built-in child-safety lock helps prevent it starting by accident.</p><p>We still recommend an adult nearby whenever very hot water is in use.</p>"
+          }
+        },
+        "question_8": {
+          "type": "question",
+          "settings": {
+            "question": "Can it pour chilled sparkling water?",
+            "answer": "<p>Yes. Choose chilled or room-temperature sparkling water, whenever the mood strikes.</p>"
+          }
+        },
+        "question_9": {
+          "type": "question",
+          "settings": {
+            "question": "How does the sparkling water work?",
+            "answer": "<p>A carbonation system with a replaceable CO₂ cylinder adds the bubbles right at your tap.</p><p>When the cylinder runs out, swap in a new one and carry on.</p>"
+          }
+        },
+        "question_10": {
+          "type": "question",
+          "settings": {
+            "question": "Is it still an everyday kitchen tap?",
+            "answer": "<p>Absolutely. Hot and cold water work just as you'd expect, for washing up, rinsing vegetables and cleaning.</p><p>The extra waters add convenience and take nothing away.</p>"
+          }
+        },
+        "question_11": {
+          "type": "question",
+          "settings": {
+            "question": "Do I replace the whole tap when the CO₂ runs out?",
+            "answer": "<p>No. Only the CO₂ cylinder needs replacing. Your tap stays exactly where it is.</p>"
+          }
+        },
+        "question_12": {
+          "type": "question",
+          "settings": {
+            "question": "What if something goes wrong?",
+            "answer": "<p>Every Farless comes with a 5-year warranty.</p>"
           }
         }
       },
@@ -171,13 +286,37 @@
         "question_1",
         "question_2",
         "question_3",
-        "question_4"
-      ]
+        "question_4",
+        "question_5",
+        "question_6",
+        "question_7",
+        "question_8",
+        "question_9",
+        "question_10",
+        "question_11",
+        "question_12"
+      ],
+      "settings": {
+        "kicker": "Questions",
+        "heading": "Good to know.",
+        "anchor": "questions",
+        "tone": false,
+        "arc": "none",
+        "lede": "Everything you need to know about your Farless 5-in-1 Tap."
+      }
     },
     "final": {
       "type": "farless-final",
       "settings": {
-        "button_link": "shopify://products/faucet"
+        "kicker": "Farless",
+        "heading": "Make room.",
+        "lede": "Five waters. One tap. Far less on your counter.",
+        "button_label": "Buy Farless",
+        "button_link": "shopify://products/faucet",
+        "bubbles": true,
+        "anchor": "buy",
+        "tone": true,
+        "arc": "none"
       }
     }
   },

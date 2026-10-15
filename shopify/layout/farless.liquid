@@ -48,6 +48,7 @@
   --accent:#C4A57D;
   --accent-soft:rgba(196,165,125,.35);
   --hot:#D9573F;
+  --liked:#B5524A;
   --cool:#F6F1EA;
   --on-accent:#14100D;
   --film-ink:#F3ECE2;
@@ -108,7 +109,7 @@ nav.top ul a.ico::after{display:none}
 .ico:hover{color:var(--film-ink)}
 .ico:focus-visible{outline:1px solid var(--accent);outline-offset:2px}
 .ico svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.1;stroke-linecap:round;stroke-linejoin:round}
-.ico .count{position:absolute;top:3px;right:-3px;min-width:15px;padding:0 4px;border-radius:8px;background:var(--accent);color:var(--on-accent);font:500 .58rem/15px var(--font);letter-spacing:0;text-align:center}
+.ico .count{position:absolute;top:3px;right:-3px;min-width:15px;padding:0 4px;border-radius:8px;background:var(--liked);color:var(--film-ink);font:500 .58rem/15px var(--font);letter-spacing:0;text-align:center}
 @media (pointer:coarse){.ico{width:44px;height:44px}}
 @media (max-width:600px){.menu-btn .mt{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}}
 
@@ -270,18 +271,18 @@ html.menu-open{overflow:hidden}
 .cl-links a{text-decoration:none;font:300 1.15rem/1.3 var(--font);color:var(--text-primary);transition:color .35s var(--ease-out)}
 .cl-links a:hover{color:var(--accent)}
 
-/* the heart: an outline that fills with bronze once a piece is saved */
+/* the heart: an outline that fills with a quiet red once a piece is saved */
 .fav{all:unset;box-sizing:border-box;cursor:pointer;display:grid;place-items:center;width:40px;height:40px;color:var(--text-secondary);transition:color .35s var(--ease-out)}
 .fav svg{width:20px;height:20px;fill:transparent;stroke:currentColor;stroke-width:1.1;stroke-linejoin:round;transition:fill .35s var(--ease-out)}
 .fav:hover{color:var(--text-primary)}
 .fav:focus-visible{outline:1px solid var(--accent);outline-offset:2px}
-.fav[aria-pressed="true"]{color:var(--accent)}
+.fav[aria-pressed="true"]{color:var(--liked)}
 .fav[aria-pressed="true"] svg{fill:currentColor}
 .fav.beat svg{animation:beat .55s var(--ease-out)}
 @keyframes beat{40%{transform:scale(1.22)}}
 .buy-actions.has-fav{grid-template-columns:minmax(0,1fr) auto;align-items:stretch}
 .buy-actions .fav.big{width:58px;height:auto;min-height:56px;border:1px solid rgba(243,236,226,.55);color:var(--film-ink)}
-.buy-actions .fav.big[aria-pressed="true"]{color:var(--accent);border-color:var(--accent)}
+.buy-actions .fav.big[aria-pressed="true"]{color:var(--liked);border-color:var(--liked)}
 
 /* ---------- buttons: square, outlined, a line that reaches out on hover ---------- */
 .btn{display:inline-flex;align-items:center;gap:16px;text-decoration:none;font:400 .72rem/1 var(--font);letter-spacing:.26em;text-transform:uppercase;color:var(--film-ink);border:1px solid rgba(243,236,226,.55);padding:18px 26px 18px 30px;background:transparent;transition:background-color .45s var(--ease-out),color .45s var(--ease-out),border-color .45s var(--ease-out);text-shadow:none}

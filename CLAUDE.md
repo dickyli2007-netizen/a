@@ -28,7 +28,7 @@ and no prices shown anywhere ("keep it exclusive").
 After Gessi's: the Menu button on the left, the name in the middle, and three thin outline icons on the
 right: search, account and favourites. No Buy on the bar or in the menu: the owner does not want the buy
 button pushed (keep it to the hero's close, the shop section and the final call).
-- Menu slides a side menu in from the left: Collections (a second layer listing each collection with its
+- Menu slides a side menu in from the left: Home, Collections (a second layer listing each collection with its
   own picture, else its first piece's cut-out, and its piece count; every collection when none are
   picked), the links in large type (Five waters, Safety, Design, Questions), and small links with the
   store policies near the bottom.
@@ -37,8 +37,11 @@ button pushed (keep it to the hero's close, the shop section and the final call)
   (`templates/search.json`, `sections/farless-search.liquid`).
 - Account goes to Shopify's log in or sign up (new customer accounts are on).
 - The heart opens favourites from the right. Every piece has a heart: collection and search cards
-  (`snippets/farless-card.liquid`) and beside Add to cart on product pages. Favourites are kept in the
-  shopper's browser (localStorage), not in their account, and pieces that are gone drop out.
+  (`snippets/farless-card.liquid`) and beside Add to cart on product pages. Each colour is its own
+  favourite (keyed by product handle and variant id, with that colour's cut-out, name and link), and the
+  product page's heart follows the colour picker, so colours added later work with no change. A saved heart
+  turns a quiet red (`--liked`, #B5524A), as does the count on the bar. Favourites are kept in the
+  shopper's browser (localStorage), not in their account, and pieces or colours that are gone drop out.
 One panel is open at a time; Escape, Close, the shade or a link close it, focus stays inside, and the
 film ignores scrolling meanwhile. Picking the menu bar in the editor opens the side menu.
 

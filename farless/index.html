@@ -32,6 +32,7 @@
   --accent:#C4A57D;
   --accent-soft:rgba(196,165,125,.35);
   --hot:#D9573F;
+  --liked:#B5524A;
   --cool:#F6F1EA;
   --on-accent:#14100D;
   --film-ink:#F3ECE2;
@@ -92,7 +93,7 @@ nav.top ul a.ico::after{display:none}
 .ico:hover{color:var(--film-ink)}
 .ico:focus-visible{outline:1px solid var(--accent);outline-offset:2px}
 .ico svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.1;stroke-linecap:round;stroke-linejoin:round}
-.ico .count{position:absolute;top:3px;right:-3px;min-width:15px;padding:0 4px;border-radius:8px;background:var(--accent);color:var(--on-accent);font:500 .58rem/15px var(--font);letter-spacing:0;text-align:center}
+.ico .count{position:absolute;top:3px;right:-3px;min-width:15px;padding:0 4px;border-radius:8px;background:var(--liked);color:var(--film-ink);font:500 .58rem/15px var(--font);letter-spacing:0;text-align:center}
 @media (pointer:coarse){.ico{width:44px;height:44px}}
 @media (max-width:600px){.menu-btn .mt{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}}
 
@@ -254,18 +255,18 @@ html.menu-open{overflow:hidden}
 .cl-links a{text-decoration:none;font:300 1.15rem/1.3 var(--font);color:var(--text-primary);transition:color .35s var(--ease-out)}
 .cl-links a:hover{color:var(--accent)}
 
-/* the heart: an outline that fills with bronze once a piece is saved */
+/* the heart: an outline that fills with a quiet red once a piece is saved */
 .fav{all:unset;box-sizing:border-box;cursor:pointer;display:grid;place-items:center;width:40px;height:40px;color:var(--text-secondary);transition:color .35s var(--ease-out)}
 .fav svg{width:20px;height:20px;fill:transparent;stroke:currentColor;stroke-width:1.1;stroke-linejoin:round;transition:fill .35s var(--ease-out)}
 .fav:hover{color:var(--text-primary)}
 .fav:focus-visible{outline:1px solid var(--accent);outline-offset:2px}
-.fav[aria-pressed="true"]{color:var(--accent)}
+.fav[aria-pressed="true"]{color:var(--liked)}
 .fav[aria-pressed="true"] svg{fill:currentColor}
 .fav.beat svg{animation:beat .55s var(--ease-out)}
 @keyframes beat{40%{transform:scale(1.22)}}
 .buy-actions.has-fav{grid-template-columns:minmax(0,1fr) auto;align-items:stretch}
 .buy-actions .fav.big{width:58px;height:auto;min-height:56px;border:1px solid rgba(243,236,226,.55);color:var(--film-ink)}
-.buy-actions .fav.big[aria-pressed="true"]{color:var(--accent);border-color:var(--accent)}
+.buy-actions .fav.big[aria-pressed="true"]{color:var(--liked);border-color:var(--liked)}
 
 /* ---------- buttons: square, outlined, a line that reaches out on hover ---------- */
 .btn{display:inline-flex;align-items:center;gap:16px;text-decoration:none;font:400 .72rem/1 var(--font);letter-spacing:.26em;text-transform:uppercase;color:var(--film-ink);border:1px solid rgba(243,236,226,.55);padding:18px 26px 18px 30px;background:transparent;transition:background-color .45s var(--ease-out),color .45s var(--ease-out),border-color .45s var(--ease-out);text-shadow:none}
@@ -681,14 +682,15 @@ body.paused *, body.paused *::before, body.paused *::after{animation-play-state:
   <div class="sm-pane sm-main">
     <div class="sm-top"><button type="button" class="sm-close" data-close><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><path d="M2 2l12 12M14 2L2 14"/></svg>Close</button></div>
     <ul class="sm-list">
-      <li class="sm-in" style="--i:0"><button type="button" aria-expanded="false" aria-controls="sm-collections" data-sub-open>Collections<svg class="chev" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><path d="M4 1.5L8.5 6 4 10.5"/></svg></button></li>
-      <li class="sm-in" style="--i:1"><a href="#waters">Five waters</a></li>
-      <li class="sm-in" style="--i:2"><a href="#safety">Safety</a></li>
-      <li class="sm-in" style="--i:3"><a href="#design">Design</a></li>
-      <li class="sm-in" style="--i:4"><a href="#questions">Questions</a></li>
+      <li class="sm-in" style="--i:0"><a href="#top">Home</a></li>
+      <li class="sm-in" style="--i:1"><button type="button" aria-expanded="false" aria-controls="sm-collections" data-sub-open>Collections<svg class="chev" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><path d="M4 1.5L8.5 6 4 10.5"/></svg></button></li>
+      <li class="sm-in" style="--i:2"><a href="#waters">Five waters</a></li>
+      <li class="sm-in" style="--i:3"><a href="#safety">Safety</a></li>
+      <li class="sm-in" style="--i:4"><a href="#design">Design</a></li>
+      <li class="sm-in" style="--i:5"><a href="#questions">Questions</a></li>
     </ul>
     <ul class="sm-small">
-      <li class="sm-in" style="--i:5"><a class="label" href="#questions">5-year warranty</a></li>
+      <li class="sm-in" style="--i:6"><a class="label" href="#questions">5-year warranty</a></li>
     </ul>
   </div>
   <div class="sm-pane sm-sub" id="sm-collections" role="group" aria-labelledby="sm-collections-h">
@@ -706,7 +708,7 @@ body.paused *, body.paused *::before, body.paused *::after{animation-play-state:
     <form class="sp-form" role="search" data-search-form><label class="sr" for="sp-q">Search the pieces</label><input id="sp-q" type="search" name="q" placeholder="Search the pieces" autocomplete="off" spellcheck="false" data-autofocus><button type="submit" class="sp-go" aria-label="Search"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h15M14 7l5 5-5 5"/></svg></button></form>
     <div class="sp-idle" data-search-idle><span class="label">Collections</span><a href="#shop">Multi Function Faucets</a><a href="#shop">Filtered Faucets</a></div>
     <div class="sp-results" data-search-results aria-live="polite"></div>
-    <script type="application/json" data-search-local>[{"handle": "faucet", "title": "Farless 5-in-1 Tap", "sub": "Five waters. One tap.", "image": "assets/menu-multi-function.webp", "ar": 0.6522, "foot": 33.3, "colours": 4, "url": "#shop"}, {"handle": "flex-duo-filter-tap", "title": "Farless Flex Duo Filter Tap", "sub": "Filtered water. Two levers. One tap.", "image": "assets/search-flex-duo-filter-tap.webp", "ar": 0.5816, "foot": 72.1, "colours": 1, "colour": "Polished Gold", "url": "#shop"}, {"handle": "flex-square-filter-tap", "title": "Farless Flex Square Filter Tap", "sub": "Filtered water in brushed gold.", "image": "assets/search-flex-square-filter-tap.webp", "ar": 0.5079, "foot": 74.6, "colours": 1, "colour": "Brushed Gold", "url": "#shop"}, {"handle": "flex-angle-filter-tap", "title": "Farless Flex Angle Filter Tap", "sub": "Filtered water in rose gold.", "image": "assets/search-flex-angle-filter-tap.webp", "ar": 0.5289, "foot": 74.0, "colours": 1, "colour": "Rose Gold", "url": "#shop"}, {"handle": "arc-duo-filter-tap", "title": "Farless Arc Duo Filter Tap", "sub": "Filtered water. Two levers. One arc.", "image": "assets/search-arc-duo-filter-tap.webp", "ar": 0.6105, "foot": 73.4, "colours": 1, "colour": "Brushed Steel", "url": "#shop"}, {"handle": "arc-filter-tap", "title": "Farless Arc Filter Tap", "sub": "Filtered water from one clean arc.", "image": "assets/search-arc-filter-tap.webp", "ar": 0.5211, "foot": 64.6, "colours": 1, "colour": "Brushed Steel", "url": "#shop"}]</script>
+    <script type="application/json" data-search-local>[{"handle": "faucet", "title": "Farless 5-in-1 Tap", "sub": "Five waters. One tap.", "image": "assets/menu-multi-function.webp", "ar": 0.6522, "foot": 33.3, "colours": 4, "url": "#shop", "colour": "Polished Chrome", "colourKey": "polished-chrome"}, {"handle": "flex-duo-filter-tap", "title": "Farless Flex Duo Filter Tap", "sub": "Filtered water. Two levers. One tap.", "image": "assets/search-flex-duo-filter-tap.webp", "ar": 0.5816, "foot": 72.1, "colours": 1, "colour": "Polished Gold", "url": "#shop", "colourKey": "polished-gold"}, {"handle": "flex-square-filter-tap", "title": "Farless Flex Square Filter Tap", "sub": "Filtered water in brushed gold.", "image": "assets/search-flex-square-filter-tap.webp", "ar": 0.5079, "foot": 74.6, "colours": 1, "colour": "Brushed Gold", "url": "#shop", "colourKey": "brushed-gold"}, {"handle": "flex-angle-filter-tap", "title": "Farless Flex Angle Filter Tap", "sub": "Filtered water in rose gold.", "image": "assets/search-flex-angle-filter-tap.webp", "ar": 0.5289, "foot": 74.0, "colours": 1, "colour": "Rose Gold", "url": "#shop", "colourKey": "rose-gold"}, {"handle": "arc-duo-filter-tap", "title": "Farless Arc Duo Filter Tap", "sub": "Filtered water. Two levers. One arc.", "image": "assets/search-arc-duo-filter-tap.webp", "ar": 0.6105, "foot": 73.4, "colours": 1, "colour": "Brushed Steel", "url": "#shop", "colourKey": "brushed-steel"}, {"handle": "arc-filter-tap", "title": "Farless Arc Filter Tap", "sub": "Filtered water from one clean arc.", "image": "assets/search-arc-filter-tap.webp", "ar": 0.5211, "foot": 64.6, "colours": 1, "colour": "Brushed Steel", "url": "#shop", "colourKey": "brushed-steel"}]</script>
   </div></div>
 </div>
 <div class="fav-panel" id="fav-panel" data-panel="favourites" role="dialog" aria-modal="true" aria-labelledby="fav-h">
@@ -901,13 +903,22 @@ body.paused *, body.paused *::before, body.paused *::after{animation-play-state:
       <div class="side" data-in>
         <span class="label kicker part">Questions</span>
         <h2 class="h2 part" id="faq-h">Good to know.</h2>
+        <p class="lede part">Everything you need to know about your Farless 5-in-1 Tap.</p>
         <span class="drop part" aria-hidden="true"></span>
       </div>
       <div>
-        <details><summary>Is it safe with children around?<span class="pm" aria-hidden="true"></span></summary><p>Yes. Boiling water needs a push and a turn at the same time, so it can't start by accident.</p></details>
+        <details><summary>What makes Farless different?<span class="pm" aria-hidden="true"></span></summary><p>Five waters from one beautifully made tap: hot, cold, filtered, boiling and sparkling.</p><p>From washing up to your favourite drinks, Farless makes the kitchen simpler without giving up an ounce of style.</p></details>
+        <details><summary>What comes with my Farless?<span class="pm" aria-hidden="true"></span></summary><p>Your Farless 5-in-1 Tap, plus everything it needs to pour boiling and sparkling water.</p><p>Filtered water runs through a separate filtration system, which isn't included.</p></details>
+        <details><summary>Can I use my own water filter?<span class="pm" aria-hidden="true"></span></summary><p>Yes. Farless connects to a separate filtration system, so the choice of filter is yours.</p><p>Compatibility depends on your filter's specifications and connections, so please check before you buy.</p></details>
+        <details><summary>Do I need Farless replacement filters?<span class="pm" aria-hidden="true"></span></summary><p>No. There are no Farless-only filters to buy.</p><p>Choose a compatible system from the brand you trust, and keep to the maintenance schedule that suits your home.</p></details>
+        <details><summary>How clean is the filtered water?<span class="pm" aria-hidden="true"></span></summary><p>That depends on the filtration system you choose, as each one is designed to reduce different contaminants.</p><p>We recommend a certified system that matches your household's water.</p></details>
+        <details><summary>Can I adjust the boiling water temperature?<span class="pm" aria-hidden="true"></span></summary><p>Yes. Adjustable temperature settings let you pour exactly what you need, from tea and coffee to water for cooking.</p></details>
+        <details><summary>Is boiling water safe with children around?<span class="pm" aria-hidden="true"></span></summary><p>Safety is built in. Boiling water only flows once the pin is pressed and the handle turned, and a built-in child-safety lock helps prevent it starting by accident.</p><p>We still recommend an adult nearby whenever very hot water is in use.</p></details>
+        <details><summary>Can it pour chilled sparkling water?<span class="pm" aria-hidden="true"></span></summary><p>Yes. Choose chilled or room-temperature sparkling water, whenever the mood strikes.</p></details>
+        <details><summary>How does the sparkling water work?<span class="pm" aria-hidden="true"></span></summary><p>A carbonation system with a replaceable CO₂ cylinder adds the bubbles right at your tap.</p><p>When the cylinder runs out, swap in a new one and carry on.</p></details>
+        <details><summary>Is it still an everyday kitchen tap?<span class="pm" aria-hidden="true"></span></summary><p>Absolutely. Hot and cold water work just as you'd expect, for washing up, rinsing vegetables and cleaning.</p><p>The extra waters add convenience and take nothing away.</p></details>
+        <details><summary>Do I replace the whole tap when the CO₂ runs out?<span class="pm" aria-hidden="true"></span></summary><p>No. Only the CO₂ cylinder needs replacing. Your tap stays exactly where it is.</p></details>
         <details><summary>What if something goes wrong?<span class="pm" aria-hidden="true"></span></summary><p>Every Farless comes with a 5-year warranty.</p></details>
-        <details><summary>Does it really replace the kettle?<span class="pm" aria-hidden="true"></span></summary><p>Yes. Boiling water is ready the moment you turn the dial. No waiting, no refilling.</p></details>
-        <details><summary>Will I run out of sparkling water bottles?<span class="pm" aria-hidden="true"></span></summary><p>There are no bottles to run out of. Sparkling water comes straight from the tap.</p></details>
       </div>
     </div>
   </section>
@@ -1252,7 +1263,8 @@ body.paused *, body.paused *::before, body.paused *::after{animation-play-state:
   let favMem = null;
   function favList(){
     if (favMem) return favMem;
-    try { const v = JSON.parse(localStorage.getItem(FAV_KEY) || '[]'); favMem = Array.isArray(v) ? v.filter(x => x && x.handle) : []; }
+    // each colour is its own favourite, keyed by product and variant; older entries are keyed by product alone
+    try { const v = JSON.parse(localStorage.getItem(FAV_KEY) || '[]'); favMem = Array.isArray(v) ? v.filter(x => x && x.handle).map(x => ({ ...x, key: x.key || x.handle })) : []; }
     catch (err){ favMem = []; }
     return favMem;
   }
@@ -1280,15 +1292,15 @@ body.paused *, body.paused *::before, body.paused *::after{animation-play-state:
       if (item.sub){ const sub = document.createElement('span'); sub.className = 'fp-sub'; sub.textContent = item.sub; text.append(sub); }
       a.append(thumb, text);
       const rm = document.createElement('button');
-      rm.type = 'button'; rm.className = 'fp-remove'; rm.dataset.favRemove = item.handle;
-      rm.setAttribute('aria-label', `${removeLabel}: ${item.title}`); rm.innerHTML = X_ICON;
+      rm.type = 'button'; rm.className = 'fp-remove'; rm.dataset.favRemove = item.key;
+      rm.setAttribute('aria-label', `${removeLabel}: ${item.title}${item.sub ? ', ' + item.sub : ''}`); rm.innerHTML = X_ICON;
       li.append(a, rm);
       return li;
     }));
   }
   function syncFavs(){
     const list = favList();
-    const saved = new Set(list.map(x => x.handle));
+    const saved = new Set(list.map(x => x.key));
     document.querySelectorAll('[data-fav]').forEach(b => b.setAttribute('aria-pressed', saved.has(b.dataset.fav) ? 'true' : 'false'));
     document.querySelectorAll('[data-fav-count]').forEach(c => { c.textContent = list.length; c.hidden = !list.length; });
     document.querySelectorAll('[data-fav-list]').forEach(renderFavList);
@@ -1298,8 +1310,8 @@ body.paused *, body.paused *::before, body.paused *::after{animation-play-state:
     if (heart){
       e.preventDefault();
       const d = heart.dataset, list = favList();
-      favWrite(list.some(x => x.handle === d.fav) ? list.filter(x => x.handle !== d.fav)
-        : [{ handle: d.fav, title: d.favTitle || '', url: d.favUrl || '', image: d.favImage || '', sub: d.favSub || '' }, ...list]);
+      favWrite(list.some(x => x.key === d.fav) ? list.filter(x => x.key !== d.fav)
+        : [{ key: d.fav, handle: d.favHandle || d.fav, variant: d.favVariant || '', title: d.favTitle || '', url: d.favUrl || '', image: d.favImage || '', sub: d.favSub || '' }, ...list]);
       heart.classList.remove('beat'); void heart.offsetWidth; heart.classList.add('beat');
       return;
     }
@@ -1308,14 +1320,14 @@ body.paused *, body.paused *::before, body.paused *::after{animation-play-state:
       const ul = rm.closest('[data-fav-list]');
       const items = [...ul.querySelectorAll('[data-fav-remove]')];
       const at = items.indexOf(rm);
-      favWrite(favList().filter(x => x.handle !== rm.dataset.favRemove));
+      favWrite(favList().filter(x => x.key !== rm.dataset.favRemove));
       // keep focus in the list: the next piece's remove button, or the panel's close button once it is empty
       const left = [...ul.querySelectorAll('[data-fav-remove]')];
       (left[Math.min(at, left.length - 1)] || ul.closest('[data-panel]').querySelector('[data-close]'))?.focus({ preventScroll: true });
     }
   });
   addEventListener('storage', e => { if (e.key === FAV_KEY){ favMem = null; syncFavs(); } });
-  // on the store, drop saved pieces that are gone and pick up renamed ones
+  // on the store, drop saved pieces and colours that are gone and pick up renamed ones
   let favChecked = false;
   async function refreshFavs(){
     if (favChecked || !(window.Shopify && window.Shopify.routes)) return;
@@ -1324,17 +1336,19 @@ body.paused *, body.paused *::before, body.paused *::after{animation-play-state:
     const list = favList().slice();
     let changed = false;
     const gone = new Set();
-    await Promise.all(list.map(async item => {
+    await Promise.all([...new Set(list.map(x => x.handle))].map(async handle => {
       try {
-        const r = await fetch(`${root}products/${encodeURIComponent(item.handle)}.js`);
-        if (r.status === 404){ gone.add(item.handle); changed = true; return; }
+        const r = await fetch(`${root}products/${encodeURIComponent(handle)}.js`);
+        if (r.status === 404){ list.forEach(x => { if (x.handle === handle) gone.add(x.key); }); changed = true; return; }
         if (!r.ok) return;
         const p = await r.json();
-        if (p.title && p.title !== item.title){ item.title = p.title; changed = true; }
-        if (p.url && p.url !== item.url){ item.url = p.url; changed = true; }
+        list.filter(x => x.handle === handle).forEach(item => {
+          if (item.variant && !(p.variants || []).some(v => String(v.id) === String(item.variant))){ gone.add(item.key); changed = true; return; }
+          if (p.title && p.title !== item.title){ item.title = p.title; changed = true; }
+        });
       } catch (err){}
     }));
-    if (changed) favWrite(list.filter(x => !gone.has(x.handle)));
+    if (changed) favWrite(list.filter(x => !gone.has(x.key)));
   }
 
   /* ---------- panels: the side menu (left), search (top) and favourites (right), one open at a time;
@@ -1442,8 +1456,8 @@ body.paused *, body.paused *::before, body.paused *::after{animation-play-state:
       a.append(pic, meta);
       const fav = document.createElement('button');
       fav.type = 'button'; fav.className = 'fav';
-      Object.assign(fav.dataset, { fav: it.handle, favTitle: it.title, favUrl: it.url, favImage: it.image, favSub: it.sub || '' });
-      fav.setAttribute('aria-label', `${L.labelSave || 'Save to favourites'}: ${it.title}`);
+      Object.assign(fav.dataset, { fav: `${it.handle}:${it.colourKey || ''}`, favHandle: it.handle, favTitle: it.title, favUrl: it.url, favImage: it.image, favSub: it.colour || '' });
+      fav.setAttribute('aria-label', `${L.labelSave || 'Save to favourites'}: ${it.title}${it.colour ? ', ' + it.colour : ''}`);
       fav.innerHTML = HEART_ICON;
       li.append(a, fav);
       return li;
@@ -1458,7 +1472,7 @@ body.paused *, body.paused *::before, body.paused *::after{animation-play-state:
         out.append(all);
       }
       // the words on fetched cards follow the menu bar's settings
-      if (L.labelSave) out.querySelectorAll('[data-fav]').forEach(f => f.setAttribute('aria-label', `${L.labelSave}: ${f.dataset.favTitle}`));
+      if (L.labelSave) out.querySelectorAll('[data-fav]').forEach(f => f.setAttribute('aria-label', `${L.labelSave}: ${f.dataset.favTitle}${f.dataset.favSub ? ', ' + f.dataset.favSub : ''}`));
       if (L.labelSold) out.querySelectorAll('[data-sold]').forEach(x => { x.textContent = L.labelSold; });
       syncFavs();
     }

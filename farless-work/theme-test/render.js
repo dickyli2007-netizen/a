@@ -21,7 +21,7 @@ engine.registerFilter('image_tag', (u, ...args) => {
   return `<img src="${u}"${srcset}${o.sizes ? ` sizes="${o.sizes}"` : ''} width="${u.img.width}" height="${u.img.height}"${extra}>`;
 });
 engine.registerFilter('money', c => `$${(c / 100).toFixed(2)}`);
-engine.registerFilter('json', v => JSON.stringify(v));
+engine.registerFilter('json', v => JSON.stringify(v instanceof Img ? String(v) : v));   // image_url gives a URL string on Shopify
 engine.registerFilter('asset_url', n => `/cdn/${n}`);
 engine.registerFilter('handleize', s => String(s || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''));
 class FormTag extends Tag {

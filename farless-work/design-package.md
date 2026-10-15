@@ -72,13 +72,29 @@ Nav: Farless wordmark (inline SVG), links "Five waters", "Safety", "Design", "Qu
 4. **Design** (ending frame reused as the image)
    - Headline: "Made to be looked at."
    - Body: "Brushed steel and one clean arc. Nothing to hide, and nothing to add."
-5. **Questions** (real objections from research, answered only with confirmed facts)
-   - "Is it safe with children around?" / "Yes. Boiling water needs a push and a turn at the same time, so it can't start by accident."
+5. **Questions** (the owner's FAQ, rewritten professional but lively; answered only with confirmed facts)
+   - Line under the heading: "Everything you need to know about your Farless 5-in-1 Tap."
+   - "What makes Farless different?" / "Five waters from one beautifully made tap: hot, cold, filtered, boiling and sparkling. From washing up to your favourite drinks, Farless makes the kitchen simpler without giving up an ounce of style."
+   - "What comes with my Farless?" / "Your Farless 5-in-1 Tap, plus everything it needs to pour boiling and sparkling water. Filtered water runs through a separate filtration system, which isn't included."
+   - "Can I use my own water filter?" / "Yes. Farless connects to a separate filtration system, so the choice of filter is yours. Compatibility depends on your filter's specifications and connections, so please check before you buy."
+   - "Do I need Farless replacement filters?" / "No. There are no Farless-only filters to buy. Choose a compatible system from the brand you trust, and keep to the maintenance schedule that suits your home."
+   - "How clean is the filtered water?" / "That depends on the filtration system you choose, as each one is designed to reduce different contaminants. We recommend a certified system that matches your household's water."
+   - "Can I adjust the boiling water temperature?" / "Yes. Adjustable temperature settings let you pour exactly what you need, from tea and coffee to water for cooking."
+   - "Is boiling water safe with children around?" / "Safety is built in. Boiling water only flows once the pin is pressed and the handle turned, and a built-in child-safety lock helps prevent it starting by accident. We still recommend an adult nearby whenever very hot water is in use."
+   - "Can it pour chilled sparkling water?" / "Yes. Choose chilled or room-temperature sparkling water, whenever the mood strikes."
+   - "How does the sparkling water work?" / "A carbonation system with a replaceable CO₂ cylinder adds the bubbles right at your tap. When the cylinder runs out, swap in a new one and carry on."
+   - "Is it still an everyday kitchen tap?" / "Absolutely. Hot and cold water work just as you'd expect, for washing up, rinsing vegetables and cleaning. The extra waters add convenience and take nothing away."
+   - "Do I replace the whole tap when the CO₂ runs out?" / "No. Only the CO₂ cylinder needs replacing. Your tap stays exactly where it is."
    - "What if something goes wrong?" / "Every Farless comes with a 5-year warranty."
-   - "Does it really replace the kettle?" / "Yes. Boiling water is ready the moment you turn the dial. No waiting, no refilling."
-   - "Will it still make sparkling water when I'm out of bottles?" / "There are no bottles to run out of. Sparkling water comes straight from the tap."
-   - Pending facts from the owner before more answers: filter change schedule and cost, installation, hard water.
-   - Confirmed by the owner: the knob only turns once the pin is pressed down (safety section copy stands), and the questions answer keeps "boiling" water for push and turn.
+   - Confirmed by the owner (October 2026 FAQ): the box holds the tap and the equipment for boiling and sparkling;
+     filtered water needs a separate filtration system, not included, from any compatible brand (no Farless-only
+     filters); filtered water quality depends on that system; boiling temperature is adjustable; a built-in
+     child-safety lock, with adult supervision still recommended; chilled and room-temperature sparkling; a
+     replaceable CO2 cylinder does the carbonation; hot and cold work as an everyday kitchen tap. Earlier: the knob
+     only turns once the pin is pressed down, and every Farless has a 5-year warranty.
+   - Still pending from the owner: installation, hard water, CO2 cylinder size and where to buy refills.
+   - The site says "tap" where the owner's FAQ said "faucet", to match the product name and the rest of the copy.
+
 6. **Final call to action**
    - Headline: "Make room."
    - Line: "Five waters. One tap. Far less on your counter."

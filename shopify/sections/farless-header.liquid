@@ -68,9 +68,13 @@
   <div class="sm-pane sm-main">
     <div class="sm-top"><button type="button" class="sm-close" data-close><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><path d="M2 2l12 12M14 2L2 14"/></svg>{{ section.settings.close_label | escape }}</button></div>
     <ul class="sm-list">
+      {%- if section.settings.home_label != blank %}
+      <li class="sm-in" style="--i:{{ i }}"><a href="{% if on_home %}#top{% else %}{{ routes.root_url }}{% endif %}">{{ section.settings.home_label | escape }}</a></li>
+      {%- assign i = i | plus: 1 -%}
+      {%- endif -%}
       {%- if show_collections %}
-      <li class="sm-in" style="--i:0"><button type="button" aria-expanded="false" aria-controls="sm-collections-{{ section.id }}" data-sub-open>{{ section.settings.collections_label | escape }}<svg class="chev" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><path d="M4 1.5L8.5 6 4 10.5"/></svg></button></li>
-      {%- assign i = 1 -%}
+      <li class="sm-in" style="--i:{{ i }}"><button type="button" aria-expanded="false" aria-controls="sm-collections-{{ section.id }}" data-sub-open>{{ section.settings.collections_label | escape }}<svg class="chev" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><path d="M4 1.5L8.5 6 4 10.5"/></svg></button></li>
+      {%- assign i = i | plus: 1 -%}
       {%- endif -%}
       {%- for block in section.blocks -%}
         {%- if block.type == 'link' %}{% render 'farless-link', block: block, on_home: on_home, item_class: 'sm-in', index: i %}{% assign i = i | plus: 1 %}{% endif -%}
@@ -203,6 +207,7 @@
     { "type": "header", "content": "Side menu" },
     { "type": "text", "id": "menu_label", "label": "Menu button", "default": "Menu" },
     { "type": "text", "id": "close_label", "label": "Close button", "default": "Close" },
+    { "type": "text", "id": "home_label", "label": "Home link, first in the menu", "default": "Home", "info": "Leave empty for none." },
     { "type": "text", "id": "collections_label", "label": "Collections", "default": "Collections", "info": "Opens a second layer listing the collections. Leave empty to leave it out." },
     { "type": "collection_list", "id": "collections", "label": "Collections in the menu", "limit": 12, "info": "Leave empty to list every collection." },
     { "type": "text", "id": "back_label", "label": "Back button", "default": "Back" },

@@ -336,7 +336,8 @@
   let favMem = null;
   function favList(){
     if (favMem) return favMem;
-    try { const v = JSON.parse(localStorage.getItem(FAV_KEY) || '[]'); favMem = Array.isArray(v) ? v.filter(x => x && x.handle) : []; }
+    // each colour is its own favourite, keyed by product and variant; older entries are keyed by product alone
+    try { const v = JSON.parse(localStorage.getItem(FAV_KEY) || '[]'); favMem = Array.isArray(v) ? v.filter(x => x && x.handle).map(x => ({ ...x, key: x.key || x.handle })) : []; }
     catch (err){ favMem = []; }
     return favMem;
   }
@@ -364,15 +365,15 @@
       if (item.sub){ const sub = document.createElement('span'); sub.className = 'fp-sub'; sub.textContent = item.sub; text.append(sub); }
       a.append(thumb, text);
       const rm = document.createElement('button');
-      rm.type = 'button'; rm.className = 'fp-remove'; rm.dataset.favRemove = item.handle;
-      rm.setAttribute('aria-label', `${removeLabel}: ${item.title}`); rm.innerHTML = X_ICON;
+      rm.type = 'button'; rm.className = 'fp-remove'; rm.dataset.favRemove = item.key;
+      rm.setAttribute('aria-label', `${removeLabel}: ${item.title}${item.sub ? ', ' + item.sub : ''}`); rm.innerHTML = X_ICON;
       li.append(a, rm);
       return li;
     }));
   }
   function syncFavs(){
     const list = favList();
-    const saved = new Set(list.map(x => x.handle));
+    const saved = new Set(list.map(x => x.key));
     document.querySelectorAll('[data-fav]').forEach(b => b.setAttribute('aria-pressed', saved.has(b.dataset.fav) ? 'true' : 'false'));
     document.querySelectorAll('[data-fav-count]').forEach(c => { c.textContent = list.length; c.hidden = !list.length; });
     document.querySelectorAll('[data-fav-list]').forEach(renderFavList);
@@ -382,8 +383,8 @@
     if (heart){
       e.preventDefault();
       const d = heart.dataset, list = favList();
-      favWrite(list.some(x => x.handle === d.fav) ? list.filter(x => x.handle !== d.fav)
-        : [{ handle: d.fav, title: d.favTitle || '', url: d.favUrl || '', image: d.favImage || '', sub: d.favSub || '' }, ...list]);
+      favWrite(list.some(x => x.key === d.fav) ? list.filter(x => x.key !== d.fav)
+        : [{ key: d.fav, handle: d.favHandle || d.fav, variant: d.favVariant || '', title: d.favTitle || '', url: d.favUrl || '', image: d.favImage || '', sub: d.favSub || '' }, ...list]);
       heart.classList.remove('beat'); void heart.offsetWidth; heart.classList.add('beat');
       return;
     }
@@ -392,14 +393,14 @@
       const ul = rm.closest('[data-fav-list]');
       const items = [...ul.querySelectorAll('[data-fav-remove]')];
       const at = items.indexOf(rm);
-      favWrite(favList().filter(x => x.handle !== rm.dataset.favRemove));
+      favWrite(favList().filter(x => x.key !== rm.dataset.favRemove));
       // keep focus in the list: the next piece's remove button, or the panel's close button once it is empty
       const left = [...ul.querySelectorAll('[data-fav-remove]')];
       (left[Math.min(at, left.length - 1)] || ul.closest('[data-panel]').querySelector('[data-close]'))?.focus({ preventScroll: true });
     }
   });
   addEventListener('storage', e => { if (e.key === FAV_KEY){ favMem = null; syncFavs(); } });
-  // on the store, drop saved pieces that are gone and pick up renamed ones
+  // on the store, drop saved pieces and colours that are gone and pick up renamed ones
   let favChecked = false;
   async function refreshFavs(){
     if (favChecked || !(window.Shopify && window.Shopify.routes)) return;
@@ -408,17 +409,19 @@
     const list = favList().slice();
     let changed = false;
     const gone = new Set();
-    await Promise.all(list.map(async item => {
+    await Promise.all([...new Set(list.map(x => x.handle))].map(async handle => {
       try {
-        const r = await fetch(`${root}products/${encodeURIComponent(item.handle)}.js`);
-        if (r.status === 404){ gone.add(item.handle); changed = true; return; }
+        const r = await fetch(`${root}products/${encodeURIComponent(handle)}.js`);
+        if (r.status === 404){ list.forEach(x => { if (x.handle === handle) gone.add(x.key); }); changed = true; return; }
         if (!r.ok) return;
         const p = await r.json();
-        if (p.title && p.title !== item.title){ item.title = p.title; changed = true; }
-        if (p.url && p.url !== item.url){ item.url = p.url; changed = true; }
+        list.filter(x => x.handle === handle).forEach(item => {
+          if (item.variant && !(p.variants || []).some(v => String(v.id) === String(item.variant))){ gone.add(item.key); changed = true; return; }
+          if (p.title && p.title !== item.title){ item.title = p.title; changed = true; }
+        });
       } catch (err){}
     }));
-    if (changed) favWrite(list.filter(x => !gone.has(x.handle)));
+    if (changed) favWrite(list.filter(x => !gone.has(x.key)));
   }
 
   /* ---------- panels: the side menu (left), search (top) and favourites (right), one open at a time;
@@ -526,8 +529,8 @@
       a.append(pic, meta);
       const fav = document.createElement('button');
       fav.type = 'button'; fav.className = 'fav';
-      Object.assign(fav.dataset, { fav: it.handle, favTitle: it.title, favUrl: it.url, favImage: it.image, favSub: it.sub || '' });
-      fav.setAttribute('aria-label', `${L.labelSave || 'Save to favourites'}: ${it.title}`);
+      Object.assign(fav.dataset, { fav: `${it.handle}:${it.colourKey || ''}`, favHandle: it.handle, favTitle: it.title, favUrl: it.url, favImage: it.image, favSub: it.colour || '' });
+      fav.setAttribute('aria-label', `${L.labelSave || 'Save to favourites'}: ${it.title}${it.colour ? ', ' + it.colour : ''}`);
       fav.innerHTML = HEART_ICON;
       li.append(a, fav);
       return li;
@@ -542,7 +545,7 @@
         out.append(all);
       }
       // the words on fetched cards follow the menu bar's settings
-      if (L.labelSave) out.querySelectorAll('[data-fav]').forEach(f => f.setAttribute('aria-label', `${L.labelSave}: ${f.dataset.favTitle}`));
+      if (L.labelSave) out.querySelectorAll('[data-fav]').forEach(f => f.setAttribute('aria-label', `${L.labelSave}: ${f.dataset.favTitle}${f.dataset.favSub ? ', ' + f.dataset.favSub : ''}`));
       if (L.labelSold) out.querySelectorAll('[data-sold]').forEach(x => { x.textContent = L.labelSold; });
       syncFavs();
     }
@@ -994,6 +997,15 @@
       btn.textContent = v.available ? (btn.dataset.labelAdd || 'Add to cart') : (btn.dataset.labelSold || 'Sold out');
       if (price) price.innerHTML = v.price;
       if (!designMode) history.replaceState(history.state, '', `${location.pathname}?variant=${v.id}`);
+      // each colour is its own favourite: the heart now saves this one
+      const heart = root.querySelector('.buy-actions [data-fav]');
+      if (heart){
+        const colour = colourPos >= 0 ? v.options[colourPos] : '';
+        Object.assign(heart.dataset, { fav: `${heart.dataset.favHandle}:${v.id}`, favVariant: v.id, favUrl: `${heart.dataset.favBase}?variant=${v.id}`, favSub: colour || '' });
+        if (v.image) heart.dataset.favImage = v.image;
+        heart.setAttribute('aria-label', `${heart.dataset.labelSave || 'Save to favourites'}: ${heart.dataset.favTitle}${colour ? ', ' + colour : ''}`);
+        syncFavs();
+      }
     };
     if (stage) stage.addEventListener('farless:colour', update);
     selects.forEach(s => s.addEventListener('change', update));

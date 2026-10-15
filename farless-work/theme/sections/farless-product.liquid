@@ -146,11 +146,16 @@
         <div class="opts">{{ other_options }}</div>
           {%- endif -%}
         {%- endunless %}
+        {%- comment -%} each colour is its own favourite: the heart saves the chosen colour and follows the picker {%- endcomment -%}
         {%- liquid
           assign heart_media = current.featured_media | default: product.featured_media
           assign heart_image = ''
           if heart_media
             assign heart_image = heart_media.preview_image | image_url: width: 300
+          endif
+          assign heart_colour = ''
+          if colour_pos >= 0
+            assign heart_colour = current.options[colour_pos]
           endif
         -%}
         <div class="buy-actions has-fav" id="buy">
@@ -158,7 +163,7 @@
             <input type="hidden" name="id" value="{{ current.id }}">
             <button class="btn solid" type="submit" name="add" data-add data-label-add="{{ section.settings.add_label | escape }}" data-label-sold="{{ section.settings.sold_out_label | escape }}" data-label-none="{{ section.settings.unavailable_label | escape }}"{% unless current.available %} disabled{% endunless %}>{% if current.available %}{{ section.settings.add_label | escape }}{% else %}{{ section.settings.sold_out_label | escape }}{% endif %}</button>
           {%- endform -%}
-          <button type="button" class="fav big" data-fav="{{ product.handle }}" data-fav-title="{{ product.title | escape }}" data-fav-url="{{ product.url }}" data-fav-image="{{ heart_image }}" data-fav-sub="{{ lede | escape }}" aria-pressed="false" aria-label="{{ section.settings.save_label | escape }}: {{ product.title | escape }}">{% render 'farless-heart' %}</button>
+          <button type="button" class="fav big" data-fav="{{ product.handle }}:{{ current.id }}" data-fav-handle="{{ product.handle }}" data-fav-variant="{{ current.id }}" data-fav-base="{{ product.url }}" data-fav-title="{{ product.title | escape }}" data-fav-url="{{ product.url }}?variant={{ current.id }}" data-fav-image="{{ heart_image }}" data-fav-sub="{{ heart_colour | escape }}" data-label-save="{{ section.settings.save_label | escape }}" aria-pressed="false" aria-label="{{ section.settings.save_label | escape }}: {{ product.title | escape }}{% if heart_colour != blank %}, {{ heart_colour | escape }}{% endif %}">{% render 'farless-heart' %}</button>
         </div>
         {%- if excerpt != blank %}
         <p class="excerpt">{{ excerpt | escape }}</p>
@@ -183,7 +188,7 @@
 </div>
 <script type="application/json" data-variants data-colour-pos="{{ colour_pos }}">[
   {%- for v in product.variants -%}
-  {"id":{{ v.id }},"available":{{ v.available | json }},"options":{{ v.options | json }},"price":{{ v.price | money | json }}}{% unless forloop.last %},{% endunless %}
+  {"id":{{ v.id }},"available":{{ v.available | json }},"options":{{ v.options | json }},"price":{{ v.price | money | json }},"image":{% if v.featured_media %}{{ v.featured_media.preview_image | image_url: width: 300 | json }}{% else %}null{% endif %}}{% unless forloop.last %},{% endunless %}
   {%- endfor -%}
 ]</script>
 

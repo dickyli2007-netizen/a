@@ -1,22 +1,29 @@
 {%- comment -%}
   One product as a card: its cut-out (the first colour's picture) in the soft light and contact shadow of
   its product page, or with pictures: 'photo' its first picture filling the card; its name, Sold out, its
-  price or how many colours, its tagline, and a heart that saves it to favourites in this browser.
+  price or how many colours, its tagline, and a heart that saves the colour shown to favourites in this
+  browser. Each colour is its own favourite (product handle and variant id).
   product, pictures ('cutout' or 'photo'), show_prices, sold_out_label, colours_label, save_label, sizes,
   item_class (an extra class on the card, such as part for the entrances).
 {%- endcomment -%}
 {%- liquid
   assign colour_count = 0
+  assign colour_pos = -1
   for option in product.options_with_values
     assign oname = option.name | downcase | strip
     if oname == 'colour' or oname == 'color' or oname == 'finish' or oname == 'colours' or oname == 'colors'
       assign colour_count = option.values.size
+      assign colour_pos = option.position | minus: 1
       break
     endif
   endfor
+  assign v = product.selected_or_first_available_variant
+  assign colour_name = ''
+  if colour_pos >= 0
+    assign colour_name = v.options[colour_pos]
+  endif
   assign pic = product.featured_media
   if pictures != 'photo'
-    assign v = product.selected_or_first_available_variant
     if v.featured_media
       assign pic = v.featured_media
     else
@@ -54,4 +61,4 @@
   {%- if lede != blank %}
   <p class="sub">{{ lede | escape }}</p>
   {%- endif %}
-</a><button type="button" class="fav" data-fav="{{ product.handle }}" data-fav-title="{{ product.title | escape }}" data-fav-url="{{ product.url }}" data-fav-image="{{ heart_image }}" data-fav-sub="{{ lede | escape }}" aria-pressed="false" aria-label="{{ save_label | default: 'Save to favourites' | escape }}: {{ product.title | escape }}">{% render 'farless-heart' %}</button></li>
+</a><button type="button" class="fav" data-fav="{{ product.handle }}:{{ v.id }}" data-fav-handle="{{ product.handle }}" data-fav-variant="{{ v.id }}" data-fav-title="{{ product.title | escape }}" data-fav-url="{{ product.url }}?variant={{ v.id }}" data-fav-image="{{ heart_image }}" data-fav-sub="{{ colour_name | escape }}" aria-pressed="false" aria-label="{{ save_label | default: 'Save to favourites' | escape }}: {{ product.title | escape }}{% if colour_name != blank %}, {{ colour_name | escape }}{% endif %}">{% render 'farless-heart' %}</button></li>
