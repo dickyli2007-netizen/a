@@ -12,7 +12,7 @@ and no prices shown anywhere ("keep it exclusive").
 - `farless-work/theme/`: the Shopify theme's own source. Every page's words, pictures, links and film
   are section settings and blocks there, so the owner edits them in Online Store > Customize:
   `sections/` (film hero, shop, five waters, safety knob, design, questions, final call, product,
-  collection, menu bar and footer, plus the header and footer groups), `snippets/`, `templates/` (which sections each page
+  collection, menu bar with its side menu, and footer, plus the header and footer groups), `snippets/`, `templates/` (which sections each page
   shows, with today's content) and `assets/farless.src.js` (the shared script; each part starts per
   section and restarts when the editor reloads a section).
 - `farless-work/build_shopify.py`: builds `shopify/` and `farless-shopify-addon.zip` from those pieces,
@@ -22,6 +22,15 @@ and no prices shown anywhere ("keep it exclusive").
 - `farless-work/design-package.md`: the brand plan (palette, type, copy decisions, confirmed facts).
 - `farless-work/product-page/`: the product page template and its preview builder (below), the cut-out
   tool, and `collection_image.py`, which composes a collection's picture from its products' cut-outs.
+
+## The menu
+
+After Gessi's: the left of the bar is a Menu button; Design, Questions and Buy sit on the right (only Buy
+on phones). The button slides a side menu in from the left: Collections (a second layer listing each
+collection with its picture and piece count; every collection when none are picked), the links in large
+type, small links and the store policies near the bottom, and a Buy Farless button. Link blocks show in
+the menu, or in the menu and on the bar. Escape, Close, the shade or a link close it; focus stays inside
+while it is open and the film ignores scrolling meanwhile. Picking the menu bar in the editor opens it.
 
 ## Changing the site
 
