@@ -1,0 +1,81 @@
+{%- comment -%}
+  The page that lists every collection (/collections), in the Farless style: the same 3:2 cards as the
+  home page's shop section, each with the collection's own picture (else its first piece's cut-out, whole,
+  in the soft light), its name and how many pieces it holds. The collections can be picked in the editor;
+  left empty, every collection shows except Shopify's own home page and all products ones.
+{%- endcomment -%}
+{%- liquid
+  assign picked = section.settings.collections
+  if picked == blank
+    assign picked = collections
+  endif
+-%}
+{%- render 'farless-arc', arc: section.settings.arc -%}
+<section class="cl{% if section.settings.tone %} tone{% endif %}" aria-labelledby="h-{{ section.id }}">
+  <div class="wrap">
+    <nav class="crumbs label" aria-label="Breadcrumb"><a href="{{ routes.root_url }}#shop">{{ section.settings.shop_crumb | escape }}</a><span aria-hidden="true">/</span><span aria-current="page">{{ section.settings.heading | escape }}</span></nav>
+    <div class="cl-head" data-in>
+      <div>
+        <span class="label kicker part">{{ section.settings.kicker | escape }}</span>
+        <h1 class="h2 part" id="h-{{ section.id }}">{{ section.settings.heading | escape }}</h1>
+        {%- if section.settings.lede != blank %}
+        <p class="lede part">{{ section.settings.lede | escape }}</p>
+        {%- endif %}
+      </div>
+    </div>
+    <ul class="ccards" data-in>
+      {%- for c in picked -%}
+        {%- if c.handle == 'frontpage' or c.handle == 'all' %}{% continue %}{% endif -%}
+        {%- if c.products_count == 0 and section.settings.show_empty == false %}{% continue %}{% endif -%}
+        {%- liquid
+          assign cimg = c.image
+          assign cut = false
+          if cimg == blank
+            assign first = c.products.first
+            if first
+              assign fv = first.selected_or_first_available_variant
+              if fv.featured_media
+                assign cimg = fv.featured_media.preview_image
+                assign cut = true
+              elsif first.featured_media
+                assign cimg = first.featured_media.preview_image
+              endif
+            endif
+          endif
+        -%}
+      <li class="ccard part"><a href="{{ c.url }}">
+        {%- if cimg -%}
+        <div class="cimg{% if cut %} cut{% endif %}">{{ cimg | image_url: width: 1200 | image_tag: widths: '500, 750, 1000, 1200', sizes: '(min-width: 990px) 45vw, 100vw', loading: 'lazy', alt: c.title }}</div>
+        {%- else -%}
+        <div class="cimg empty" aria-hidden="true"><svg viewBox="0 0 200 120"><path d="M30 118 V58 C30 22 58 4 100 4 C142 4 170 22 170 58 V82"/><circle cx="170" cy="98" r="3"/></svg></div>
+        {%- endif -%}
+        <div class="cmeta"><h2>{{ c.title | escape }}</h2><span class="label">{% if c.products_count == 0 %}{{ section.settings.coming_soon_label | escape }}{% elsif c.products_count == 1 %}1 {{ section.settings.piece_label | escape }}{% else %}{{ c.products_count }} {{ section.settings.pieces_label | escape }}{% endif %}</span></div>
+      </a></li>
+      {%- endfor %}
+    </ul>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Farless collections list",
+  "tag": "div",
+  "class": "farless-collections",
+  "disabled_on": { "groups": ["header", "footer"] },
+  "settings": [
+    { "type": "text", "id": "kicker", "label": "Small label", "default": "Farless" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Collections" },
+    { "type": "text", "id": "lede", "label": "Line under the heading", "info": "Leave empty for none." },
+    { "type": "collection_list", "id": "collections", "label": "Collections to show", "limit": 24, "info": "Leave empty to show every collection, in the store's order." },
+    { "type": "checkbox", "id": "show_empty", "label": "Show collections with no pieces yet", "default": true },
+    { "type": "header", "content": "Labels" },
+    { "type": "text", "id": "shop_crumb", "label": "First link in the trail", "default": "Shop" },
+    { "type": "text", "id": "coming_soon_label", "label": "Empty collection", "default": "Coming soon" },
+    { "type": "text", "id": "piece_label", "label": "One product", "default": "piece" },
+    { "type": "text", "id": "pieces_label", "label": "Several products", "default": "pieces" },
+    { "type": "header", "content": "Layout" },
+    { "type": "checkbox", "id": "tone", "label": "Slightly lighter background", "default": false },
+    { "type": "select", "id": "arc", "label": "Arc line above", "default": "none", "options": [ { "value": "none", "label": "None" }, { "value": "left", "label": "From the left" }, { "value": "right", "label": "From the right" } ] }
+  ]
+}
+{% endschema %}

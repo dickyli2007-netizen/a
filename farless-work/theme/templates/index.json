@@ -48,7 +48,7 @@
             "heading": "Far less on your counter.",
             "line": "Just one tap.",
             "button_label": "Buy Farless",
-            "button_link": "shopify://products/faucet",
+            "button_link": "/collections",
             "time": "end",
             "focus": 54
           }
@@ -71,7 +71,7 @@
         "still_heading": "Far less on your counter.",
         "still_text": "Boiling, filtered, sparkling, hot and cold water. All from one quiet tap.",
         "still_button_label": "Buy Farless",
-        "still_button_link": "shopify://products/faucet"
+        "still_button_link": "/collections"
       }
     },
     "shop": {
@@ -312,7 +312,7 @@
         "heading": "Make room.",
         "lede": "Five waters. One tap. Far less on your counter.",
         "button_label": "Buy Farless",
-        "button_link": "shopify://products/faucet",
+        "button_link": "/collections",
         "bubbles": true,
         "anchor": "buy",
         "tone": true,

@@ -40,7 +40,7 @@ button pushed (keep it to the hero's close, the shop section and the final call)
   (`snippets/farless-card.liquid`) and beside Add to cart on product pages. Each colour is its own
   favourite (keyed by product handle and variant id, with that colour's cut-out, name and link), and the
   product page's heart follows the colour picker, so colours added later work with no change. A saved heart
-  turns a quiet red (`--liked`, #B5524A), as does the count on the bar. Favourites are kept in the
+  turns a quiet red (`--liked`, #C75A4E), as does the count on the bar. Favourites are kept in the
   shopper's browser (localStorage), not in their account, and pieces or colours that are gone drop out.
 One panel is open at a time; Escape, Close, the shade or a link close it, focus stays inside, and the
 film ignores scrolling meanwhile. Picking the menu bar in the editor opens the side menu.
@@ -133,11 +133,13 @@ copper and black are stand-ins until real photos exist.
 - Theme files: `layout/farless.liquid` (loads `farless-header-group`, the page, `farless-footer-group`
   and `assets/farless.js`), the `farless-*` sections and snippets, `templates/index.json` and
   `templates/page.farless.json` (home page), `templates/product.json` (every product page),
-  `templates/collection.json` (every collection page), `templates/search.json` (search results). The
-  theme's original product, collection and search pages are kept as the alternate templates
-  `templates/product.atelier.json`, `collection.atelier.json` and `search.atelier.json`;
-  the list of all collections (`/collections`) still uses the theme's original page. Buttons that
-  buy link to `shopify://products/faucet` in the templates; the owner can repoint them in the editor.
+  `templates/collection.json` (every collection page), `templates/list-collections.json` (the page listing
+  every collection, `sections/farless-collections.liquid`, the home page's collection cards without
+  Shopify's own "Home page" and "all" collections), `templates/search.json` (search results). The theme's
+  original product, collection, collections list and search pages are kept as the alternate templates
+  `templates/product.atelier.json`, `collection.atelier.json`, `list-collections.atelier.json` and
+  `search.atelier.json`. Every Buy Farless button (the film's close, the still hero, the final call) goes
+  to `/collections`, the owner's choice; they can repoint them in the editor.
 - The connector cannot write to the live theme, publish one or delete theme files, so uploads go to an
   unpublished copy (duplicate the newest theme, upload with `themeFilesUpsert` from raw GitHub URLs
   pinned to a commit, check the checksums) and the owner previews and publishes it. Before copying, read

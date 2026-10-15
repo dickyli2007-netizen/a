@@ -4,7 +4,7 @@
     "hero": {
       "type": "farless-hero",
       "settings": {
-        "still_button_link": "shopify://products/faucet"
+        "still_button_link": "/collections"
       },
       "blocks": {
         "opening_1": {
@@ -51,7 +51,7 @@
             "heading": "Far less on your counter.",
             "line": "Just one tap.",
             "button_label": "Buy Farless",
-            "button_link": "shopify://products/faucet",
+            "button_link": "/collections",
             "time": "end",
             "focus": 58
           }
@@ -241,7 +241,7 @@
     "final": {
       "type": "farless-final",
       "settings": {
-        "button_link": "shopify://products/faucet"
+        "button_link": "/collections"
       }
     }
   },

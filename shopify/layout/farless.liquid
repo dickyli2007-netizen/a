@@ -48,7 +48,7 @@
   --accent:#C4A57D;
   --accent-soft:rgba(196,165,125,.35);
   --hot:#D9573F;
-  --liked:#B5524A;
+  --liked:#C75A4E;
   --cool:#F6F1EA;
   --on-accent:#14100D;
   --film-ink:#F3ECE2;
@@ -490,13 +490,15 @@ section.sec.tone{background:var(--canvas-2)}
 .ccard .cimg{position:relative;aspect-ratio:3/2;overflow:hidden;background:var(--panel)}
 .ccard .cimg img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform 1.4s var(--ease-out)}
 .ccard a:hover .cimg img{transform:scale(1.04)}
+.ccard .cimg.cut::before{content:"";position:absolute;inset:0;background:radial-gradient(50% 50% at 50% 52%,rgba(236,227,214,.085),rgba(236,227,214,0) 72%)}
+.ccard .cimg.cut img{object-fit:contain;padding:9% 0}
 .ccard .cimg.empty{display:grid;place-items:center;border:1px solid var(--hair)}
 .ccard .cimg.empty svg{width:42%;height:auto;overflow:visible}
 .ccard .cimg.empty path{fill:none;stroke:var(--hair-strong);stroke-width:1;vector-effect:non-scaling-stroke;transition:stroke .6s var(--ease-out)}
 .ccard .cimg.empty circle{fill:var(--accent);opacity:.6}
 .ccard a:hover .cimg.empty path{stroke:var(--accent)}
 .ccard .cmeta{display:flex;justify-content:space-between;align-items:baseline;gap:16px;margin-top:18px}
-.ccard h3{font:300 1.15rem/1.3 var(--font);letter-spacing:.02em}
+.ccard h2,.ccard h3{font:300 1.15rem/1.3 var(--font);letter-spacing:.02em}
 @media (max-width:860px){.feature{grid-template-columns:1fr}}
 @media (max-width:600px){.f-notes{grid-template-columns:1fr}}
 

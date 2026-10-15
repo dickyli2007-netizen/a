@@ -178,6 +178,8 @@ async function page(file, templateFile, template, scope, designMode){
   await page('products/faucet/index.html', T('product.json'), { name: 'product', suffix: null }, { product: faucet, page_title: 'Farless 5-in-1 Tap', page_description: 'Five waters. One tap.' });
   for (const p of filtered) await page(`products/${p.handle}/index.html`, T('product.json'), { name: 'product', suffix: null }, { product: p, page_title: p.title });
   for (const [h, c] of Object.entries(COLLECTIONS)) await page(`collections/${h}/index.html`, T('collection.json'), { name: 'collection', suffix: null }, { collection: c, page_title: c.title });
+  // the page listing every collection
+  await page('collections/index.html', T('list-collections.json'), { name: 'list-collections', suffix: null }, { page_title: 'Collections' });
   // search for "arc": the results page, and the suggestions the search sheet fetches as you type
   const arcs = filtered.filter(p => p.handle.startsWith('arc')).map(p => ({ ...p, object_type: 'product' }));
   await page('search/index.html', T('search.json'), { name: 'search', suffix: null }, { search: { performed: true, terms: 'arc', results_count: arcs.length, results: arcs }, page_title: 'Search' });

@@ -5,7 +5,7 @@
     "menu": {
       "type": "farless-header",
       "settings": {
-        "buy_link": "shopify://products/faucet",
+        "buy_link": "/collections",
         "buy_label": "",
         "menu_buy_label": "",
         "all_collections_label": ""
