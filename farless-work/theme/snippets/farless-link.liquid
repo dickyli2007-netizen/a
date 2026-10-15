@@ -1,6 +1,7 @@
 {%- comment -%}
   One menu or footer link from a link block: the page it picks, or else a section on the home page.
   block: the link block. on_home: true when the home page sections are on this page. class: link class.
+  item_class and index (optional): the list item's class and its place in the side menu's entrance.
 {%- endcomment -%}
 {%- liquid
   if block.settings.link != blank
@@ -11,4 +12,4 @@
     assign href = routes.root_url | append: '#' | append: block.settings.anchor
   endif
 -%}
-<li {{ block.shopify_attributes }}><a{% if class != blank %} class="{{ class }}"{% endif %} href="{{ href }}">{{ block.settings.label | escape }}</a></li>
+<li{% if item_class != blank %} class="{{ item_class }}"{% endif %}{% if index != blank %} style="--i:{{ index }}"{% endif %} {{ block.shopify_attributes }}><a{% if class != blank %} class="{{ class }}"{% endif %} href="{{ href }}">{{ block.settings.label | escape }}</a></li>

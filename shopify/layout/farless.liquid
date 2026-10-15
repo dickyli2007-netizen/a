@@ -95,11 +95,71 @@ nav.top ul a:hover{color:var(--film-ink)}
 nav.top ul a:hover::after{transform:scaleX(1)}
 nav.top ul a.buy{color:var(--accent)}
 .brand{justify-self:center;text-decoration:none;font:400 1.02rem/1 var(--font);letter-spacing:.46em;text-transform:uppercase;margin-right:-.46em;color:var(--film-ink)}
+nav.top .l{display:flex;align-items:center}
 @media (max-width:900px){
-  nav.top{grid-template-columns:1fr auto}
-  nav.top ul.l,nav.top ul.r li:not(.keep){display:none}
-  .brand{justify-self:start}
+  nav.top ul.r li:not(.keep){display:none}
 }
+
+/* ---------- side menu, after Gessi's: the Menu button slides a panel in from the left with the collections,
+   the links and the small print; Collections opens a second layer inside it. Only transform and opacity
+   move, and the panel leaves the tab order (visibility) once it has slid away. ---------- */
+.menu-btn{all:unset;box-sizing:border-box;cursor:pointer;display:inline-flex;align-items:center;gap:16px;padding:6px 0;font:400 .7rem/1 var(--font);letter-spacing:.24em;text-transform:uppercase;color:rgba(243,236,226,.78);transition:color .35s var(--ease-out)}
+.menu-btn:hover{color:var(--film-ink)}
+.menu-btn:focus-visible{outline:1px solid var(--accent);outline-offset:6px}
+.menu-btn .bars{position:relative;width:26px;height:9px;flex:none}
+.menu-btn .bars i{position:absolute;left:0;width:100%;height:1px;background:currentColor;transform-origin:left;transition:transform .5s var(--ease-out)}
+.menu-btn .bars i:first-child{top:0}
+.menu-btn .bars i:last-child{bottom:0;transform:scaleX(.62)}
+.menu-btn:hover .bars i:last-child{transform:scaleX(1)}
+@media (pointer:coarse){.menu-btn{min-height:44px}}
+html.menu-open{overflow:hidden}
+.menu-scrim{position:fixed;inset:0;z-index:54;background:rgba(10,8,6,.62);opacity:0;visibility:hidden;transition:opacity .6s var(--ease-out),visibility 0s linear .6s}
+.side-menu{position:fixed;top:0;bottom:0;left:0;z-index:55;width:min(480px,100%);overflow:hidden;background:var(--canvas-2);border-right:1px solid var(--hair);color:var(--text-primary);visibility:hidden;transform:translate3d(-100%,0,0);transition:transform .75s var(--ease-soft),visibility 0s linear .75s}
+.menu-open .menu-scrim{opacity:1;visibility:visible;transition:opacity .6s var(--ease-out)}
+.menu-open .side-menu{visibility:visible;transform:none;transition:transform .75s var(--ease-soft)}
+.sm-pane{position:absolute;inset:0;display:flex;flex-direction:column;overflow-y:auto;overscroll-behavior:contain;background:var(--canvas-2);padding:calc(22px + env(safe-area-inset-top, 0px)) clamp(24px,3.4vw,44px) calc(28px + env(safe-area-inset-bottom, 0px))}
+.sm-main{transition:transform .6s var(--ease-soft),opacity .45s var(--ease-out)}
+.side-menu.sub .sm-main{transform:translate3d(-14%,0,0);opacity:0}
+.sm-sub{visibility:hidden;transform:translate3d(100%,0,0);transition:transform .6s var(--ease-soft),visibility 0s linear .6s}
+.side-menu.sub .sm-sub{visibility:visible;transform:none;transition:transform .6s var(--ease-soft)}
+.sm-top{display:flex;align-items:center;padding-bottom:22px;border-bottom:1px solid var(--hair);margin-bottom:clamp(28px,5vh,52px);flex:none}
+.sm-close,.sm-back{all:unset;box-sizing:border-box;cursor:pointer;display:inline-flex;align-items:center;gap:16px;padding:6px 0;font:400 .7rem/1 var(--font);letter-spacing:.24em;text-transform:uppercase;color:var(--text-secondary);transition:color .35s var(--ease-out)}
+.sm-close:hover,.sm-back:hover{color:var(--text-primary)}
+.sm-close:focus-visible,.sm-back:focus-visible{outline:1px solid var(--accent);outline-offset:6px}
+.sm-close svg,.sm-back svg{width:14px;height:14px;flex:none}
+@media (pointer:coarse){.sm-close,.sm-back{min-height:44px}}
+.sm-list{list-style:none;margin:0;padding:0;display:grid;gap:clamp(2px,.8vh,8px)}
+.sm-list a,.sm-list button{all:unset;box-sizing:border-box;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:16px;width:100%;padding:9px 0;font:200 clamp(1.7rem,2.3vw,2.15rem)/1.2 var(--font);letter-spacing:-.005em;color:var(--text-primary);transition:color .35s var(--ease-out)}
+.sm-list a:hover,.sm-list button:hover{color:var(--accent)}
+.sm-list a:focus-visible,.sm-list button:focus-visible{outline:1px solid var(--accent);outline-offset:4px}
+.sm-list .chev{width:12px;height:12px;flex:none;opacity:.7;transition:transform .45s var(--ease-out)}
+.sm-list button:hover .chev{transform:translateX(4px)}
+.sm-small{list-style:none;margin:auto 0 0;padding:clamp(36px,6vh,64px) 0 0;display:grid;gap:16px}
+.sm-small a{text-decoration:none;transition:color .35s var(--ease-out)}
+.sm-small a:hover{color:var(--text-primary)}
+.sm-foot{margin-top:28px;padding-top:24px;border-top:1px solid var(--hair);flex:none}
+.sm-foot .btn{width:100%;justify-content:center}
+.sm-list + .sm-foot{margin-top:auto}
+/* the panel's contents arrive just behind it, one after another */
+.sm-in{opacity:0;transform:translate3d(-16px,0,0);transition:opacity .4s var(--ease-out),transform .4s var(--ease-out)}
+.menu-open .sm-in{opacity:1;transform:none;transition:opacity .7s var(--ease-out),transform .9s var(--ease-out);transition-delay:calc(.22s + var(--i,0) * .05s)}
+.sm-sub h2{font:200 clamp(1.7rem,2.3vw,2.15rem)/1.2 var(--font);margin:0 0 clamp(22px,4vh,36px)}
+.sm-cols{list-style:none;margin:0;padding:0;display:grid;gap:18px}
+.sm-cols a{display:grid;grid-template-columns:132px minmax(0,1fr);gap:20px;align-items:center;text-decoration:none;color:inherit}
+.sm-cols a:focus-visible{outline:1px solid var(--accent);outline-offset:4px}
+.sm-thumb{position:relative;aspect-ratio:3/2;max-width:100%;overflow:hidden;background:var(--panel)}
+.sm-thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform 1.2s var(--ease-out)}
+.sm-thumb.cut img{object-fit:contain;padding:8% 0}
+.sm-thumb.empty{display:grid;place-items:center;border:1px solid var(--hair)}
+.sm-thumb.empty svg{width:46%;height:auto;overflow:visible}
+.sm-thumb.empty path{fill:none;stroke:var(--hair-strong);stroke-width:1;vector-effect:non-scaling-stroke}
+.sm-thumb.empty circle{fill:var(--accent);opacity:.6}
+.sm-cols a:hover .sm-thumb img{transform:scale(1.04)}
+.sm-cols h3{font:300 1.15rem/1.3 var(--font);letter-spacing:.02em;transition:color .35s var(--ease-out)}
+.sm-cols a:hover h3{color:var(--accent)}
+.sm-cols .label{margin-top:8px}
+.sm-all{align-self:flex-start;margin-top:clamp(28px,5vh,44px)}
+@media (max-width:420px){.sm-cols a{grid-template-columns:104px minmax(0,1fr);gap:16px}}
 
 /* ---------- buttons: square, outlined, a line that reaches out on hover ---------- */
 .btn{display:inline-flex;align-items:center;gap:16px;text-decoration:none;font:400 .72rem/1 var(--font);letter-spacing:.26em;text-transform:uppercase;color:var(--film-ink);border:1px solid rgba(243,236,226,.55);padding:18px 26px 18px 30px;background:transparent;transition:background-color .45s var(--ease-out),color .45s var(--ease-out),border-color .45s var(--ease-out);text-shadow:none}

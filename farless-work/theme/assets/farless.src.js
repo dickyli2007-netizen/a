@@ -12,6 +12,8 @@
   const reduce = matchMedia('(prefers-reduced-motion: reduce)');
   // in the theme editor everything shows at rest, so nothing being edited is hidden behind an entrance
   const designMode = !!(window.Shopify && window.Shopify.designMode);
+  // the film leaves scrolling and keys alone while the side menu is open
+  const menuOpen = () => document.documentElement.classList.contains('menu-open');
 
   /* ---------- split words once ---------- */
   function splitWords(root){
@@ -183,7 +185,7 @@
     const canMove = dir => dir > 0 ? point < LAST : point > 0;
     let lastWheel = 0, gTop = false, gUsed = false, acc = 0;
     function onWheel(e){
-      if (e.ctrlKey) return;
+      if (e.ctrlKey || menuOpen()) return;
       const now = performance.now();
       if (now - lastWheel > 220){ gTop = atTop(); gUsed = false; acc = 0; }
       lastWheel = now;
@@ -200,7 +202,7 @@
     let ty = 0, tTop = false, tUsed = false;
     function onTouchStart(e){ ty = e.touches[0].clientY; tTop = atTop(); tUsed = false; }
     function onTouchMove(e){
-      if (!tTop || !atTop()) return;
+      if (!tTop || !atTop() || menuOpen()) return;
       if (tUsed){ e.preventDefault(); return; }
       const dy = ty - e.touches[0].clientY;
       const dir = Math.sign(dy);
@@ -209,7 +211,7 @@
       if (Math.abs(dy) > 36){ tUsed = true; goTo(point + dir); }
     }
     function onKey(e){
-      if (!atTop() || e.altKey || e.ctrlKey || e.metaKey) return;
+      if (!atTop() || e.altKey || e.ctrlKey || e.metaKey || menuOpen()) return;
       const el = e.target;
       if (el.closest && el.closest('input,textarea,select,[contenteditable]')) return;
       if (e.key === ' ' && el.closest && el.closest('button,a,summary')) return;
@@ -328,6 +330,74 @@
   }
   addEventListener('scroll', updateNav, { passive: true });
   addEventListener('resize', updateNav);
+
+  /* ---------- side menu: opens from the Menu button, closes with Close, the shade, Escape or a link ---------- */
+  function initMenu(root){
+    const menu = root.querySelector('.side-menu');
+    const opener = root.querySelector('[data-menu-open]');
+    if (!menu || !opener) return null;
+    const html = document.documentElement;
+    const main = menu.querySelector('.sm-main'), sub = menu.querySelector('.sm-sub'), subOpener = menu.querySelector('[data-sub-open]');
+    let shut = [];
+    const isOpen = () => html.classList.contains('menu-open') && opener.getAttribute('aria-expanded') === 'true';
+    const focusables = () => [...menu.querySelectorAll('a[href],button')].filter(el => !el.closest('[inert]') && el.getClientRects().length && getComputedStyle(el).visibility !== 'hidden');
+    function setSub(on, focus){
+      if (!sub) return;
+      menu.classList.toggle('sub', on);
+      if (subOpener) subOpener.setAttribute('aria-expanded', on ? 'true' : 'false');
+      main.inert = on;
+      sub.inert = !on;
+      if (focus) (on ? sub.querySelector('[data-sub-close]') : subOpener)?.focus({ preventScroll: true });
+    }
+    // quiet: opened by the theme editor, so focus stays with the editor and the page stays reachable
+    function open(quiet){
+      if (isOpen()) return;
+      setSub(false);
+      html.classList.add('menu-open');
+      opener.setAttribute('aria-expanded', 'true');
+      if (quiet === true) return;
+      // everything outside the panel stays out of reach while it is open
+      shut = [...document.body.children].filter(el => !el.contains(menu) && !el.inert && !el.matches('.menu-scrim'));
+      const bar = opener.closest('nav');
+      if (bar && !bar.contains(menu)) shut.push(bar);
+      shut.forEach(el => { el.inert = true; });
+      setTimeout(() => menu.querySelector('.sm-close')?.focus({ preventScroll: true }), 60);
+    }
+    function close(returnFocus){
+      if (!isOpen()) return;
+      html.classList.remove('menu-open');
+      opener.setAttribute('aria-expanded', 'false');
+      shut.forEach(el => { el.inert = false; });
+      shut = [];
+      if (returnFocus !== false) opener.focus({ preventScroll: true });
+    }
+    function onClick(e){
+      const t = e.target.closest('[data-menu-open],[data-menu-close],[data-sub-open],[data-sub-close],.side-menu a[href]');
+      if (!t || !root.contains(t)) return;
+      if (t.matches('[data-menu-open]')) open();
+      else if (t.matches('[data-menu-close]')) close();
+      else if (t.matches('[data-sub-open]')) setSub(true, true);
+      else if (t.matches('[data-sub-close]')) setSub(false, true);
+      else close(false);   // a link: the panel closes and the page follows it
+    }
+    function onKeyDown(e){
+      if (!isOpen()) return;
+      if (e.key === 'Escape'){
+        e.preventDefault();
+        if (menu.classList.contains('sub')) setSub(false, true); else close();
+      } else if (e.key === 'Tab'){
+        const f = focusables();
+        if (!f.length) return;
+        const first = f[0], last = f[f.length - 1];
+        if (e.shiftKey && (document.activeElement === first || !menu.contains(document.activeElement))){ e.preventDefault(); last.focus(); }
+        else if (!e.shiftKey && (document.activeElement === last || !menu.contains(document.activeElement))){ e.preventDefault(); first.focus(); }
+      }
+    }
+    if (sub) sub.inert = true;
+    root.addEventListener('click', onClick);
+    document.addEventListener('keydown', onKeyDown);
+    return { open, close, destroy(){ close(false); root.removeEventListener('click', onClick); document.removeEventListener('keydown', onKeyDown); } };
+  }
 
   /* ---------- shop gallery: thumbnails swap the main image ---------- */
   function initGallery(root){
@@ -641,12 +711,15 @@
   /* ---------- sections start, and start again when the theme editor reloads them ---------- */
   const running = new Map();
   const heroes = new Map();
+  const menus = new Map();
   function start(root){
     stop(root);
     splitWords(root);
     const cleanups = [];
     const hero = initHero(root);
     if (hero){ cleanups.push(hero.destroy); heroes.set(root, hero); }
+    const menu = initMenu(root);
+    if (menu){ cleanups.push(menu.destroy); menus.set(root, menu); }
     initKnob(root);
     initGallery(root);
     initPicker(root);
@@ -659,6 +732,7 @@
     (running.get(root) || []).forEach(f => f());
     running.delete(root);
     heroes.delete(root);
+    menus.delete(root);
     removeSeams(root);
   }
   const sectionOf = el => el.closest('.shopify-section') || document.body;
@@ -669,8 +743,13 @@
   document.addEventListener('shopify:section:load', e => { start(e.target); updateNav(); });
   document.addEventListener('shopify:section:unload', e => stop(e.target));
   // picking a film point or a question in the editor shows it
+  // picking the menu bar, or one of its links, in the editor opens the side menu
+  document.addEventListener('shopify:section:select', e => { const m = menus.get(e.target); if (m) m.open(true); });
+  document.addEventListener('shopify:section:deselect', e => { const m = menus.get(e.target); if (m) m.close(false); });
   document.addEventListener('shopify:block:select', e => {
     const block = e.target;
+    const menu = menus.get(sectionOf(block));
+    if (menu) menu.open(true);
     const hero = heroes.get(sectionOf(block));
     if (hero && block.classList.contains('band')) hero.goTo(hero.indexOf(block), true);
     if (block.tagName === 'DETAILS') block.open = true;

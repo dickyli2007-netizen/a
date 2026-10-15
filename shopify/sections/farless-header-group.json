@@ -47,6 +47,13 @@
             "side": "right",
             "anchor": "questions"
           }
+        },
+        "small_1": {
+          "type": "small_link",
+          "settings": {
+            "label": "5-year warranty",
+            "anchor": "questions"
+          }
         }
       },
       "block_order": [
@@ -54,7 +61,8 @@
         "link_2",
         "link_3",
         "link_4",
-        "link_5"
+        "link_5",
+        "small_1"
       ]
     }
   },

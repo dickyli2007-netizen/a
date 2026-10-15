@@ -100,10 +100,14 @@ const COLLECTIONS = {
 };
 const PRODUCTS = { faucet, ...Object.fromEntries(filtered.map(p => [p.handle, p])) };
 
+// every collection in the store, as the side menu lists them when none are picked (it skips the home page one)
+const ALL_COLLECTIONS = [{ title: 'Home page', handle: 'frontpage', url: '/collections/frontpage', products_count: 1, featured_image: null, products: [faucet] },
+  COLLECTIONS['multi-function-faucets'], COLLECTIONS['filtered-faucets']];
 const globals = { routes: { root_url: '/', cart_url: '/cart', all_products_collection_url: '/collections/all', collections_url: '/collections' },
-  shop: { name: 'Farless', policies: [{ title: 'Refund policy', url: '/policies/refund-policy' }] }, request: { locale: { iso_code: 'en' } }, content_for_header: '' };
+  shop: { name: 'Farless', policies: [{ title: 'Refund policy', url: '/policies/refund-policy' }] }, request: { locale: { iso_code: 'en' } }, content_for_header: '',
+  collections: ALL_COLLECTIONS };
 // Shopify's global objects are visible inside rendered snippets too
-engine.options.globals = { routes: globals.routes, shop: globals.shop, request: globals.request };
+engine.options.globals = { routes: globals.routes, shop: globals.shop, request: globals.request, collections: ALL_COLLECTIONS };
 
 // ---------- sections the Shopify way ----------
 const schemaOf = file => JSON.parse(file.match(/{% schema %}([\s\S]*?){% endschema %}/)[1]);

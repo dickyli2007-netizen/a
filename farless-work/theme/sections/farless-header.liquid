@@ -1,6 +1,8 @@
 {%- comment -%}
-  The menu bar: links left and right of the name, and a Buy link that stays on phones.
-  A link either picks a page, or names a section on the home page (shop, waters, safety...).
+  The menu bar and its side menu, after Gessi's. The bar: the Menu button, the name, and the links set to
+  show on the bar, with a Buy link that stays on phones. The side menu slides in from the left: Collections
+  (a second layer listing the collections with their pictures), every link, the small links and the store
+  policies, and a Buy button. A link either picks a page, or names a section on the home page.
 {%- endcomment -%}
 {%- liquid
   assign on_home = false
@@ -21,23 +23,106 @@
   else
     assign buy_href = routes.root_url | append: '#buy'
   endif
+
+  assign menu_collections = section.settings.collections
+  if menu_collections == blank
+    assign menu_collections = collections
+  endif
+  assign collection_count = 0
+  for c in menu_collections
+    unless c.handle == 'frontpage' or c.handle == 'all'
+      assign collection_count = collection_count | plus: 1
+    endunless
+  endfor
+  assign show_collections = false
+  if section.settings.collections_label != blank and collection_count > 0
+    assign show_collections = true
+  endif
+  assign i = 0
 -%}
 <nav class="top" aria-label="Main">
-  <ul class="l">
-    {%- for block in section.blocks -%}
-      {%- if block.settings.side == 'left' %}{% render 'farless-link', block: block, on_home: on_home %}{% endif -%}
-    {%- endfor %}
-  </ul>
+  <div class="l"><button type="button" class="menu-btn" aria-expanded="false" aria-controls="side-menu-{{ section.id }}" data-menu-open><span class="bars" aria-hidden="true"><i></i><i></i></span>{{ section.settings.menu_label | escape }}</button></div>
   <a class="brand" href="{{ brand_href }}" aria-label="{{ section.settings.brand | escape }} home">{{ section.settings.brand | escape }}</a>
   <ul class="r">
     {%- for block in section.blocks -%}
-      {%- if block.settings.side == 'right' %}{% render 'farless-link', block: block, on_home: on_home %}{% endif -%}
+      {%- if block.type == 'link' and block.settings.side == 'right' %}{% render 'farless-link', block: block, on_home: on_home %}{% endif -%}
     {%- endfor -%}
     {%- if section.settings.buy_label != blank %}
     <li class="keep"><a class="buy" href="{{ buy_href }}">{{ section.settings.buy_label | escape }}</a></li>
     {%- endif %}
   </ul>
 </nav>
+<div class="menu-scrim" data-menu-close aria-hidden="true"></div>
+<div class="side-menu" id="side-menu-{{ section.id }}" role="dialog" aria-modal="true" aria-label="{{ section.settings.menu_label | default: 'Menu' | escape }}">
+  <div class="sm-pane sm-main">
+    <div class="sm-top"><button type="button" class="sm-close" data-menu-close><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><path d="M2 2l12 12M14 2L2 14"/></svg>{{ section.settings.close_label | escape }}</button></div>
+    <ul class="sm-list">
+      {%- if show_collections %}
+      <li class="sm-in" style="--i:0"><button type="button" aria-expanded="false" aria-controls="sm-collections-{{ section.id }}" data-sub-open>{{ section.settings.collections_label | escape }}<svg class="chev" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><path d="M4 1.5L8.5 6 4 10.5"/></svg></button></li>
+      {%- assign i = 1 -%}
+      {%- endif -%}
+      {%- for block in section.blocks -%}
+        {%- if block.type == 'link' %}{% render 'farless-link', block: block, on_home: on_home, item_class: 'sm-in', index: i %}{% assign i = i | plus: 1 %}{% endif -%}
+      {%- endfor %}
+    </ul>
+    {%- capture small_links -%}
+      {%- for block in section.blocks -%}
+        {%- if block.type == 'small_link' and block.settings.label != blank %}{% render 'farless-link', block: block, on_home: on_home, class: 'label', item_class: 'sm-in', index: i %}{% assign i = i | plus: 1 %}{% endif -%}
+      {%- endfor -%}
+      {%- if section.settings.show_policies -%}
+        {%- for policy in shop.policies %}
+      <li class="sm-in" style="--i:{{ i }}"><a class="label" href="{{ policy.url }}">{{ policy.title | escape }}</a></li>
+          {%- assign i = i | plus: 1 -%}
+        {%- endfor -%}
+      {%- endif -%}
+    {%- endcapture -%}
+    {%- if small_links != blank %}
+    <ul class="sm-small">{{ small_links }}
+    </ul>
+    {%- endif -%}
+    {%- if section.settings.menu_buy_label != blank %}
+    <div class="sm-foot sm-in" style="--i:{{ i }}"><a class="btn" href="{{ buy_href }}">{{ section.settings.menu_buy_label | escape }}</a></div>
+    {%- endif %}
+  </div>
+  {%- if show_collections %}
+  <div class="sm-pane sm-sub" id="sm-collections-{{ section.id }}" role="group" aria-labelledby="sm-collections-h-{{ section.id }}">
+    <div class="sm-top"><button type="button" class="sm-back" data-sub-close><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><path d="M10.5 2L4.5 8l6 6"/></svg>{{ section.settings.back_label | escape }}</button></div>
+    <h2 id="sm-collections-h-{{ section.id }}">{{ section.settings.collections_label | escape }}</h2>
+    <ul class="sm-cols">
+      {%- for c in menu_collections -%}
+        {%- if c.handle == 'frontpage' or c.handle == 'all' %}{% continue %}{% endif -%}
+        {%- liquid
+          assign cimg = c.featured_image
+          assign cut = false
+          if cimg == blank
+            assign first = c.products.first
+            if first
+              assign fv = first.selected_or_first_available_variant
+              if fv.featured_media
+                assign cimg = fv.featured_media.preview_image
+                assign cut = true
+              elsif first.featured_media
+                assign cimg = first.featured_media.preview_image
+              endif
+            endif
+          endif
+        -%}
+      <li><a href="{{ c.url }}">
+        {%- if cimg -%}
+        <span class="sm-thumb{% if cut %} cut{% endif %}">{{ cimg | image_url: width: 400 | image_tag: widths: '200, 300, 400', sizes: '132px', loading: 'lazy', alt: '' }}</span>
+        {%- else -%}
+        <span class="sm-thumb empty" aria-hidden="true"><svg viewBox="0 0 200 120"><path d="M30 118 V58 C30 22 58 4 100 4 C142 4 170 22 170 58 V82"/><circle cx="170" cy="98" r="3"/></svg></span>
+        {%- endif -%}
+        <span><h3>{{ c.title | escape }}</h3><span class="label">{% if c.products_count == 0 %}{{ section.settings.coming_soon_label | escape }}{% elsif c.products_count == 1 %}1 {{ section.settings.piece_label | escape }}{% else %}{{ c.products_count }} {{ section.settings.pieces_label | escape }}{% endif %}</span></span>
+      </a></li>
+      {%- endfor %}
+    </ul>
+    {%- if section.settings.all_collections_label != blank %}
+    <a class="link sm-all" href="{{ routes.collections_url }}">{{ section.settings.all_collections_label | escape }}</a>
+    {%- endif %}
+  </div>
+  {%- endif %}
+</div>
 
 {% schema %}
 {
@@ -45,11 +130,23 @@
   "tag": "div",
   "class": "farless-header",
   "enabled_on": { "groups": ["header"] },
-  "max_blocks": 10,
+  "max_blocks": 20,
   "settings": [
     { "type": "text", "id": "brand", "label": "Name in the middle", "default": "Farless" },
     { "type": "text", "id": "buy_label", "label": "Buy link label", "default": "Buy", "info": "Stays visible on phones. On product pages it jumps to the Add to cart button." },
-    { "type": "url", "id": "buy_link", "label": "Buy link" }
+    { "type": "url", "id": "buy_link", "label": "Buy link" },
+    { "type": "header", "content": "Side menu" },
+    { "type": "text", "id": "menu_label", "label": "Menu button", "default": "Menu" },
+    { "type": "text", "id": "close_label", "label": "Close button", "default": "Close" },
+    { "type": "text", "id": "collections_label", "label": "Collections", "default": "Collections", "info": "Opens a second layer listing the collections. Leave empty to leave it out." },
+    { "type": "collection_list", "id": "collections", "label": "Collections in the menu", "limit": 12, "info": "Leave empty to list every collection." },
+    { "type": "text", "id": "back_label", "label": "Back button", "default": "Back" },
+    { "type": "text", "id": "all_collections_label", "label": "Link to all collections", "default": "All collections", "info": "Leave empty to hide it." },
+    { "type": "text", "id": "coming_soon_label", "label": "Empty collection", "default": "Coming soon" },
+    { "type": "text", "id": "piece_label", "label": "One product", "default": "piece" },
+    { "type": "text", "id": "pieces_label", "label": "Several products", "default": "pieces" },
+    { "type": "checkbox", "id": "show_policies", "label": "Show the store policies with the small links", "default": true },
+    { "type": "text", "id": "menu_buy_label", "label": "Button at the bottom", "default": "Buy Farless", "info": "Goes where the Buy link goes. Leave empty to hide it." }
   ],
   "blocks": [
     {
@@ -57,8 +154,17 @@
       "name": "Link",
       "settings": [
         { "type": "text", "id": "label", "label": "Label", "default": "Shop" },
-        { "type": "select", "id": "side", "label": "Side", "default": "left", "options": [ { "value": "left", "label": "Left of the name" }, { "value": "right", "label": "Right of the name" } ] },
+        { "type": "select", "id": "side", "label": "Where it shows", "default": "left", "options": [ { "value": "left", "label": "In the side menu" }, { "value": "right", "label": "In the side menu and on the bar" } ] },
         { "type": "text", "id": "anchor", "label": "Section on the home page", "default": "shop", "info": "The link name of a home page section: shop, waters, safety, design, questions or buy." },
+        { "type": "url", "id": "link", "label": "Or link to a page", "info": "Used instead of the section above when set." }
+      ]
+    },
+    {
+      "type": "small_link",
+      "name": "Small link",
+      "settings": [
+        { "type": "text", "id": "label", "label": "Label", "default": "5-year warranty" },
+        { "type": "text", "id": "anchor", "label": "Section on the home page", "default": "questions", "info": "Shows in small print near the bottom of the side menu." },
         { "type": "url", "id": "link", "label": "Or link to a page", "info": "Used instead of the section above when set." }
       ]
     }
@@ -71,7 +177,8 @@
         { "type": "link", "settings": { "label": "Five waters", "side": "left", "anchor": "waters" } },
         { "type": "link", "settings": { "label": "Safety", "side": "left", "anchor": "safety" } },
         { "type": "link", "settings": { "label": "Design", "side": "right", "anchor": "design" } },
-        { "type": "link", "settings": { "label": "Questions", "side": "right", "anchor": "questions" } }
+        { "type": "link", "settings": { "label": "Questions", "side": "right", "anchor": "questions" } },
+        { "type": "small_link", "settings": { "label": "5-year warranty", "anchor": "questions" } }
       ]
     }
   ]
