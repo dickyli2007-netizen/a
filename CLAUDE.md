@@ -9,8 +9,9 @@ and no prices shown anywhere ("keep it exclusive").
 - `farless/index.html`: the static landing page, one self-contained file, used for design previews.
   Its `<head>` styles are the theme's styles: `:root` tokens, nav, footer, buttons and labels are the
   house style for everything else. Buttons (`.btn`: Buy Farless, Add to cart, Check out) are pills, as on
-  Gessi's, and the heart beside Add to cart is a circle; picture cards (collection cards, product cards)
-  have soft corners (`--radius`), and small pictures in the panels a smaller one (`--radius-sm`).
+  Gessi's, and the heart beside Add to cart is a circle; pictures (collection and product cards, the shop
+  section's photo, the design picture) have soft corners (`--radius`), and small pictures (the shop photo's
+  thumbnails, the panels) a smaller one (`--radius-sm`).
 - `farless-work/theme/`: the Shopify theme's own source. Every page's words, pictures, links and film
   are section settings and blocks there, so the owner edits them in Online Store > Customize:
   `sections/` (film hero, shop, five waters, safety knob, design, questions, final call, product,
