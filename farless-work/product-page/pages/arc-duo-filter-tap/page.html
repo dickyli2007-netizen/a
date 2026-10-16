@@ -91,6 +91,9 @@ nav.top ul a.ico::after{display:none}
 .ico .count{position:absolute;top:3px;right:-3px;min-width:15px;padding:0 4px;border-radius:8px;background:var(--liked);color:var(--film-ink);font:500 .58rem/15px var(--font);letter-spacing:0;text-align:center}
 @media (pointer:coarse){.ico{width:44px;height:44px}}
 @media (max-width:600px){.menu-btn .mt{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}}
+/* phones keep search, favourites and the cart on the bar; logging in moves into the side menu */
+.sm-small .sm-acct{display:none}
+@media (max-width:600px){nav.top ul.icons li.acct{display:none}.sm-small .sm-acct{display:block}}
 
 /* ---------- side menu, after Gessi's: the Menu button slides a panel in from the left with the collections,
    the links and the small print; Collections opens a second layer inside it. Search drops a sheet from the
@@ -187,8 +190,8 @@ html.menu-open{overflow:hidden}
 @media (max-width:600px){.sp-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:28px 14px}}
 
 /* favourites: the heart's panel from the right, kept in this browser */
-.fav-panel{position:fixed;top:0;bottom:0;right:0;z-index:55;width:min(440px,100%);overflow:hidden;background:var(--canvas-2);border-left:1px solid var(--hair);color:var(--text-primary);visibility:hidden;transform:translate3d(100%,0,0);transition:transform .75s var(--ease-soft),visibility 0s linear .75s}
-.fav-panel.open{visibility:visible;transform:none;transition:transform .75s var(--ease-soft)}
+.fav-panel,.cart-panel{position:fixed;top:0;bottom:0;right:0;z-index:55;width:min(440px,100%);overflow:hidden;background:var(--canvas-2);border-left:1px solid var(--hair);color:var(--text-primary);visibility:hidden;transform:translate3d(100%,0,0);transition:transform .75s var(--ease-soft),visibility 0s linear .75s}
+.fav-panel.open,.cart-panel.open{visibility:visible;transform:none;transition:transform .75s var(--ease-soft)}
 .fp-top{justify-content:space-between}
 .fp-top h2{margin:0}
 .fp-list{list-style:none;margin:0;padding:0;display:grid;gap:18px}
@@ -205,6 +208,71 @@ html.menu-open{overflow:hidden}
 .fp-remove:focus-visible{outline:1px solid var(--accent);outline-offset:2px}
 .fp-remove svg{width:13px;height:13px}
 .fp-empty{color:var(--text-secondary);max-width:32ch}
+
+/* ---------- the cart: slides in from the right like favourites. A tick on each piece says what goes to checkout
+   now; unticked pieces fade back and stay in the cart. The checkout button stays in reach at the bottom. ---------- */
+.ico .count.bag{background:var(--accent);color:var(--on-accent)}
+.cart-panel .sm-pane{padding-bottom:0}
+.cart-panel .sm-top{margin-bottom:8px}
+.ct-view{display:flex;flex-direction:column;flex:1 0 auto}
+.ct-view[aria-busy="true"]{cursor:progress}
+.ct-view[aria-busy="true"] .ct-list{opacity:.6;transition:opacity .3s var(--ease-out)}
+.ct-head{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:6px 0 10px}
+.ct-pick{display:inline-flex;align-items:center;gap:14px;min-height:44px;cursor:pointer;font:400 .7rem/1 var(--font);letter-spacing:.24em;text-transform:uppercase;color:var(--text-secondary)}
+.ct-box{appearance:none;-webkit-appearance:none;flex:none;display:grid;place-items:center;margin:0;width:18px;height:18px;border:1px solid var(--hair-strong);border-radius:0;background:transparent;cursor:pointer;transition:background-color .3s var(--ease-out),border-color .3s var(--ease-out)}
+.ct-box::before{content:"";width:9px;height:5px;margin-top:-3px;border-left:1.2px solid var(--canvas);border-bottom:1.2px solid var(--canvas);transform:rotate(-45deg) scale(0);transition:transform .35s var(--ease-out)}
+.ct-box:hover{border-color:var(--text-primary)}
+.ct-box:checked{background:var(--text-primary);border-color:var(--text-primary)}
+.ct-box:checked::before{transform:rotate(-45deg) scale(1)}
+.ct-box:indeterminate{border-color:var(--text-primary)}
+.ct-box:indeterminate::before{width:8px;height:0;margin:0;border:0;border-top:1.2px solid var(--text-primary);transform:none}
+.ct-box:focus-visible{outline:1px solid var(--accent);outline-offset:3px}
+.ct-list{list-style:none;margin:0;padding:0;transition:opacity .3s var(--ease-out)}
+.ct-line{display:grid;grid-template-columns:auto 84px minmax(0,1fr);gap:16px;align-items:center;padding:20px 0;border-top:1px solid var(--hair)}
+.ct-thumb{position:relative;display:block;aspect-ratio:4/5;overflow:hidden;background:var(--panel)}
+.ct-thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;padding:10% 8%}
+.ct-info{min-width:0}
+.ct-thumb,.ct-info h3,.ct-sub,.ct-price{transition:opacity .45s var(--ease-out)}
+.ct-line.off .ct-thumb,.ct-line.off .ct-info h3,.ct-line.off .ct-sub,.ct-line.off .ct-price{opacity:.42}
+.ct-info h3{font:300 1.05rem/1.3 var(--font);letter-spacing:.02em}
+.ct-info h3 a{text-decoration:none;transition:color .35s var(--ease-out)}
+.ct-info h3 a:hover{color:var(--accent)}
+.ct-sub{display:block;margin-top:4px;color:var(--text-secondary);font-size:.9rem;line-height:1.45}
+.ct-price{display:block;margin-top:6px;font-size:.95rem;letter-spacing:.04em}
+.ct-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:14px}
+.ct-qty{display:inline-flex;align-items:center;border:1px solid var(--hair-strong)}
+.ct-qty button{all:unset;box-sizing:border-box;display:grid;place-items:center;width:34px;height:34px;cursor:pointer;color:var(--text-secondary);transition:color .3s var(--ease-out)}
+.ct-qty button:hover{color:var(--text-primary)}
+.ct-qty button:disabled{opacity:.3;cursor:default}
+.ct-qty button:focus-visible{outline:1px solid var(--accent);outline-offset:-3px}
+.ct-qty svg{width:11px;height:11px;fill:none;stroke:currentColor;stroke-width:1.2}
+.ct-n{min-width:24px;text-align:center;font-size:.95rem;font-variant-numeric:tabular-nums}
+.ct-remove{all:unset;box-sizing:border-box;cursor:pointer;padding:8px 0;font:400 .66rem/1 var(--font);letter-spacing:.24em;text-transform:uppercase;color:var(--text-secondary);transition:color .3s var(--ease-out)}
+.ct-remove:hover{color:var(--text-primary)}
+.ct-remove:focus-visible{outline:1px solid var(--accent);outline-offset:4px}
+@media (pointer:coarse){.ct-qty button{width:44px;height:44px}.ct-remove{min-height:44px}}
+.ct-foot{position:sticky;bottom:0;display:grid;gap:14px;margin-top:auto;padding:22px 0 calc(24px + env(safe-area-inset-bottom, 0px));border-top:1px solid var(--hair);background:var(--canvas-2)}
+.ct-total{display:flex;justify-content:space-between;align-items:baseline;gap:16px;letter-spacing:.04em}
+.ct-note{color:var(--text-secondary);font-size:.9rem;line-height:1.55}
+.ct-go{width:100%;justify-content:center;cursor:pointer;font-family:var(--font)}
+.ct-msg{color:var(--text-secondary);font-size:.9rem;line-height:1.5}
+.ct-msg:empty{display:none}
+.ct-empty{color:var(--text-secondary);max-width:32ch}
+.ct-browse{align-self:flex-start;margin-top:24px}
+.ct-view > .ct-msg{margin-top:18px}
+/* the cart page: the pieces on the left, the checkout beside them */
+.cart-page .ct-view{display:grid;grid-template-columns:minmax(0,1fr) minmax(280px,380px);gap:clamp(40px,7vw,120px);align-items:start}
+.cart-page .ct-view.is-empty{display:block}
+.cart-page .ct-list{border-bottom:1px solid var(--hair)}
+.cart-page .ct-line{grid-template-columns:auto 120px minmax(0,1fr);gap:24px}
+.ct-line.plain{grid-template-columns:84px minmax(0,1fr)}
+.cart-page .ct-line.plain{grid-template-columns:120px minmax(0,1fr)}
+.cart-page .ct-foot{position:sticky;top:110px;bottom:auto;margin-top:0;padding:24px 0 0;border-top-color:var(--hair-strong);background:none}
+@media (max-width:860px){
+  .cart-page .ct-view{grid-template-columns:1fr}
+  .cart-page .ct-foot{position:static}
+  .cart-page .ct-line{grid-template-columns:auto 96px minmax(0,1fr);gap:16px}
+}
 
 /* a product as a card: its cut-out in the light and contact shadow of its page, or a photo filling it */
 .cl-card{position:relative;min-width:0}
@@ -225,12 +293,15 @@ html.menu-open{overflow:hidden}
 .cl-card .fav{position:absolute;top:8px;right:8px;z-index:2}
 
 /* collection and search pages: a heading, then the pieces as cards */
-.cl{padding:calc(118px + env(safe-area-inset-top, 0px)) var(--gutter) clamp(96px,13vh,150px)}
+.cl{padding:calc(84px + env(safe-area-inset-top, 0px)) var(--gutter) clamp(96px,13vh,150px)}
+@media (pointer:coarse){.cl{padding-top:calc(94px + env(safe-area-inset-top, 0px))}}
 .cl.tone{background:var(--canvas-2)}
-.cl .crumbs{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:clamp(28px,5vh,56px)}
-.cl .crumbs a{text-decoration:none;color:var(--text-secondary);transition:color .35s var(--ease-out)}
-.cl .crumbs a:hover{color:var(--text-primary)}
-.cl .crumbs [aria-current]{color:var(--text-primary)}
+.cl > .crumbs{margin-bottom:clamp(36px,6vh,64px)}
+/* the trail of links just under the bar, lined up with the Menu button, as on Gessi's pages */
+.crumbs{display:flex;flex-wrap:wrap;gap:12px}
+.crumbs a{text-decoration:none;color:var(--text-secondary);transition:color .35s var(--ease-out)}
+.crumbs a:hover{color:var(--text-primary)}
+.crumbs [aria-current]{color:var(--text-primary)}
 .cl-head{display:flex;justify-content:space-between;align-items:end;gap:24px 48px;flex-wrap:wrap;margin-bottom:clamp(48px,8vh,88px)}
 .cl-head > div{min-width:0}
 .cl-head .lede{margin-top:22px}
@@ -659,12 +730,12 @@ body.paused *, body.paused *::before, body.paused *::after{animation-play-state:
   .bubbles,.grain{display:none}
 }
 /* ---------- product page, after Gessi's: the product alone with its name, colour and button beside it; the details below ---------- */
-.pdp{padding:calc(118px + env(safe-area-inset-top, 0px)) var(--gutter) clamp(96px,13vh,150px)}
-.crumbs{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:clamp(20px,3vh,36px)}
-.crumbs a{text-decoration:none;color:var(--text-secondary);transition:color .35s var(--ease-out)}
-.crumbs a:hover{color:var(--text-primary)}
-.crumbs [aria-current]{color:var(--text-primary)}
-.pdp-grid{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);gap:clamp(40px,6vw,110px);align-items:center}
+.pdp{padding:calc(84px + env(safe-area-inset-top, 0px)) var(--gutter) clamp(96px,13vh,150px)}
+@media (pointer:coarse){.pdp{padding-top:calc(94px + env(safe-area-inset-top, 0px))}}
+.pdp > .crumbs{margin-bottom:clamp(16px,3vh,32px)}
+/* wider than the other pages, with a wide gap, so the product stands well apart from its name */
+.pdp > .wrap{width:min(1680px,100%)}
+.pdp-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(300px,440px);column-gap:clamp(64px,13vw,300px);align-items:center}
 .stage-col{min-width:0}
 .stage{position:relative;height:min(72vh,760px);min-height:420px;touch-action:pan-y;cursor:grab;user-select:none;-webkit-user-select:none;
   -webkit-mask-image:linear-gradient(90deg,transparent,#000 9%,#000 91%,transparent);mask-image:linear-gradient(90deg,transparent,#000 9%,#000 91%,transparent)}
@@ -709,9 +780,8 @@ body.paused *, body.paused *::before, body.paused *::after{animation-play-state:
 .buy-actions{display:grid;gap:14px;margin-top:clamp(32px,5vh,48px)}
 .buy-actions form{display:grid;gap:14px;margin:0}
 .buy-actions .btn{justify-content:center;cursor:pointer;font-family:var(--font)}
-.buy-note{grid-column:1 / -1;min-height:1.6em;color:var(--text-secondary);font-size:.92rem;line-height:1.6}
 /* the details, below the product: the tagline large, the description beside it, the notes across */
-.pdp-more{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);column-gap:clamp(40px,6vw,110px);margin-top:clamp(72px,11vh,130px);padding-top:clamp(56px,8vh,88px);border-top:1px solid var(--hair)}
+.pdp-more{display:grid;grid-template-columns:minmax(0,1fr) minmax(300px,440px);column-gap:clamp(64px,13vw,300px);margin-top:clamp(72px,11vh,130px);padding-top:clamp(56px,8vh,88px);border-top:1px solid var(--hair)}
 .more-head{display:contents}
 .more-head .label{grid-column:1 / -1}
 .more-head h2{min-width:0;font:200 clamp(2rem,3.4vw,3.2rem)/1.12 var(--font);letter-spacing:-.005em;max-width:18ch}
@@ -724,7 +794,7 @@ body.paused *, body.paused *::before, body.paused *::after{animation-play-state:
 .pdp-more .f-notes{grid-column:1 / -1;margin-top:clamp(48px,7vh,72px)}
 @media (max-width:860px){
   .pdp{padding-top:calc(94px + env(safe-area-inset-top, 0px))}
-  .crumbs{display:none}
+  .pdp > .crumbs{display:none}
   .pdp-grid{grid-template-columns:1fr;row-gap:0}
   .buy-col{display:contents}
   .buy-col h1{order:1}
@@ -735,6 +805,7 @@ body.paused *, body.paused *::before, body.paused *::after{animation-play-state:
   .opts{order:4}
   .buy-actions{order:5;margin-top:28px}
   .pdp-more{grid-template-columns:1fr;margin-top:72px;padding-top:48px}
+  .buy-col{max-width:none}
   .more-copy{grid-column:auto;max-width:none;margin-top:24px;padding-top:0}
 }
 @media (max-width:600px){
@@ -756,8 +827,9 @@ body.paused *, body.paused *::before, body.paused *::after{animation-play-state:
   <a class="brand" href="https://claude.ai/artifact/VUaaH6Je53dopSGLQ8Hors" aria-label="Farless home">Farless</a>
   <ul class="r icons">
     <li class="keep"><button type="button" class="ico" aria-label="Search" aria-expanded="false" aria-controls="search-panel" data-open="search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L21 21"/></svg></button></li>
-    <li class="keep"><a class="ico" href="https://claude.ai/artifact/VUaaH6Je53dopSGLQ8Hors" aria-label="Log in or sign up"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8.5" r="4"/><path d="M4 20.5c1.2-3.8 4.3-5.5 8-5.5s6.8 1.7 8 5.5"/></svg></a></li>
+    <li class="keep acct"><a class="ico" href="https://claude.ai/artifact/VUaaH6Je53dopSGLQ8Hors" aria-label="Log in or sign up"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8.5" r="4"/><path d="M4 20.5c1.2-3.8 4.3-5.5 8-5.5s6.8 1.7 8 5.5"/></svg></a></li>
     <li class="keep"><button type="button" class="ico" aria-label="Favourites" aria-expanded="false" aria-controls="fav-panel" data-open="favourites"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.3s-7.4-4.5-9.1-9.1C1.7 7.8 3.9 4.6 7.3 4.6c2 0 3.5 1 4.7 2.7 1.2-1.7 2.7-2.7 4.7-2.7 3.4 0 5.6 3.2 4.4 6.6-1.7 4.6-9.1 9.1-9.1 9.1z"/></svg><span class="count" data-fav-count hidden>0</span></button></li>
+    <li class="keep"><a class="ico" href="https://claude.ai/artifact/VUaaH6Je53dopSGLQ8Hors#shop" aria-label="Cart" aria-expanded="false" aria-controls="cart-panel" data-open="cart"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.1 8.5h11.8l-.9 11.6a1 1 0 0 1-1 .9H8a1 1 0 0 1-1-.9z"/><path d="M9.3 8.5V7.2a2.7 2.7 0 0 1 5.4 0v1.3"/></svg><span class="count bag" data-cart-count hidden>0</span></a></li>
   </ul>
 </nav>
 <div class="menu-scrim" data-close aria-hidden="true"></div>
@@ -774,6 +846,7 @@ body.paused *, body.paused *::before, body.paused *::after{animation-play-state:
     </ul>
     <ul class="sm-small">
       <li class="sm-in" style="--i:6"><a class="label" href="https://claude.ai/artifact/VUaaH6Je53dopSGLQ8Hors#questions">5-year warranty</a></li>
+      <li class="sm-in sm-acct" style="--i:7"><a class="label" href="https://claude.ai/artifact/VUaaH6Je53dopSGLQ8Hors">Log in or sign up</a></li>
     </ul>
   </div>
   <div class="sm-pane sm-sub" id="sm-collections" role="group" aria-labelledby="sm-collections-h">
@@ -801,10 +874,16 @@ body.paused *, body.paused *::before, body.paused *::after{animation-play-state:
     <p class="fp-empty" data-fav-empty>Nothing saved yet. Tap the heart on any piece to keep it here.</p>
   </div>
 </div>
+<div class="cart-panel" id="cart-panel" data-panel="cart" role="dialog" aria-modal="true" aria-labelledby="cart-h">
+  <div class="sm-pane">
+    <div class="sm-top fp-top"><h2 class="label" id="cart-h">Cart</h2><button type="button" class="sm-close" data-close><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><path d="M2 2l12 12M14 2L2 14"/></svg>Close</button></div>
+    <div class="ct-view" data-cart-view data-label-all="Select all" data-label-selected="selected" data-label-note="Tick the pieces to check out now. The rest stay in your cart." data-label-checkout="Check out" data-label-none="Tick a piece to check out." data-label-empty="Your cart is empty." data-label-browse="See the collections" data-browse-url="https://claude.ai/artifact/VUaaH6Je53dopSGLQ8Hors#shop" data-label-remove="Remove" data-label-pick="Check out now" data-label-fewer="One fewer" data-label-more="One more" data-label-quantity="Quantity" data-label-subtotal="Subtotal" data-label-error="Something went wrong. Please try again." data-show-prices="false"></div>
+  </div>
+</div>
 
 <main id="main" class="pdp" tabindex="-1">
+  <nav class="crumbs label" aria-label="Breadcrumb"><a href="https://claude.ai/artifact/VUaaH6Je53dopSGLQ8Hors#shop">Shop</a><span aria-hidden="true">/</span><a href="https://claude.ai/artifact/VUaaH6Je53dopSGLQ8Hors#shop">Filtered Faucets</a><span aria-hidden="true">/</span><span aria-current="page">Farless Arc Duo Filter Tap</span></nav>
   <div class="wrap">
-    <nav class="crumbs label" aria-label="Breadcrumb"><a href="https://claude.ai/artifact/VUaaH6Je53dopSGLQ8Hors#shop">Shop</a><span aria-hidden="true">/</span><a href="https://claude.ai/artifact/VUaaH6Je53dopSGLQ8Hors#shop">Filtered Faucets</a><span aria-hidden="true">/</span><span aria-current="page">Farless Arc Duo Filter Tap</span></nav>
     <div class="pdp-grid">
       <div class="stage-col" style="--n:1">
         <div class="stage single" data-stage style="--ar:620/1014;--shadow-x:73.4%;--shadow-w:34%" aria-label="Farless Arc Duo Filter Tap">
@@ -816,7 +895,6 @@ body.paused *, body.paused *::before, body.paused *::after{animation-play-state:
         <div class="buy-actions has-fav">
           <button class="btn solid" type="button" data-add data-title="Farless Arc Duo Filter Tap">Add to cart</button>
           <button type="button" class="fav big" data-fav="arc-duo-filter-tap:brushed-steel" data-fav-handle="arc-duo-filter-tap" data-fav-variant="brushed-steel" data-fav-title="Farless Arc Duo Filter Tap" data-fav-url="#" data-fav-image="assets/arc-duo-filter-tap-steel.webp" data-fav-sub="Brushed Steel" aria-pressed="false" aria-label="Save to favourites: Farless Arc Duo Filter Tap, Brushed Steel"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.3s-7.4-4.5-9.1-9.1C1.7 7.8 3.9 4.6 7.3 4.6c2 0 3.5 1 4.7 2.7 1.2-1.7 2.7-2.7 4.7-2.7 3.4 0 5.6 3.2 4.4 6.6-1.7 4.6-9.1 9.1-9.1 9.1z"/></svg></button>
-          <p class="buy-note" data-buy-note aria-live="polite"></p>
         </div>
       </div>
     </div>
@@ -955,7 +1033,266 @@ body.paused *, body.paused *::before, body.paused *::after{animation-play-state:
     if (changed) favWrite(list.filter(x => !gone.has(x.key)));
   }
 
-  /* ---------- panels: the side menu (left), search (top) and favourites (right), one open at a time;
+  /* ---------- cart: Add to cart stays on the page and opens the cart; a tick on each piece says what goes to
+     checkout now, and the rest stay in the cart. Shopify checks out a whole cart, so on the way to checkout the
+     unticked pieces are set aside in this browser, and they go back into the cart, unticked, on the next visit.
+     Off the store (the design previews) the cart is kept in this browser and nothing is checked out. ---------- */
+  const CART_OFF = 'farless:cart-off', CART_HELD = 'farless:cart-held', CART_LOCAL = 'farless:cart-preview';
+  const keep = {
+    get(k, d){ try { const v = JSON.parse(localStorage.getItem(k)); return v == null ? d : v; } catch (err){ return d; } },
+    set(k, v){ try { if (v == null) localStorage.removeItem(k); else localStorage.setItem(k, JSON.stringify(v)); } catch (err){} }
+  };
+  const CART_WORDS = {
+    labelAll: 'Select all', labelSelected: 'selected', labelNote: 'Tick the pieces to check out now. The rest stay in your cart.',
+    labelCheckout: 'Check out', labelNone: 'Tick a piece to check out.', labelEmpty: 'Your cart is empty.', labelBrowse: '', browseUrl: '',
+    labelRemove: 'Remove', labelPick: 'Check out now', labelFewer: 'One fewer', labelMore: 'One more', labelQuantity: 'Quantity',
+    labelSubtotal: 'Subtotal', labelError: 'Something went wrong. Please try again.', showPrices: 'false', moneyFormat: ''
+  };
+  const cartRoot = window.Shopify && window.Shopify.routes ? (window.Shopify.routes.root || '/') : null;
+  async function cartFetch(path, body){
+    const opts = { headers: { Accept: 'application/json' } };
+    if (body !== undefined){
+      opts.method = 'POST';
+      if (body instanceof FormData) opts.body = body;
+      else { opts.body = JSON.stringify(body); opts.headers['Content-Type'] = 'application/json'; }
+    }
+    const r = await fetch(cartRoot + path, opts);
+    const data = await r.json().catch(() => ({}));
+    if (!r.ok) throw Object.assign(new Error(data.description || data.message || r.statusText), { status: r.status });
+    return data;
+  }
+  const shopCart = c => ({ items: (c.items || []).map(i => ({ key: i.key, id: i.variant_id, title: i.product_title, sub: i.variant_title || '',
+    image: i.image || '', url: i.url, quantity: i.quantity, price: i.final_line_price, properties: i.properties || {} })) });
+  const cartSource = cartRoot ? {
+    get: () => cartFetch('cart.js').then(shopCart),
+    change: (key, quantity) => cartFetch('cart/change.js', { id: key, quantity }).then(shopCart),
+    async add(form){
+      const added = await cartFetch('cart/add.js', new FormData(form));
+      return { cart: await cartSource.get(), keys: [].concat(added.items || added).map(i => i.key) };
+    },
+    async checkout(cart, picked){
+      const rest = cart.items.filter(i => !picked.has(i.key));
+      if (rest.length){
+        const before = keep.get(CART_HELD, []);
+        keep.set(CART_HELD, before.concat(rest.map(i => ({ id: i.id, quantity: i.quantity, properties: i.properties }))));
+        try { await cartFetch('cart/update.js', { updates: Object.fromEntries(rest.map(i => [i.key, 0])) }); }
+        catch (err){ keep.set(CART_HELD, before.length ? before : null); throw err; }
+      }
+      location.href = cartRoot + 'checkout';
+    }
+  } : {
+    read: () => keep.get(CART_LOCAL, []).filter(i => i && i.key && i.quantity > 0),
+    get(){ return Promise.resolve({ items: this.read() }); },
+    change(key, quantity){
+      keep.set(CART_LOCAL, this.read().map(i => i.key === key ? { ...i, quantity } : i).filter(i => i.quantity > 0));
+      return this.get();
+    },
+    add(d){
+      const items = this.read(), hit = items.find(i => i.key === d.key);
+      if (hit) hit.quantity += 1;
+      else items.unshift({ key: d.key, title: d.title || '', sub: d.sub || '', image: d.image || '', url: d.url || '#', quantity: 1, price: null });
+      keep.set(CART_LOCAL, items);
+      return this.get().then(cart => ({ cart, keys: [d.key] }));
+    },
+    checkout(cart, picked){ return Promise.reject(Object.assign(new Error('preview'), { preview: picked.size })); }
+  };
+
+  // pieces set aside at checkout go back into the cart, unticked
+  let restoring = null;
+  function restoreHeld(){
+    if (!cartRoot || restoring) return;
+    const held = keep.get(CART_HELD, []);
+    if (!Array.isArray(held) || !held.length) return;
+    keep.set(CART_HELD, null);   // taken, so another tab does not put them back twice
+    restoring = (async () => {
+      const back = [], lost = [];
+      try { back.push(...((await cartFetch('cart/add.js', { items: held })).items || [])); }
+      catch (err){
+        // one at a time, so a piece that sold out meanwhile does not keep the others out
+        for (const item of held){
+          try { back.push(...((await cartFetch('cart/add.js', { items: [item] })).items || [])); }
+          catch (e){ if (!e.status) lost.push(item); }
+        }
+      }
+      if (lost.length) keep.set(CART_HELD, lost.concat(keep.get(CART_HELD, [])));   // offline: try again next time
+      const off = new Set(keep.get(CART_OFF, []));
+      back.forEach(i => off.add(i.key));
+      keep.set(CART_OFF, [...off]);
+    })().finally(() => { restoring = null; });
+  }
+
+  let cartNow = null, cartBusy = false;
+  const cartViews = () => [...document.querySelectorAll('[data-cart-view]')];
+  // a view's own words, else the menu bar's cart, else these
+  function cartText(view){
+    const T = { ...CART_WORDS };
+    const bar = document.querySelector('[data-panel="cart"] [data-cart-view]');
+    [bar, view].forEach(v => { if (v) Object.entries(v.dataset).forEach(([k, x]) => { if (x !== '' && k !== 'cartView') T[k] = x; }); });
+    return T;
+  }
+  function money(cents, fmt){
+    const n = (cents || 0) / 100;
+    const fix = (d, t, dec) => { const [a, b] = n.toFixed(d).split('.'); return a.replace(/\B(?=(\d{3})+(?!\d))/g, t) + (b ? dec + b : ''); };
+    const A = { amount: fix(2, ',', '.'), amount_no_decimals: fix(0, ',', '.'), amount_with_comma_separator: fix(2, '.', ','),
+      amount_no_decimals_with_comma_separator: fix(0, '.', ','), amount_with_apostrophe_separator: fix(2, "'", '.') };
+    // the shop's money format, such as $ followed by the amount in double braces
+    return fmt ? fmt.replace(/<[^>]*>/g, '').replace(/\{\{\s*(\w+)\s*\}\}/g, (m, k) => A[k] || A.amount) : A.amount;
+  }
+  function sized(src, w){
+    if (!src || !cartRoot) return src;
+    try { const u = new URL(src, location.href); u.searchParams.set('width', w); return u.href; } catch (err){ return src; }
+  }
+  function el(tag, attrs, ...kids){
+    const n = document.createElement(tag);
+    Object.entries(attrs || {}).forEach(([k, v]) => {
+      if (v == null || v === false) return;
+      if (k === 'text') n.textContent = v; else if (k === 'svg') n.innerHTML = v; else n.setAttribute(k, v === true ? '' : v);
+    });
+    n.append(...kids.filter(Boolean));
+    return n;
+  }
+  const MINUS = '<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6h8"/></svg>';
+  const PLUS = '<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6h8M6 2v8"/></svg>';
+  function renderCart(view){
+    if (!cartNow) return;
+    const T = cartText(view), items = cartNow.items;
+    const off = new Set(keep.get(CART_OFF, []));
+    const picked = items.filter(i => !off.has(i.key));
+    const prices = T.showPrices === 'true' && items.every(i => typeof i.price === 'number');
+    const a = document.activeElement, focusKey = a && view.contains(a) ? a.getAttribute('data-ct-focus') : null;
+    const said = view.querySelector('[data-ct-msg]');
+    const msg = el('p', { class: 'ct-msg', 'data-ct-msg': true, 'aria-live': 'polite', text: said ? said.textContent : '' });
+    view.replaceChildren();
+    view.classList.toggle('is-empty', !items.length);
+    if (!items.length){
+      view.append(el('p', { class: 'ct-empty', text: T.labelEmpty }));
+      if (T.labelBrowse && T.browseUrl) view.append(el('a', { class: 'link ct-browse', href: T.browseUrl, text: T.labelBrowse }));
+      view.append(msg);
+      return;
+    }
+    const all = el('input', { type: 'checkbox', class: 'ct-box', 'data-ct-all': true, 'data-ct-focus': 'all' });
+    all.checked = picked.length === items.length;
+    all.indeterminate = picked.length > 0 && picked.length < items.length;
+    const name = i => `${i.title}${i.sub ? ', ' + i.sub : ''}`;
+    const list = el('ul', { class: 'ct-list' }, ...items.map(i => {
+      const pick = el('input', { type: 'checkbox', class: 'ct-box', 'data-ct-pick': i.key, 'data-ct-focus': 'pick:' + i.key, 'aria-label': `${T.labelPick}: ${name(i)}` });
+      pick.checked = !off.has(i.key);
+      return el('li', { class: 'ct-line' + (pick.checked ? '' : ' off') },
+        el('label', { class: 'ct-pick' }, pick),
+        el('a', { class: 'ct-thumb', href: i.url, tabindex: '-1', 'aria-hidden': 'true' }, i.image ? el('img', { src: sized(i.image, 240), alt: '', loading: 'lazy' }) : null),
+        el('div', { class: 'ct-info' },
+          el('h3', {}, el('a', { href: i.url, text: i.title })),
+          i.sub ? el('span', { class: 'ct-sub', text: i.sub }) : null,
+          prices ? el('span', { class: 'ct-price', text: money(i.price, T.moneyFormat) }) : null,
+          el('div', { class: 'ct-row' },
+            el('div', { class: 'ct-qty', role: 'group', 'aria-label': `${T.labelQuantity}: ${name(i)}` },
+              el('button', { type: 'button', 'data-ct-qty': i.key, 'data-step': '-1', 'data-ct-focus': 'less:' + i.key, 'aria-label': T.labelFewer, disabled: i.quantity <= 1, svg: MINUS }),
+              el('output', { class: 'ct-n', text: String(i.quantity) }),
+              el('button', { type: 'button', 'data-ct-qty': i.key, 'data-step': '1', 'data-ct-focus': 'more:' + i.key, 'aria-label': T.labelMore, svg: PLUS })),
+            el('button', { type: 'button', class: 'ct-remove', 'data-ct-remove': i.key, 'data-ct-focus': 'rm:' + i.key, 'aria-label': `${T.labelRemove}: ${name(i)}`, text: T.labelRemove }))));
+    }));
+    if (!picked.length && !msg.textContent) msg.textContent = T.labelNone;
+    view.append(
+      el('div', { class: 'ct-main' },
+        el('div', { class: 'ct-head' }, el('label', { class: 'ct-pick ct-all' }, all, el('span', { text: T.labelAll })), el('span', { class: 'label', text: `${picked.length} ${T.labelSelected}` })),
+        list),
+      el('div', { class: 'ct-foot' },
+        prices ? el('p', { class: 'ct-total' }, el('span', { class: 'label', text: T.labelSubtotal }), el('span', { text: money(picked.reduce((s, i) => s + i.price, 0), T.moneyFormat) })) : null,
+        T.labelNote ? el('p', { class: 'ct-note', text: T.labelNote }) : null,
+        el('button', { type: 'button', class: 'btn solid ct-go', 'data-ct-go': true, 'data-ct-focus': 'go', disabled: !picked.length, text: T.labelCheckout }),
+        msg));
+    if (focusKey){
+      const f = view.querySelector(`[data-ct-focus="${CSS.escape(focusKey)}"]`);
+      (f && !f.disabled ? f : view.querySelector('[data-ct-go]:not(:disabled), [data-ct-all]'))?.focus({ preventScroll: true });
+    }
+  }
+  function paintCart(){
+    const n = cartNow ? cartNow.items.reduce((s, i) => s + i.quantity, 0) : null;
+    if (n !== null) document.querySelectorAll('[data-cart-count]').forEach(c => { c.textContent = n; c.hidden = !n; });
+    cartViews().forEach(renderCart);
+  }
+  function sayCart(text){ cartViews().forEach(v => { const m = v.querySelector('[data-ct-msg]'); if (m) m.textContent = text; }); }
+  const cartError = err => err.message || cartText(document.body).labelError;
+  async function refreshCart(){
+    if (restoring) await restoring;
+    try { cartNow = await cartSource.get(); } catch (err){ return; }
+    const keys = new Set(cartNow.items.map(i => i.key));
+    keep.set(CART_OFF, keep.get(CART_OFF, []).filter(k => keys.has(k)));
+    paintCart();
+  }
+  async function cartDo(task){
+    if (cartBusy || !cartNow) return;
+    cartBusy = true;
+    cartViews().forEach(v => v.setAttribute('aria-busy', 'true'));
+    try { cartNow = await task(); sayCart(''); paintCart(); }
+    catch (err){ await refreshCart(); sayCart(cartError(err)); }
+    finally { cartBusy = false; cartViews().forEach(v => v.removeAttribute('aria-busy')); }
+  }
+  // Add to cart: the piece goes in, ticked, and the cart opens
+  async function addToCart(what, btn){
+    if (btn){ if (btn.disabled) return; btn.disabled = true; btn.setAttribute('aria-busy', 'true'); }
+    try {
+      if (restoring) await restoring;
+      const r = await cartSource.add(what);
+      cartNow = r.cart;
+      const off = new Set(keep.get(CART_OFF, []));
+      r.keys.forEach(k => off.delete(k));
+      keep.set(CART_OFF, [...off]);
+      sayCart(''); paintCart();
+    } catch (err){ await refreshCart(); sayCart(cartError(err)); }
+    finally { if (btn){ btn.disabled = false; btn.removeAttribute('aria-busy'); } }
+    openPanel('cart');
+  }
+  async function checkoutPicked(){
+    if (cartBusy || !cartNow) return;
+    const off = new Set(keep.get(CART_OFF, []));
+    const picked = new Set(cartNow.items.filter(i => !off.has(i.key)).map(i => i.key));
+    if (!picked.size){ sayCart(cartText(document.body).labelNone); return; }
+    cartBusy = true;
+    try { await cartSource.checkout(cartNow, picked); }
+    catch (err){
+      cartBusy = false;
+      sayCart(err.preview != null
+        ? `Preview only. In the store, the ${err.preview === 1 ? 'piece you ticked goes' : `${err.preview} pieces you ticked go`} to checkout, and the rest stay in the cart.`
+        : cartError(err));
+    }
+  }
+  document.addEventListener('change', e => {
+    const t = e.target;
+    if (!(t instanceof HTMLInputElement) || !cartNow) return;
+    if (t.matches('[data-ct-pick]')){
+      const off = new Set(keep.get(CART_OFF, []));
+      if (t.checked) off.delete(t.dataset.ctPick); else off.add(t.dataset.ctPick);
+      keep.set(CART_OFF, [...off]);
+    } else if (t.matches('[data-ct-all]')) keep.set(CART_OFF, t.checked ? [] : cartNow.items.map(i => i.key));
+    else return;
+    sayCart(''); paintCart();
+  });
+  document.addEventListener('click', e => {
+    const q = e.target.closest('[data-ct-qty]'), rm = e.target.closest('[data-ct-remove]'), go = e.target.closest('[data-ct-go]');
+    const add = !cartRoot && e.target.closest('[data-preview-add]');
+    if (q && cartNow){
+      const line = cartNow.items.find(i => i.key === q.dataset.ctQty);
+      if (line) cartDo(() => cartSource.change(line.key, Math.max(0, line.quantity + +q.dataset.step)));
+    } else if (rm) cartDo(() => cartSource.change(rm.dataset.ctRemove, 0));
+    else if (go) checkoutPicked();
+    else if (add){ e.preventDefault(); addToCart({ ...add.dataset }, add); }
+  });
+  // on the store, every Add to cart form adds without leaving the page while there is a cart to open
+  document.addEventListener('submit', e => {
+    const form = e.target;
+    if (!cartRoot || !(form instanceof HTMLFormElement) || !document.querySelector('[data-panel="cart"]')) return;
+    if (!/\/cart\/add\/?$/.test(new URL(form.getAttribute('action') || '', location.href).pathname)) return;
+    e.preventDefault();
+    addToCart(form, e.submitter || form.querySelector('[type="submit"]'));
+  });
+  addEventListener('pageshow', e => { if (e.persisted){ cartBusy = false; restoreHeld(); refreshCart(); } });
+  addEventListener('storage', e => { if (e.key === CART_LOCAL || e.key === CART_OFF) refreshCart(); });
+  restoreHeld();
+  refreshCart();
+  /* ---------- end of the cart ---------- */
+
+  /* ---------- panels: the side menu (left), search (top), favourites and the cart (right), one open at a time;
      Close, the shade, Escape or a link close them, focus stays inside, the page behind is out of reach ---------- */
   const HEART_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.3s-7.4-4.5-9.1-9.1C1.7 7.8 3.9 4.6 7.3 4.6c2 0 3.5 1 4.7 2.7 1.2-1.7 2.7-2.7 4.7-2.7 3.4 0 5.6 3.2 4.4 6.6-1.7 4.6-9.1 9.1-9.1 9.1z"/></svg>';
   function initPanels(root){
@@ -986,6 +1323,7 @@ body.paused *, body.paused *::before, body.paused *::after{animation-play-state:
       html.classList.add('menu-open');
       root.querySelectorAll(`[data-open="${name}"]`).forEach(b => b.setAttribute('aria-expanded', 'true'));
       if (name === 'favourites') refreshFavs();
+      if (name === 'cart') refreshCart();
       if (quiet === true) return;
       shut = [...document.body.children].filter(el => !el.contains(panel) && !el.inert && !el.matches('.menu-scrim'));
       const bar = root.querySelector('nav.top');
@@ -1113,7 +1451,8 @@ body.paused *, body.paused *::before, body.paused *::after{animation-play-state:
     form.addEventListener('submit', onSubmit);
     return () => { clearTimeout(timer); if (ctrl) ctrl.abort(); input.removeEventListener('input', onInput); form.removeEventListener('submit', onSubmit); };
   }
-  initPanels(document.body);
+  const panelCtl = initPanels(document.body);
+  function openPanel(name){ if (panelCtl) panelCtl.open(name); }
 
   /* ---------- colour picker: the tap slides sideways to the chosen colour ---------- */
   const stage = root.querySelector('[data-stage]');
@@ -1227,16 +1566,15 @@ body.paused *, body.paused *::before, body.paused *::after{animation-play-state:
   taps.forEach((el, k) => { el.style.transition = 'none'; place(el, k - cur, k === cur ? 1 : 0); });
   }
 
-  // preview only: there is no store behind this page
-  const add = document.querySelector('[data-add]'), note = document.querySelector('[data-buy-note]');
-  add.addEventListener('click', () => {
-    const chosen = document.querySelector('.swatches [aria-checked="true"]');
-    note.textContent = `Preview only. In the shop this adds the ${add.dataset.title}${chosen ? ` in ${chosen.getAttribute('aria-label')}` : ''} to the cart.`;
-  });
+  // preview only: there is no store behind this page, so the chosen colour goes into a cart kept in this browser
+  const add = document.querySelector('[data-add]');
   const heart = document.querySelector('.buy-actions [data-fav]');
+  add.addEventListener('click', () => {
+    const d = heart.dataset;
+    addToCart({ key: d.fav, title: d.favTitle, sub: d.favSub, image: d.favImage, url: d.favUrl }, add);
+  });
   const colours = JSON.parse(document.querySelector('[data-colours]').textContent);
   if (stage) stage.addEventListener('farless:colour', e => {
-    note.textContent = '';
     const c = colours[e.detail.index];
     Object.assign(heart.dataset, { fav: `${heart.dataset.favHandle}:${c.key}`, favVariant: c.key, favImage: c.image, favSub: c.name });
     heart.setAttribute('aria-label', `Save to favourites: ${heart.dataset.favTitle}, ${c.name}`);

@@ -424,7 +424,11 @@
     if (changed) favWrite(list.filter(x => !gone.has(x.key)));
   }
 
-  /* ---------- panels: the side menu (left), search (top) and favourites (right), one open at a time;
+/*FARLESS_CART*/
+  // Add to cart opens the cart panel of the menu bar
+  function openPanel(name){ menus.forEach(m => m.open(name)); }
+
+  /* ---------- panels: the side menu (left), search (top), favourites and the cart (right), one open at a time;
      Close, the shade, Escape or a link close them, focus stays inside, the page behind is out of reach ---------- */
   const HEART_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.3s-7.4-4.5-9.1-9.1C1.7 7.8 3.9 4.6 7.3 4.6c2 0 3.5 1 4.7 2.7 1.2-1.7 2.7-2.7 4.7-2.7 3.4 0 5.6 3.2 4.4 6.6-1.7 4.6-9.1 9.1-9.1 9.1z"/></svg>';
   function initPanels(root){
@@ -455,6 +459,7 @@
       html.classList.add('menu-open');
       root.querySelectorAll(`[data-open="${name}"]`).forEach(b => b.setAttribute('aria-expanded', 'true'));
       if (name === 'favourites') refreshFavs();
+      if (name === 'cart') refreshCart();
       if (quiet === true) return;
       shut = [...document.body.children].filter(el => !el.contains(panel) && !el.inert && !el.matches('.menu-scrim'));
       const bar = root.querySelector('nav.top');
@@ -918,6 +923,7 @@
     initPicker(root);
     observeEntrances(root);
     syncFavs();
+    paintCart();
     addSeams(root);
     watchLoops(root);
     running.set(root, cleanups);

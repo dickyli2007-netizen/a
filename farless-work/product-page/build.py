@@ -57,21 +57,23 @@ def link_home(html):
 head = src[src.index('<head>') + len('<head>'):src.index('</head>')]
 nav = link_home(cut(src, '<nav class="top"', '</nav>'))
 footer = link_home(cut(src, '<footer>', '</footer>'))
-# the bar's side menu, search sheet and favourites, with their script, so the bar works on the preview too;
+# the bar's side menu, search sheet, favourites and cart, with their script, so the bar works on the preview too;
 # their pictures are the main page's (farless/assets: PANEL_ASSETS), published beside the product's
-panels = link_home(src[src.index('<div class="menu-scrim"'):src.index('\n\n<header>')]).replace('"url": "#shop"', f'"url": "{SITE}#shop"')
+panels = (link_home(src[src.index('<div class="menu-scrim"'):src.index('\n\n<header>')])
+          .replace('"url": "#shop"', f'"url": "{SITE}#shop"').replace('data-browse-url="#shop"', f'data-browse-url="{SITE}#shop"'))
 PANEL_ASSETS = sorted(set(re.findall(r'assets/((?:menu|search)-[\w.-]+)', panels)))
-JS_PANELS = src[src.index('  /* ---------- favourites:'):src.index('  initPanels(document.body);\n') + len('  initPanels(document.body);\n')]
+PANELS_END = '  function openPanel(name){ if (panelCtl) panelCtl.open(name); }\n'
+JS_PANELS = src[src.index('  /* ---------- favourites:'):src.index(PANELS_END) + len(PANELS_END)]
 HEART = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.3s-7.4-4.5-9.1-9.1C1.7 7.8 3.9 4.6 7.3 4.6c2 0 3.5 1 4.7 2.7 1.2-1.7 2.7-2.7 4.7-2.7 3.4 0 5.6 3.2 4.4 6.6-1.7 4.6-9.1 9.1-9.1 9.1z"/></svg>'
 
 CSS = '''
 /* ---------- product page, after Gessi's: the product alone with its name, colour and button beside it; the details below ---------- */
-.pdp{padding:calc(118px + env(safe-area-inset-top, 0px)) var(--gutter) clamp(96px,13vh,150px)}
-.crumbs{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:clamp(20px,3vh,36px)}
-.crumbs a{text-decoration:none;color:var(--text-secondary);transition:color .35s var(--ease-out)}
-.crumbs a:hover{color:var(--text-primary)}
-.crumbs [aria-current]{color:var(--text-primary)}
-.pdp-grid{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);gap:clamp(40px,6vw,110px);align-items:center}
+.pdp{padding:calc(84px + env(safe-area-inset-top, 0px)) var(--gutter) clamp(96px,13vh,150px)}
+@media (pointer:coarse){.pdp{padding-top:calc(94px + env(safe-area-inset-top, 0px))}}
+.pdp > .crumbs{margin-bottom:clamp(16px,3vh,32px)}
+/* wider than the other pages, with a wide gap, so the product stands well apart from its name */
+.pdp > .wrap{width:min(1680px,100%)}
+.pdp-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(300px,440px);column-gap:clamp(64px,13vw,300px);align-items:center}
 .stage-col{min-width:0}
 .stage{position:relative;height:min(72vh,760px);min-height:420px;touch-action:pan-y;cursor:grab;user-select:none;-webkit-user-select:none;
   -webkit-mask-image:linear-gradient(90deg,transparent,#000 9%,#000 91%,transparent);mask-image:linear-gradient(90deg,transparent,#000 9%,#000 91%,transparent)}
@@ -116,9 +118,8 @@ CSS = '''
 .buy-actions{display:grid;gap:14px;margin-top:clamp(32px,5vh,48px)}
 .buy-actions form{display:grid;gap:14px;margin:0}
 .buy-actions .btn{justify-content:center;cursor:pointer;font-family:var(--font)}
-.buy-note{grid-column:1 / -1;min-height:1.6em;color:var(--text-secondary);font-size:.92rem;line-height:1.6}
 /* the details, below the product: the tagline large, the description beside it, the notes across */
-.pdp-more{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);column-gap:clamp(40px,6vw,110px);margin-top:clamp(72px,11vh,130px);padding-top:clamp(56px,8vh,88px);border-top:1px solid var(--hair)}
+.pdp-more{display:grid;grid-template-columns:minmax(0,1fr) minmax(300px,440px);column-gap:clamp(64px,13vw,300px);margin-top:clamp(72px,11vh,130px);padding-top:clamp(56px,8vh,88px);border-top:1px solid var(--hair)}
 .more-head{display:contents}
 .more-head .label{grid-column:1 / -1}
 .more-head h2{min-width:0;font:200 clamp(2rem,3.4vw,3.2rem)/1.12 var(--font);letter-spacing:-.005em;max-width:18ch}
@@ -131,7 +132,7 @@ CSS = '''
 .pdp-more .f-notes{grid-column:1 / -1;margin-top:clamp(48px,7vh,72px)}
 @media (max-width:860px){
   .pdp{padding-top:calc(94px + env(safe-area-inset-top, 0px))}
-  .crumbs{display:none}
+  .pdp > .crumbs{display:none}
   .pdp-grid{grid-template-columns:1fr;row-gap:0}
   .buy-col{display:contents}
   .buy-col h1{order:1}
@@ -142,6 +143,7 @@ CSS = '''
   .opts{order:4}
   .buy-actions{order:5;margin-top:28px}
   .pdp-more{grid-template-columns:1fr;margin-top:72px;padding-top:48px}
+  .buy-col{max-width:none}
   .more-copy{grid-column:auto;max-width:none;margin-top:24px;padding-top:0}
 }
 @media (max-width:600px){
@@ -208,8 +210,8 @@ def render_main(prod, w, h):
     ) if lede or more_copy or notes else ''
     return (
         '<main id="main" class="pdp" tabindex="-1">\n'
+        f'  <nav class="crumbs label" aria-label="Breadcrumb"><a href="{SITE}#shop">Shop</a><span aria-hidden="true">/</span>{crumb}<span aria-current="page">{e(title)}</span></nav>\n'
         '  <div class="wrap">\n'
-        f'    <nav class="crumbs label" aria-label="Breadcrumb"><a href="{SITE}#shop">Shop</a><span aria-hidden="true">/</span>{crumb}<span aria-current="page">{e(title)}</span></nav>\n'
         '    <div class="pdp-grid">\n'
         f'      <div class="stage-col" style="--n:{n}">\n'
         f'        <div class="stage{"" if n > 1 else " single"}" data-stage style="{stage_vars}" {stage_attrs}>\n'
@@ -223,7 +225,6 @@ def render_main(prod, w, h):
         '        <div class="buy-actions has-fav">\n'
         f'          <button class="btn solid" type="button" data-add data-title="{e(title)}">Add to cart</button>\n'
         f'{heart}'
-        '          <p class="buy-note" data-buy-note aria-live="polite"></p>\n'
         '        </div>\n'
         '      </div>\n'
         '    </div>\n'
@@ -350,16 +351,15 @@ JS_PICKER = '''  /* ---------- colour picker: the tap slides sideways to the cho
 '''
 
 PREVIEW_JS = '''
-  // preview only: there is no store behind this page
-  const add = document.querySelector('[data-add]'), note = document.querySelector('[data-buy-note]');
-  add.addEventListener('click', () => {
-    const chosen = document.querySelector('.swatches [aria-checked="true"]');
-    note.textContent = `Preview only. In the shop this adds the ${add.dataset.title}${chosen ? ` in ${chosen.getAttribute('aria-label')}` : ''} to the cart.`;
-  });
+  // preview only: there is no store behind this page, so the chosen colour goes into a cart kept in this browser
+  const add = document.querySelector('[data-add]');
   const heart = document.querySelector('.buy-actions [data-fav]');
+  add.addEventListener('click', () => {
+    const d = heart.dataset;
+    addToCart({ key: d.fav, title: d.favTitle, sub: d.favSub, image: d.favImage, url: d.favUrl }, add);
+  });
   const colours = JSON.parse(document.querySelector('[data-colours]').textContent);
   if (stage) stage.addEventListener('farless:colour', e => {
-    note.textContent = '';
     const c = colours[e.detail.index];
     Object.assign(heart.dataset, { fav: `${heart.dataset.favHandle}:${c.key}`, favVariant: c.key, favImage: c.image, favSub: c.name });
     heart.setAttribute('aria-label', `Save to favourites: ${heart.dataset.favTitle}, ${c.name}`);

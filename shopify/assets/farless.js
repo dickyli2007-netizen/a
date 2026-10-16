@@ -424,7 +424,268 @@
     if (changed) favWrite(list.filter(x => !gone.has(x.key)));
   }
 
-  /* ---------- panels: the side menu (left), search (top) and favourites (right), one open at a time;
+  /* ---------- cart: Add to cart stays on the page and opens the cart; a tick on each piece says what goes to
+     checkout now, and the rest stay in the cart. Shopify checks out a whole cart, so on the way to checkout the
+     unticked pieces are set aside in this browser, and they go back into the cart, unticked, on the next visit.
+     Off the store (the design previews) the cart is kept in this browser and nothing is checked out. ---------- */
+  const CART_OFF = 'farless:cart-off', CART_HELD = 'farless:cart-held', CART_LOCAL = 'farless:cart-preview';
+  const keep = {
+    get(k, d){ try { const v = JSON.parse(localStorage.getItem(k)); return v == null ? d : v; } catch (err){ return d; } },
+    set(k, v){ try { if (v == null) localStorage.removeItem(k); else localStorage.setItem(k, JSON.stringify(v)); } catch (err){} }
+  };
+  const CART_WORDS = {
+    labelAll: 'Select all', labelSelected: 'selected', labelNote: 'Tick the pieces to check out now. The rest stay in your cart.',
+    labelCheckout: 'Check out', labelNone: 'Tick a piece to check out.', labelEmpty: 'Your cart is empty.', labelBrowse: '', browseUrl: '',
+    labelRemove: 'Remove', labelPick: 'Check out now', labelFewer: 'One fewer', labelMore: 'One more', labelQuantity: 'Quantity',
+    labelSubtotal: 'Subtotal', labelError: 'Something went wrong. Please try again.', showPrices: 'false', moneyFormat: ''
+  };
+  const cartRoot = window.Shopify && window.Shopify.routes ? (window.Shopify.routes.root || '/') : null;
+  async function cartFetch(path, body){
+    const opts = { headers: { Accept: 'application/json' } };
+    if (body !== undefined){
+      opts.method = 'POST';
+      if (body instanceof FormData) opts.body = body;
+      else { opts.body = JSON.stringify(body); opts.headers['Content-Type'] = 'application/json'; }
+    }
+    const r = await fetch(cartRoot + path, opts);
+    const data = await r.json().catch(() => ({}));
+    if (!r.ok) throw Object.assign(new Error(data.description || data.message || r.statusText), { status: r.status });
+    return data;
+  }
+  const shopCart = c => ({ items: (c.items || []).map(i => ({ key: i.key, id: i.variant_id, title: i.product_title, sub: i.variant_title || '',
+    image: i.image || '', url: i.url, quantity: i.quantity, price: i.final_line_price, properties: i.properties || {} })) });
+  const cartSource = cartRoot ? {
+    get: () => cartFetch('cart.js').then(shopCart),
+    change: (key, quantity) => cartFetch('cart/change.js', { id: key, quantity }).then(shopCart),
+    async add(form){
+      const added = await cartFetch('cart/add.js', new FormData(form));
+      return { cart: await cartSource.get(), keys: [].concat(added.items || added).map(i => i.key) };
+    },
+    async checkout(cart, picked){
+      const rest = cart.items.filter(i => !picked.has(i.key));
+      if (rest.length){
+        const before = keep.get(CART_HELD, []);
+        keep.set(CART_HELD, before.concat(rest.map(i => ({ id: i.id, quantity: i.quantity, properties: i.properties }))));
+        try { await cartFetch('cart/update.js', { updates: Object.fromEntries(rest.map(i => [i.key, 0])) }); }
+        catch (err){ keep.set(CART_HELD, before.length ? before : null); throw err; }
+      }
+      location.href = cartRoot + 'checkout';
+    }
+  } : {
+    read: () => keep.get(CART_LOCAL, []).filter(i => i && i.key && i.quantity > 0),
+    get(){ return Promise.resolve({ items: this.read() }); },
+    change(key, quantity){
+      keep.set(CART_LOCAL, this.read().map(i => i.key === key ? { ...i, quantity } : i).filter(i => i.quantity > 0));
+      return this.get();
+    },
+    add(d){
+      const items = this.read(), hit = items.find(i => i.key === d.key);
+      if (hit) hit.quantity += 1;
+      else items.unshift({ key: d.key, title: d.title || '', sub: d.sub || '', image: d.image || '', url: d.url || '#', quantity: 1, price: null });
+      keep.set(CART_LOCAL, items);
+      return this.get().then(cart => ({ cart, keys: [d.key] }));
+    },
+    checkout(cart, picked){ return Promise.reject(Object.assign(new Error('preview'), { preview: picked.size })); }
+  };
+
+  // pieces set aside at checkout go back into the cart, unticked
+  let restoring = null;
+  function restoreHeld(){
+    if (!cartRoot || restoring) return;
+    const held = keep.get(CART_HELD, []);
+    if (!Array.isArray(held) || !held.length) return;
+    keep.set(CART_HELD, null);   // taken, so another tab does not put them back twice
+    restoring = (async () => {
+      const back = [], lost = [];
+      try { back.push(...((await cartFetch('cart/add.js', { items: held })).items || [])); }
+      catch (err){
+        // one at a time, so a piece that sold out meanwhile does not keep the others out
+        for (const item of held){
+          try { back.push(...((await cartFetch('cart/add.js', { items: [item] })).items || [])); }
+          catch (e){ if (!e.status) lost.push(item); }
+        }
+      }
+      if (lost.length) keep.set(CART_HELD, lost.concat(keep.get(CART_HELD, [])));   // offline: try again next time
+      const off = new Set(keep.get(CART_OFF, []));
+      back.forEach(i => off.add(i.key));
+      keep.set(CART_OFF, [...off]);
+    })().finally(() => { restoring = null; });
+  }
+
+  let cartNow = null, cartBusy = false;
+  const cartViews = () => [...document.querySelectorAll('[data-cart-view]')];
+  // a view's own words, else the menu bar's cart, else these
+  function cartText(view){
+    const T = { ...CART_WORDS };
+    const bar = document.querySelector('[data-panel="cart"] [data-cart-view]');
+    [bar, view].forEach(v => { if (v) Object.entries(v.dataset).forEach(([k, x]) => { if (x !== '' && k !== 'cartView') T[k] = x; }); });
+    return T;
+  }
+  function money(cents, fmt){
+    const n = (cents || 0) / 100;
+    const fix = (d, t, dec) => { const [a, b] = n.toFixed(d).split('.'); return a.replace(/\B(?=(\d{3})+(?!\d))/g, t) + (b ? dec + b : ''); };
+    const A = { amount: fix(2, ',', '.'), amount_no_decimals: fix(0, ',', '.'), amount_with_comma_separator: fix(2, '.', ','),
+      amount_no_decimals_with_comma_separator: fix(0, '.', ','), amount_with_apostrophe_separator: fix(2, "'", '.') };
+    // the shop's money format, such as $ followed by the amount in double braces
+    return fmt ? fmt.replace(/<[^>]*>/g, '').replace(/\{\{\s*(\w+)\s*\}\}/g, (m, k) => A[k] || A.amount) : A.amount;
+  }
+  function sized(src, w){
+    if (!src || !cartRoot) return src;
+    try { const u = new URL(src, location.href); u.searchParams.set('width', w); return u.href; } catch (err){ return src; }
+  }
+  function el(tag, attrs, ...kids){
+    const n = document.createElement(tag);
+    Object.entries(attrs || {}).forEach(([k, v]) => {
+      if (v == null || v === false) return;
+      if (k === 'text') n.textContent = v; else if (k === 'svg') n.innerHTML = v; else n.setAttribute(k, v === true ? '' : v);
+    });
+    n.append(...kids.filter(Boolean));
+    return n;
+  }
+  const MINUS = '<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6h8"/></svg>';
+  const PLUS = '<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6h8M6 2v8"/></svg>';
+  function renderCart(view){
+    if (!cartNow) return;
+    const T = cartText(view), items = cartNow.items;
+    const off = new Set(keep.get(CART_OFF, []));
+    const picked = items.filter(i => !off.has(i.key));
+    const prices = T.showPrices === 'true' && items.every(i => typeof i.price === 'number');
+    const a = document.activeElement, focusKey = a && view.contains(a) ? a.getAttribute('data-ct-focus') : null;
+    const said = view.querySelector('[data-ct-msg]');
+    const msg = el('p', { class: 'ct-msg', 'data-ct-msg': true, 'aria-live': 'polite', text: said ? said.textContent : '' });
+    view.replaceChildren();
+    view.classList.toggle('is-empty', !items.length);
+    if (!items.length){
+      view.append(el('p', { class: 'ct-empty', text: T.labelEmpty }));
+      if (T.labelBrowse && T.browseUrl) view.append(el('a', { class: 'link ct-browse', href: T.browseUrl, text: T.labelBrowse }));
+      view.append(msg);
+      return;
+    }
+    const all = el('input', { type: 'checkbox', class: 'ct-box', 'data-ct-all': true, 'data-ct-focus': 'all' });
+    all.checked = picked.length === items.length;
+    all.indeterminate = picked.length > 0 && picked.length < items.length;
+    const name = i => `${i.title}${i.sub ? ', ' + i.sub : ''}`;
+    const list = el('ul', { class: 'ct-list' }, ...items.map(i => {
+      const pick = el('input', { type: 'checkbox', class: 'ct-box', 'data-ct-pick': i.key, 'data-ct-focus': 'pick:' + i.key, 'aria-label': `${T.labelPick}: ${name(i)}` });
+      pick.checked = !off.has(i.key);
+      return el('li', { class: 'ct-line' + (pick.checked ? '' : ' off') },
+        el('label', { class: 'ct-pick' }, pick),
+        el('a', { class: 'ct-thumb', href: i.url, tabindex: '-1', 'aria-hidden': 'true' }, i.image ? el('img', { src: sized(i.image, 240), alt: '', loading: 'lazy' }) : null),
+        el('div', { class: 'ct-info' },
+          el('h3', {}, el('a', { href: i.url, text: i.title })),
+          i.sub ? el('span', { class: 'ct-sub', text: i.sub }) : null,
+          prices ? el('span', { class: 'ct-price', text: money(i.price, T.moneyFormat) }) : null,
+          el('div', { class: 'ct-row' },
+            el('div', { class: 'ct-qty', role: 'group', 'aria-label': `${T.labelQuantity}: ${name(i)}` },
+              el('button', { type: 'button', 'data-ct-qty': i.key, 'data-step': '-1', 'data-ct-focus': 'less:' + i.key, 'aria-label': T.labelFewer, disabled: i.quantity <= 1, svg: MINUS }),
+              el('output', { class: 'ct-n', text: String(i.quantity) }),
+              el('button', { type: 'button', 'data-ct-qty': i.key, 'data-step': '1', 'data-ct-focus': 'more:' + i.key, 'aria-label': T.labelMore, svg: PLUS })),
+            el('button', { type: 'button', class: 'ct-remove', 'data-ct-remove': i.key, 'data-ct-focus': 'rm:' + i.key, 'aria-label': `${T.labelRemove}: ${name(i)}`, text: T.labelRemove }))));
+    }));
+    if (!picked.length && !msg.textContent) msg.textContent = T.labelNone;
+    view.append(
+      el('div', { class: 'ct-main' },
+        el('div', { class: 'ct-head' }, el('label', { class: 'ct-pick ct-all' }, all, el('span', { text: T.labelAll })), el('span', { class: 'label', text: `${picked.length} ${T.labelSelected}` })),
+        list),
+      el('div', { class: 'ct-foot' },
+        prices ? el('p', { class: 'ct-total' }, el('span', { class: 'label', text: T.labelSubtotal }), el('span', { text: money(picked.reduce((s, i) => s + i.price, 0), T.moneyFormat) })) : null,
+        T.labelNote ? el('p', { class: 'ct-note', text: T.labelNote }) : null,
+        el('button', { type: 'button', class: 'btn solid ct-go', 'data-ct-go': true, 'data-ct-focus': 'go', disabled: !picked.length, text: T.labelCheckout }),
+        msg));
+    if (focusKey){
+      const f = view.querySelector(`[data-ct-focus="${CSS.escape(focusKey)}"]`);
+      (f && !f.disabled ? f : view.querySelector('[data-ct-go]:not(:disabled), [data-ct-all]'))?.focus({ preventScroll: true });
+    }
+  }
+  function paintCart(){
+    const n = cartNow ? cartNow.items.reduce((s, i) => s + i.quantity, 0) : null;
+    if (n !== null) document.querySelectorAll('[data-cart-count]').forEach(c => { c.textContent = n; c.hidden = !n; });
+    cartViews().forEach(renderCart);
+  }
+  function sayCart(text){ cartViews().forEach(v => { const m = v.querySelector('[data-ct-msg]'); if (m) m.textContent = text; }); }
+  const cartError = err => err.message || cartText(document.body).labelError;
+  async function refreshCart(){
+    if (restoring) await restoring;
+    try { cartNow = await cartSource.get(); } catch (err){ return; }
+    const keys = new Set(cartNow.items.map(i => i.key));
+    keep.set(CART_OFF, keep.get(CART_OFF, []).filter(k => keys.has(k)));
+    paintCart();
+  }
+  async function cartDo(task){
+    if (cartBusy || !cartNow) return;
+    cartBusy = true;
+    cartViews().forEach(v => v.setAttribute('aria-busy', 'true'));
+    try { cartNow = await task(); sayCart(''); paintCart(); }
+    catch (err){ await refreshCart(); sayCart(cartError(err)); }
+    finally { cartBusy = false; cartViews().forEach(v => v.removeAttribute('aria-busy')); }
+  }
+  // Add to cart: the piece goes in, ticked, and the cart opens
+  async function addToCart(what, btn){
+    if (btn){ if (btn.disabled) return; btn.disabled = true; btn.setAttribute('aria-busy', 'true'); }
+    try {
+      if (restoring) await restoring;
+      const r = await cartSource.add(what);
+      cartNow = r.cart;
+      const off = new Set(keep.get(CART_OFF, []));
+      r.keys.forEach(k => off.delete(k));
+      keep.set(CART_OFF, [...off]);
+      sayCart(''); paintCart();
+    } catch (err){ await refreshCart(); sayCart(cartError(err)); }
+    finally { if (btn){ btn.disabled = false; btn.removeAttribute('aria-busy'); } }
+    openPanel('cart');
+  }
+  async function checkoutPicked(){
+    if (cartBusy || !cartNow) return;
+    const off = new Set(keep.get(CART_OFF, []));
+    const picked = new Set(cartNow.items.filter(i => !off.has(i.key)).map(i => i.key));
+    if (!picked.size){ sayCart(cartText(document.body).labelNone); return; }
+    cartBusy = true;
+    try { await cartSource.checkout(cartNow, picked); }
+    catch (err){
+      cartBusy = false;
+      sayCart(err.preview != null
+        ? `Preview only. In the store, the ${err.preview === 1 ? 'piece you ticked goes' : `${err.preview} pieces you ticked go`} to checkout, and the rest stay in the cart.`
+        : cartError(err));
+    }
+  }
+  document.addEventListener('change', e => {
+    const t = e.target;
+    if (!(t instanceof HTMLInputElement) || !cartNow) return;
+    if (t.matches('[data-ct-pick]')){
+      const off = new Set(keep.get(CART_OFF, []));
+      if (t.checked) off.delete(t.dataset.ctPick); else off.add(t.dataset.ctPick);
+      keep.set(CART_OFF, [...off]);
+    } else if (t.matches('[data-ct-all]')) keep.set(CART_OFF, t.checked ? [] : cartNow.items.map(i => i.key));
+    else return;
+    sayCart(''); paintCart();
+  });
+  document.addEventListener('click', e => {
+    const q = e.target.closest('[data-ct-qty]'), rm = e.target.closest('[data-ct-remove]'), go = e.target.closest('[data-ct-go]');
+    const add = !cartRoot && e.target.closest('[data-preview-add]');
+    if (q && cartNow){
+      const line = cartNow.items.find(i => i.key === q.dataset.ctQty);
+      if (line) cartDo(() => cartSource.change(line.key, Math.max(0, line.quantity + +q.dataset.step)));
+    } else if (rm) cartDo(() => cartSource.change(rm.dataset.ctRemove, 0));
+    else if (go) checkoutPicked();
+    else if (add){ e.preventDefault(); addToCart({ ...add.dataset }, add); }
+  });
+  // on the store, every Add to cart form adds without leaving the page while there is a cart to open
+  document.addEventListener('submit', e => {
+    const form = e.target;
+    if (!cartRoot || !(form instanceof HTMLFormElement) || !document.querySelector('[data-panel="cart"]')) return;
+    if (!/\/cart\/add\/?$/.test(new URL(form.getAttribute('action') || '', location.href).pathname)) return;
+    e.preventDefault();
+    addToCart(form, e.submitter || form.querySelector('[type="submit"]'));
+  });
+  addEventListener('pageshow', e => { if (e.persisted){ cartBusy = false; restoreHeld(); refreshCart(); } });
+  addEventListener('storage', e => { if (e.key === CART_LOCAL || e.key === CART_OFF) refreshCart(); });
+  restoreHeld();
+  refreshCart();
+  /* ---------- end of the cart ---------- */
+  // Add to cart opens the cart panel of the menu bar
+  function openPanel(name){ menus.forEach(m => m.open(name)); }
+
+  /* ---------- panels: the side menu (left), search (top), favourites and the cart (right), one open at a time;
      Close, the shade, Escape or a link close them, focus stays inside, the page behind is out of reach ---------- */
   const HEART_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.3s-7.4-4.5-9.1-9.1C1.7 7.8 3.9 4.6 7.3 4.6c2 0 3.5 1 4.7 2.7 1.2-1.7 2.7-2.7 4.7-2.7 3.4 0 5.6 3.2 4.4 6.6-1.7 4.6-9.1 9.1-9.1 9.1z"/></svg>';
   function initPanels(root){
@@ -455,6 +716,7 @@
       html.classList.add('menu-open');
       root.querySelectorAll(`[data-open="${name}"]`).forEach(b => b.setAttribute('aria-expanded', 'true'));
       if (name === 'favourites') refreshFavs();
+      if (name === 'cart') refreshCart();
       if (quiet === true) return;
       shut = [...document.body.children].filter(el => !el.contains(panel) && !el.inert && !el.matches('.menu-scrim'));
       const bar = root.querySelector('nav.top');
@@ -1028,6 +1290,7 @@
     initPicker(root);
     observeEntrances(root);
     syncFavs();
+    paintCart();
     addSeams(root);
     watchLoops(root);
     running.set(root, cleanups);

@@ -57,19 +57,19 @@
 {% endcapture -%}
 <style>/*FARLESS_PRODUCT_CSS*/</style>
 <div class="pdp">
+  <nav class="crumbs label" aria-label="Breadcrumb"><a href="{{ routes.root_url }}#shop">{{ section.settings.shop_crumb | escape }}</a><span aria-hidden="true">/</span>
+    {%- liquid
+      assign crumb = blank
+      for c in product.collections
+        unless c.handle == 'frontpage'
+          assign crumb = c
+          break
+        endunless
+      endfor
+    -%}
+    {%- if crumb != blank -%}<a href="{{ crumb.url }}">{{ crumb.title | escape }}</a><span aria-hidden="true">/</span>{%- endif -%}
+    <span aria-current="page">{{ product.title | escape }}</span></nav>
   <div class="wrap">
-    <nav class="crumbs label" aria-label="Breadcrumb"><a href="{{ routes.root_url }}#shop">{{ section.settings.shop_crumb | escape }}</a><span aria-hidden="true">/</span>
-      {%- liquid
-        assign crumb = blank
-        for c in product.collections
-          unless c.handle == 'frontpage'
-            assign crumb = c
-            break
-          endunless
-        endfor
-      -%}
-      {%- if crumb != blank -%}<a href="{{ crumb.url }}">{{ crumb.title | escape }}</a><span aria-hidden="true">/</span>{%- endif -%}
-      <span aria-current="page">{{ product.title | escape }}</span></nav>
     <div class="pdp-grid">
       <div class="stage-col" style="--n:{{ slide_count }}">
         <div class="stage{% if slide_count < 2 %} single{% endif %}" data-stage data-start="{{ start }}" style="--shadow-x:{{ foot_x | default: 50 }}%;--shadow-w:{% if foot_x != blank %}34{% else %}0{% endif %}%"

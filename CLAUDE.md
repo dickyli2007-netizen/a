@@ -18,16 +18,19 @@ and no prices shown anywhere ("keep it exclusive").
 - `farless-work/build_shopify.py`: builds `shopify/` and `farless-shopify-addon.zip` from those pieces,
   the landing page's styles and the product page template. Run it after any change, then Theme Check.
 - `farless-work/theme-test/`: renders the theme like Shopify does with sample data and tests it in a
-  browser (against the static page, with edited content, with theme editor events). See render.js.
+  browser (against the static page, with edited content, with theme editor events, and the cart against a
+  stand-in for Shopify's cart in `cart-test.js`). See render.js.
 - `farless-work/design-package.md`: the brand plan (palette, type, copy decisions, confirmed facts).
 - `farless-work/product-page/`: the product page template and its preview builder (below), the cut-out
   tool, and `collection_image.py`, which composes a collection's picture from its products' cut-outs.
 
 ## The menu bar
 
-After Gessi's: the Menu button on the left, the name in the middle, and three thin outline icons on the
-right: search, account and favourites. No Buy on the bar or in the menu: the owner does not want the buy
-button pushed (keep it to the hero's close, the shop section and the final call).
+After Gessi's: the Menu button on the left, the name in the middle, and four thin outline icons on the
+right: search, account, favourites and the cart (a bag with a bronze count). On phones the bar keeps search,
+favourites and the cart, and Log in or sign up sits with the side menu's small links. No Buy on the bar or
+in the menu: the owner does not want the buy button pushed (keep it to the hero's close, the shop section
+and the final call).
 - Menu slides a side menu in from the left: Home, Collections (a second layer listing each collection with its
   own picture, else its first piece's cut-out, and its piece count; every collection when none are
   picked), the links in large type (Five waters, Safety, Design, Questions), and small links with the
@@ -42,6 +45,19 @@ button pushed (keep it to the hero's close, the shop section and the final call)
   product page's heart follows the colour picker, so colours added later work with no change. A saved heart
   turns a quiet red (`--liked`, #C75A4E), as does the count on the bar. Favourites are kept in the
   shopper's browser (localStorage), not in their account, and pieces or colours that are gone drop out.
+- The bag slides the cart in from the right. Every Add to cart (product page, the shop section) adds through
+  Shopify's Ajax cart without leaving the page and opens it. Each piece has a tick, a quantity and Remove;
+  Select all and "2 selected" sit on top, and Check out takes only the ticked pieces. Shopify always checks out
+  a whole cart, so the unticked pieces are taken out on the way to checkout, kept in the browser
+  (`farless:cart-held`), and put back into the cart, still unticked (`farless:cart-off`), on the next page
+  load, whether the shopper bought or came back. Prices stay hidden unless the menu bar's "Show prices in the
+  cart" is on; checkout shows them. The cart page `/cart` (`sections/farless-cart.liquid`,
+  `templates/cart.json`) shows the same cart with the checkout beside it. The cart's words are the menu bar's
+  Cart panel settings. The cart script is written once, in `farless/index.html` between `/* ---------- cart:`
+  and `/* ---------- end of the cart ---------- */`, and `build_shopify.py` puts it into `assets/farless.js`;
+  off the store (the design previews) the same script keeps a cart in the browser and checkout only says
+  what would happen. While every piece is at 0 stock, Add to cart shows Sold out, so the owner needs stock
+  (or "continue selling when out of stock") to try it on the store.
 One panel is open at a time; Escape, Close, the shade or a link close it, focus stays inside, and the
 film ignores scrolling meanwhile. Picking the menu bar in the editor opens the side menu.
 
@@ -61,8 +77,11 @@ Approved example: https://claude.ai/artifact/CbtjXLSyknvk6Hb2CFsAa7 (Farless 5-i
 Keep these, they are what the owner approved:
 - The layout follows Gessi's product page (the owner's reference): the product large on the left, and
   beside it only the name, the colour picker and Add to cart with its heart, so the product has the
-  focus. The details (the Small heading and Tagline as their heading, the description, the notes across)
-  sit below the product, after a hairline.
+  focus. The page is wider than the others (up to 1680px) with a wide gap (up to 300px), so the product
+  stands well apart from its name. The details (the Small heading and Tagline as their heading, the
+  description, the notes across) sit below the product, after a hairline.
+- The trail of links (Shop / collection / product) sits just under the bar, lined up with the Menu
+  button, as on Gessi's pages; collection, search, collections and cart pages place theirs the same way.
 - The product alone on the page: a transparent cut-out on the dark page, with a soft warm light behind
   it and a contact shadow under its foot. Never a photo backdrop.
 - The colour picker sits in the column beside the product: "Colour. Pick your favourite.", then the
@@ -141,12 +160,13 @@ copper and black are stand-ins until real photos exist.
 - Theme files: `layout/farless.liquid` (loads `farless-header-group`, the page, `farless-footer-group`
   and `assets/farless.js`), the `farless-*` sections and snippets, `templates/index.json` and
   `templates/page.farless.json` (home page), `templates/product.json` (every product page),
-  `templates/collection.json` (every collection page), `templates/list-collections.json` (the page listing
+  `templates/collection.json` (every collection page), `templates/cart.json` (the cart page,
+  `sections/farless-cart.liquid`), `templates/list-collections.json` (the page listing
   every collection, `sections/farless-collections.liquid`, the home page's collection cards without
   Shopify's own "Home page" and "all" collections), `templates/search.json` (search results). The theme's
-  original product, collection, collections list and search pages are kept as the alternate templates
-  `templates/product.atelier.json`, `collection.atelier.json`, `list-collections.atelier.json` and
-  `search.atelier.json`. Every Buy Farless button (the film's close, the still hero, the final call) goes
+  original product, collection, collections list, cart and search pages are kept as the alternate templates
+  `templates/product.atelier.json`, `collection.atelier.json`, `list-collections.atelier.json`,
+  `cart.atelier.json` and `search.atelier.json`. Every Buy Farless button (the film's close, the still hero, the final call) goes
   to `/collections`, the owner's choice; they can repoint them in the editor.
 - The connector cannot write to the live theme, publish one or delete theme files, so uploads go to an
   unpublished copy (duplicate the newest theme, upload with `themeFilesUpsert` from raw GitHub URLs
@@ -160,3 +180,5 @@ copper and black are stand-ins until real photos exist.
   for the collection's own picture.
 - Shopify refuses a section whose text setting has `"default": ""` (Theme Check passes it); leave the
   default out for a setting that starts empty.
+- `farless/index.html` must not contain Liquid braces (the build checks), so its script avoids writing a
+  double opening brace even in strings.

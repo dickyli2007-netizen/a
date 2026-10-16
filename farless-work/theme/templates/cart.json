@@ -1,0 +1,12 @@
+{
+  "layout": "farless",
+  "sections": {
+    "main": {
+      "type": "farless-cart",
+      "settings": {}
+    }
+  },
+  "order": [
+    "main"
+  ]
+}

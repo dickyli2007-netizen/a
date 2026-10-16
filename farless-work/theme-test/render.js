@@ -4,6 +4,7 @@
 //   npx http-server site -p 8083     (and, for parity.js, npx http-server ../../farless -p 8090)
 //   node parity.js       the theme against the static page: words, look, film, knob, phone
 //   node editor-test.js  edited content, theme editor events, section reloads, links, product page
+//   node cart-test.js    the cart against a stand-in for Shopify's cart: add, ticks, checkout of ticked pieces only
 const fs = require('fs');
 const path = require('path');
 const { Liquid, Tag } = require('liquidjs');
@@ -107,10 +108,13 @@ const ALL_COLLECTIONS = [{ title: 'Home page', handle: 'frontpage', url: '/colle
   COLLECTIONS['multi-function-faucets'], COLLECTIONS['filtered-faucets']];
 const globals = { routes: { root_url: '/', cart_url: '/cart', all_products_collection_url: '/collections/all', collections_url: '/collections',
     search_url: '/search', predictive_search_url: '/search/suggest', account_url: '/account', account_login_url: '/account/login' },
-  shop: { name: 'Farless', customer_accounts_enabled: true, policies: [{ title: 'Refund policy', url: '/policies/refund-policy' }] }, request: { locale: { iso_code: 'en' } }, content_for_header: '',
-  collections: ALL_COLLECTIONS };
+  shop: { name: 'Farless', customer_accounts_enabled: true, money_format: '${{amount}}', policies: [{ title: 'Refund policy', url: '/policies/refund-policy' }] }, request: { locale: { iso_code: 'en' } }, content_for_header: '',
+  collections: ALL_COLLECTIONS, cart: { item_count: 0, items: [] } };
 // Shopify's global objects are visible inside rendered snippets too
-engine.options.globals = { routes: globals.routes, shop: globals.shop, request: globals.request, collections: ALL_COLLECTIONS };
+engine.options.globals = { routes: globals.routes, shop: globals.shop, request: globals.request, collections: ALL_COLLECTIONS, cart: globals.cart };
+// a cart with a tap in it, for the cart page as it shows before the script draws it
+const CART_FULL = { item_count: 2, items: [{ key: '101:a', url: '/products/faucet?variant=101', quantity: 2, image: variants[0].featured_media.preview_image,
+  product: faucet, variant: variants[0] }] };
 
 // ---------- sections the Shopify way ----------
 const schemaOf = file => JSON.parse(file.match(/{% schema %}([\s\S]*?){% endschema %}/)[1]);
@@ -178,6 +182,9 @@ async function page(file, templateFile, template, scope, designMode){
   await page('products/faucet/index.html', T('product.json'), { name: 'product', suffix: null }, { product: faucet, page_title: 'Farless 5-in-1 Tap', page_description: 'Five waters. One tap.' });
   for (const p of filtered) await page(`products/${p.handle}/index.html`, T('product.json'), { name: 'product', suffix: null }, { product: p, page_title: p.title });
   for (const [h, c] of Object.entries(COLLECTIONS)) await page(`collections/${h}/index.html`, T('collection.json'), { name: 'collection', suffix: null }, { collection: c, page_title: c.title });
+  // the cart page: empty, and with a tap in it
+  await page('cart/index.html', T('cart.json'), { name: 'cart', suffix: null }, { page_title: 'Cart' });
+  await page('cart-full/index.html', T('cart.json'), { name: 'cart', suffix: null }, { page_title: 'Cart', cart: CART_FULL });
   // the page listing every collection
   await page('collections/index.html', T('list-collections.json'), { name: 'list-collections', suffix: null }, { page_title: 'Collections' });
   // search for "arc": the results page, and the suggestions the search sheet fetches as you type

@@ -12,8 +12,8 @@
   endfor
 -%}
 <section class="cl srch{% if section.settings.tone %} tone{% endif %}" aria-labelledby="h-{{ section.id }}">
+  <nav class="crumbs label" aria-label="Breadcrumb"><a href="{{ routes.root_url }}#shop">{{ section.settings.shop_crumb | escape }}</a><span aria-hidden="true">/</span><span aria-current="page">{{ section.settings.heading | escape }}</span></nav>
   <div class="wrap">
-    <nav class="crumbs label" aria-label="Breadcrumb"><a href="{{ routes.root_url }}#shop">{{ section.settings.shop_crumb | escape }}</a><span aria-hidden="true">/</span><span aria-current="page">{{ section.settings.heading | escape }}</span></nav>
     <div class="cl-head">
       <div>
         <span class="label kicker">{{ section.settings.heading | escape }}</span>

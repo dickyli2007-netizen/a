@@ -7,8 +7,8 @@
 {%- paginate collection.products by section.settings.per_page -%}
 {%- render 'farless-arc', arc: section.settings.arc -%}
 <section class="cl{% if section.settings.tone %} tone{% endif %}" aria-labelledby="h-{{ section.id }}">
+  <nav class="crumbs label" aria-label="Breadcrumb"><a href="{{ routes.root_url }}#shop">{{ section.settings.shop_crumb | escape }}</a><span aria-hidden="true">/</span><span aria-current="page">{{ collection.title | escape }}</span></nav>
   <div class="wrap">
-    <nav class="crumbs label" aria-label="Breadcrumb"><a href="{{ routes.root_url }}#shop">{{ section.settings.shop_crumb | escape }}</a><span aria-hidden="true">/</span><span aria-current="page">{{ collection.title | escape }}</span></nav>
     <div class="cl-head" data-in>
       <div>
         <span class="label kicker part">{{ section.settings.kicker | escape }}</span>

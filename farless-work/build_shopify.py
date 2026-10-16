@@ -8,6 +8,7 @@ change it. The pieces come from:
   farless-work/theme/templates/        which sections each page shows, with today's content
   farless-work/theme/assets/farless.src.js   the shared script; the product picker comes from
                                        the product page template (farless-work/product-page/build.py)
+                                       and the cart from the landing page's script
 
 Run from the repo root: python3 farless-work/build_shopify.py, then run Theme Check.
 """
@@ -125,6 +126,9 @@ files['sections/farless-product.liquid'] = product
 # ---------- the shared script, with the product picker from the template ----------
 script = (THEME / 'assets' / 'farless.src.js').read_text(encoding='utf-8')
 script = must_replace(script, '/*FARLESS_PICKER*/', product_page.JS_PICKER.rstrip())
+# the cart is written once, in the landing page's script, and works on the store and in the previews alike
+CART_JS = src[src.index('  /* ---------- cart:'):src.index('  /* ---------- end of the cart ---------- */\n') + len('  /* ---------- end of the cart ---------- */\n')]
+script = must_replace(script, '/*FARLESS_CART*/', CART_JS.rstrip())
 files['assets/farless.js'] = script
 files['layout/farless.liquid'] = layout
 

@@ -1,10 +1,11 @@
 {%- comment -%}
-  The menu bar and its panels, after Gessi's. The bar: the Menu button, the name, then search, account and
-  favourites icons (and any links set to show on the bar). The side menu slides in from the left with
+  The menu bar and its panels, after Gessi's. The bar: the Menu button, the name, then search, account,
+  favourites and cart icons (and any links set to show on the bar). The side menu slides in from the left with
   Collections (a second layer listing the collections with their pictures), every link, and the small links
   and store policies. Search drops a sheet from the top with pieces that match as you type; the heart
-  slides favourites in from the right, kept in the shopper's browser. A link either picks a page, or names
-  a section on the home page.
+  slides favourites in from the right, kept in the shopper's browser. The bag slides the cart in from the
+  right: Add to cart opens it, and a tick on each piece says what goes to checkout now (assets/farless.js).
+  A link either picks a page, or names a section on the home page.
 {%- endcomment -%}
 {%- liquid
   assign on_home = false
@@ -56,10 +57,13 @@
     <li class="keep"><button type="button" class="ico" aria-label="{{ section.settings.search_label | escape }}" aria-expanded="false" aria-controls="search-panel-{{ section.id }}" data-open="search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L21 21"/></svg></button></li>
     {%- endif -%}
     {%- if section.settings.show_account and shop.customer_accounts_enabled %}
-    <li class="keep"><a class="ico" href="{% if customer %}{{ routes.account_url }}{% else %}{{ routes.account_login_url }}{% endif %}" aria-label="{% if customer %}{{ section.settings.account_label | escape }}{% else %}{{ section.settings.login_label | escape }}{% endif %}"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8.5" r="4"/><path d="M4 20.5c1.2-3.8 4.3-5.5 8-5.5s6.8 1.7 8 5.5"/></svg></a></li>
+    <li class="keep acct"><a class="ico" href="{% if customer %}{{ routes.account_url }}{% else %}{{ routes.account_login_url }}{% endif %}" aria-label="{% if customer %}{{ section.settings.account_label | escape }}{% else %}{{ section.settings.login_label | escape }}{% endif %}"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8.5" r="4"/><path d="M4 20.5c1.2-3.8 4.3-5.5 8-5.5s6.8 1.7 8 5.5"/></svg></a></li>
     {%- endif -%}
     {%- if section.settings.show_favourites %}
     <li class="keep"><button type="button" class="ico" aria-label="{{ section.settings.favourites_label | escape }}" aria-expanded="false" aria-controls="fav-panel-{{ section.id }}" data-open="favourites">{% render 'farless-heart' %}<span class="count" data-fav-count hidden>0</span></button></li>
+    {%- endif -%}
+    {%- if section.settings.show_cart %}
+    <li class="keep"><a class="ico" href="{{ routes.cart_url }}" aria-label="{{ section.settings.cart_label | escape }}" aria-expanded="false" aria-controls="cart-panel-{{ section.id }}" data-open="cart"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.1 8.5h11.8l-.9 11.6a1 1 0 0 1-1 .9H8a1 1 0 0 1-1-.9z"/><path d="M9.3 8.5V7.2a2.7 2.7 0 0 1 5.4 0v1.3"/></svg><span class="count bag" data-cart-count{% if cart.item_count == 0 %} hidden{% endif %}>{{ cart.item_count }}</span></a></li>
     {%- endif %}
   </ul>
 </nav>
@@ -84,6 +88,10 @@
       {%- for block in section.blocks -%}
         {%- if block.type == 'small_link' and block.settings.label != blank %}{% render 'farless-link', block: block, on_home: on_home, class: 'label', item_class: 'sm-in', index: i %}{% assign i = i | plus: 1 %}{% endif -%}
       {%- endfor -%}
+      {%- if section.settings.show_account and shop.customer_accounts_enabled %}
+      <li class="sm-in sm-acct" style="--i:{{ i }}"><a class="label" href="{% if customer %}{{ routes.account_url }}{% else %}{{ routes.account_login_url }}{% endif %}">{% if customer %}{{ section.settings.account_label | escape }}{% else %}{{ section.settings.login_label | escape }}{% endif %}</a></li>
+        {%- assign i = i | plus: 1 -%}
+      {%- endif -%}
       {%- if section.settings.show_policies -%}
         {%- for policy in shop.policies %}
       <li class="sm-in" style="--i:{{ i }}"><a class="label" href="{{ policy.url }}">{{ policy.title | escape }}</a></li>
@@ -173,6 +181,24 @@
     <p class="fp-empty" data-fav-empty>{{ section.settings.favourites_empty | escape }}</p>
   </div>
 </div>
+{%- endif -%}
+{%- if section.settings.show_cart %}
+<div class="cart-panel" id="cart-panel-{{ section.id }}" data-panel="cart" role="dialog" aria-modal="true" aria-labelledby="cart-h-{{ section.id }}">
+  <div class="sm-pane">
+    <div class="sm-top fp-top"><h2 class="label" id="cart-h-{{ section.id }}">{{ section.settings.cart_label | escape }}</h2><button type="button" class="sm-close" data-close><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><path d="M2 2l12 12M14 2L2 14"/></svg>{{ section.settings.close_label | escape }}</button></div>
+    {%- comment -%} assets/farless.js draws the pieces from Shopify's cart with these words; the cart page uses them too {%- endcomment %}
+    <div class="ct-view" data-cart-view
+      data-label-all="{{ section.settings.cart_all_label | escape }}" data-label-selected="{{ section.settings.cart_selected_label | escape }}"
+      data-label-note="{{ section.settings.cart_note | escape }}" data-label-checkout="{{ section.settings.cart_checkout_label | escape }}"
+      data-label-none="{{ section.settings.cart_none_label | escape }}" data-label-empty="{{ section.settings.cart_empty | escape }}"
+      data-label-browse="{{ section.settings.cart_browse_label | escape }}" data-browse-url="{{ routes.collections_url }}"
+      data-label-remove="{{ section.settings.remove_label | escape }}" data-label-pick="{{ section.settings.cart_pick_label | escape }}"
+      data-label-fewer="{{ section.settings.cart_fewer_label | escape }}" data-label-more="{{ section.settings.cart_more_label | escape }}"
+      data-label-quantity="{{ section.settings.cart_quantity_label | escape }}" data-label-subtotal="{{ section.settings.cart_subtotal_label | escape }}"
+      data-label-error="{{ section.settings.cart_error | escape }}" data-show-prices="{{ section.settings.cart_show_prices }}"
+      data-money-format="{{ shop.money_format | strip_html | escape }}"></div>
+  </div>
+</div>
 {%- endif %}
 
 {% schema %}
@@ -188,12 +214,14 @@
     { "type": "url", "id": "buy_link", "label": "Buy link" },
     { "type": "header", "content": "Icons on the bar" },
     { "type": "checkbox", "id": "show_search", "label": "Search", "default": true },
-    { "type": "checkbox", "id": "show_account", "label": "Account (log in or sign up)", "default": true, "info": "Shows when customer accounts are on in Settings > Customer accounts." },
+    { "type": "checkbox", "id": "show_account", "label": "Account (log in or sign up)", "default": true, "info": "Shows when customer accounts are on in Settings > Customer accounts. On phones it sits in the side menu, with the small links." },
     { "type": "checkbox", "id": "show_favourites", "label": "Favourites", "default": true, "info": "A heart on every piece saves it here, in the shopper's own browser." },
     { "type": "text", "id": "search_label", "label": "Search, for screen readers and the sheet", "default": "Search" },
-    { "type": "text", "id": "login_label", "label": "Account icon before logging in, for screen readers", "default": "Log in or sign up" },
-    { "type": "text", "id": "account_label", "label": "Account icon once logged in, for screen readers", "default": "Account" },
+    { "type": "text", "id": "login_label", "label": "Account before logging in", "default": "Log in or sign up", "info": "For screen readers on the bar; shown in the side menu on phones." },
+    { "type": "text", "id": "account_label", "label": "Account once logged in", "default": "Account" },
     { "type": "text", "id": "favourites_label", "label": "Favourites", "default": "Favourites" },
+    { "type": "checkbox", "id": "show_cart", "label": "Cart", "default": true, "info": "Add to cart opens it without leaving the page, and shoppers tick the pieces to check out now; the rest stay in their cart." },
+    { "type": "text", "id": "cart_label", "label": "Cart", "default": "Cart" },
     { "type": "header", "content": "Search sheet" },
     { "type": "text", "id": "search_placeholder", "label": "Search box", "default": "Search the pieces" },
     { "type": "text", "id": "search_products_label", "label": "Heading over the pieces found", "default": "Pieces" },
@@ -201,9 +229,25 @@
     { "type": "text", "id": "search_all_label", "label": "Link to all results", "default": "See all results" },
     { "type": "header", "content": "Favourites panel" },
     { "type": "text", "id": "favourites_empty", "label": "Nothing saved yet", "default": "Nothing saved yet. Tap the heart on any piece to keep it here." },
-    { "type": "text", "id": "remove_label", "label": "Remove button, for screen readers", "default": "Remove" },
+    { "type": "text", "id": "remove_label", "label": "Remove buttons (in the cart, and for screen readers in favourites)", "default": "Remove" },
     { "type": "text", "id": "save_label", "label": "Heart buttons, for screen readers", "default": "Save to favourites" },
     { "type": "text", "id": "sold_out_label", "label": "Sold out", "default": "Sold out" },
+    { "type": "header", "content": "Cart panel" },
+    { "type": "paragraph", "content": "The cart page (/cart) uses these words too." },
+    { "type": "text", "id": "cart_all_label", "label": "Tick for every piece", "default": "Select all" },
+    { "type": "text", "id": "cart_selected_label", "label": "After the number of ticked pieces", "default": "selected" },
+    { "type": "text", "id": "cart_note", "label": "Line above the checkout button", "default": "Tick the pieces to check out now. The rest stay in your cart.", "info": "Leave empty for none." },
+    { "type": "text", "id": "cart_checkout_label", "label": "Checkout button", "default": "Check out" },
+    { "type": "text", "id": "cart_none_label", "label": "When nothing is ticked", "default": "Tick a piece to check out." },
+    { "type": "text", "id": "cart_empty", "label": "Empty cart", "default": "Your cart is empty." },
+    { "type": "text", "id": "cart_browse_label", "label": "Link from an empty cart to the collections", "default": "See the collections", "info": "Leave empty for none." },
+    { "type": "checkbox", "id": "cart_show_prices", "label": "Show prices in the cart", "default": false, "info": "Checkout always shows the prices." },
+    { "type": "text", "id": "cart_subtotal_label", "label": "Subtotal, when prices show", "default": "Subtotal" },
+    { "type": "text", "id": "cart_error", "label": "When something goes wrong", "default": "Something went wrong. Please try again.", "info": "Shopify's own message shows instead when it gives one, such as when no more are in stock." },
+    { "type": "text", "id": "cart_pick_label", "label": "Each tick, for screen readers", "default": "Check out now" },
+    { "type": "text", "id": "cart_quantity_label", "label": "Quantity, for screen readers", "default": "Quantity" },
+    { "type": "text", "id": "cart_fewer_label", "label": "Minus button, for screen readers", "default": "One fewer" },
+    { "type": "text", "id": "cart_more_label", "label": "Plus button, for screen readers", "default": "One more" },
     { "type": "header", "content": "Side menu" },
     { "type": "text", "id": "menu_label", "label": "Menu button", "default": "Menu" },
     { "type": "text", "id": "close_label", "label": "Close button", "default": "Close" },
