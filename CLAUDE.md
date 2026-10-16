@@ -59,6 +59,10 @@ they add. Build each new product's page from it instead of designing a new one.
 Approved example: https://claude.ai/artifact/CbtjXLSyknvk6Hb2CFsAa7 (Farless 5-in-1 Tap).
 
 Keep these, they are what the owner approved:
+- The layout follows Gessi's product page (the owner's reference): the product large on the left, and
+  beside it only the name, the colour picker and Add to cart with its heart, so the product has the
+  focus. The details (the Small heading and Tagline as their heading, the description, the notes across)
+  sit below the product, after a hairline.
 - The product alone on the page: a transparent cut-out on the dark page, with a soft warm light behind
   it and a contact shadow under its foot. Never a photo backdrop.
 - The colour picker sits in the column beside the product: "Colour. Pick your favourite.", then the
@@ -69,8 +73,8 @@ Keep these, they are what the owner approved:
   colour too. Only transform and opacity animate.
 - The colour picker belongs on product pages only, never on the main page. The main page's shop
   section stays as it is.
-- Phones: name on top, then the product, then the swatches, so the product and the swatches fit on one
-  screen together.
+- Phones: name on top, then the product, then the swatches and the button, so they fit on one screen
+  together; the details follow below.
 - A product with one colour gets the same page without the picker.
 
 ### Adding a product to the store
@@ -84,7 +88,9 @@ product) builds itself from the product, so a new product needs no new code:
    when one is set.
 3. Fill in the product's Farless fields in the admin: Small heading, Tagline, Notes (one per line,
    "Label | text") and Shadow position (where the foot is, % from the left of the cut-out).
-4. The first paragraph of the description shows under the button, so open the description with it.
+4. The details below the product show the Tagline as their heading, then the description's first
+   paragraph (the product page's Description setting in the editor can show the whole description or
+   none); an opening paragraph that repeats the Tagline is skipped.
 5. Put it in its collection. Collection pages (`sections/farless-collection.liquid`, used by
    `templates/collection.json`) show each product as its first colour's cut-out with the same light and
    shadow. Give the collection a picture for the home page's 3:2 card:
@@ -108,7 +114,9 @@ select under the swatches.
 4. Build: `python3 farless-work/product-page/build.py HANDLE`. This writes `pages/HANDLE/index.html` for
    local testing (serve it with `assets/HANDLE` as `assets/`) and `pages/HANDLE/page.html` for the preview.
 5. Test on desktop and a phone (click, keyboard, swipe), publish `pages/HANDLE/page.html` as an artifact
-   with `assets/HANDLE/*` as `assets/*`, and record its URL under `"preview"` in the product file.
+   with `assets/HANDLE/*` as `assets/*`, plus the bar's pictures (`build.PANEL_ASSETS`, the `menu-*` and
+   `search-*` files in `farless/assets`) also as `assets/*`, and record its URL under `"preview"` in the
+   product file. The preview's menu, search and favourites work like the store's.
 
 Stand-in colours: `cutout.py --recolour brass,copper,black` makes recoloured stand-ins from one photo,
 for previews only. Mark them `"stand_in": true` and tell the owner. The Farless 5-in-1 Tap's brass,

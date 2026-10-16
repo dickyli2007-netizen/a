@@ -27,6 +27,7 @@
   --accent:#C4A57D;
   --accent-soft:rgba(196,165,125,.35);
   --hot:#D9573F;
+  --liked:#C75A4E;
   --cool:#F6F1EA;
   --on-accent:#14100D;
   --film-ink:#F3ECE2;
@@ -38,6 +39,7 @@
   --gutter:max(5vw,24px);
 }
 *,*::before,*::after{box-sizing:border-box}
+[hidden]{display:none!important}
 html{overflow-x:hidden;overflow-x:clip;scroll-behavior:smooth;background:var(--canvas)}
 body{margin:0;overflow-x:hidden;overflow-x:clip;background:var(--canvas);color:var(--text-primary);font:300 1.0625rem/1.75 var(--font);-webkit-font-smoothing:antialiased;animation:pagein 1.1s var(--ease-out) both}
 @keyframes pagein{from{opacity:0}to{opacity:1}}
@@ -74,11 +76,192 @@ nav.top ul a:hover{color:var(--film-ink)}
 nav.top ul a:hover::after{transform:scaleX(1)}
 nav.top ul a.buy{color:var(--accent)}
 .brand{justify-self:center;text-decoration:none;font:400 1.02rem/1 var(--font);letter-spacing:.46em;text-transform:uppercase;margin-right:-.46em;color:var(--film-ink)}
+nav.top .l{display:flex;align-items:center}
 @media (max-width:900px){
-  nav.top{grid-template-columns:1fr auto}
-  nav.top ul.l,nav.top ul.r li:not(.keep){display:none}
-  .brand{justify-self:start}
+  nav.top ul.r li:not(.keep){display:none}
 }
+/* the bar's icons: search, account and favourites, thin outlines like the hairlines */
+nav.top ul.icons{gap:clamp(10px,1.6vw,22px)}
+.ico{all:unset;box-sizing:border-box;cursor:pointer;position:relative;display:grid;place-items:center;width:36px;height:36px;color:rgba(243,236,226,.78);transition:color .35s var(--ease-out)}
+nav.top ul a.ico{padding:0}
+nav.top ul a.ico::after{display:none}
+.ico:hover{color:var(--film-ink)}
+.ico:focus-visible{outline:1px solid var(--accent);outline-offset:2px}
+.ico svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.1;stroke-linecap:round;stroke-linejoin:round}
+.ico .count{position:absolute;top:3px;right:-3px;min-width:15px;padding:0 4px;border-radius:8px;background:var(--liked);color:var(--film-ink);font:500 .58rem/15px var(--font);letter-spacing:0;text-align:center}
+@media (pointer:coarse){.ico{width:44px;height:44px}}
+@media (max-width:600px){.menu-btn .mt{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}}
+
+/* ---------- side menu, after Gessi's: the Menu button slides a panel in from the left with the collections,
+   the links and the small print; Collections opens a second layer inside it. Search drops a sheet from the
+   top and the heart slides favourites in from the right. Only transform and opacity move, and a panel
+   leaves the tab order (visibility) once it has slid away. ---------- */
+.menu-btn{all:unset;box-sizing:border-box;cursor:pointer;display:inline-flex;align-items:center;gap:16px;padding:6px 0;font:400 .7rem/1 var(--font);letter-spacing:.24em;text-transform:uppercase;color:rgba(243,236,226,.78);transition:color .35s var(--ease-out)}
+.menu-btn:hover{color:var(--film-ink)}
+.menu-btn:focus-visible{outline:1px solid var(--accent);outline-offset:6px}
+.menu-btn .bars{position:relative;width:26px;height:9px;flex:none}
+.menu-btn .bars i{position:absolute;left:0;width:100%;height:1px;background:currentColor;transform-origin:left;transition:transform .5s var(--ease-out)}
+.menu-btn .bars i:first-child{top:0}
+.menu-btn .bars i:last-child{bottom:0;transform:scaleX(.62)}
+.menu-btn:hover .bars i:last-child{transform:scaleX(1)}
+@media (pointer:coarse){.menu-btn{min-height:44px}}
+html.menu-open{overflow:hidden}
+.menu-scrim{position:fixed;inset:0;z-index:54;background:rgba(10,8,6,.62);opacity:0;visibility:hidden;transition:opacity .6s var(--ease-out),visibility 0s linear .6s}
+.side-menu{position:fixed;top:0;bottom:0;left:0;z-index:55;width:min(480px,100%);overflow:hidden;background:var(--canvas-2);border-right:1px solid var(--hair);color:var(--text-primary);visibility:hidden;transform:translate3d(-100%,0,0);transition:transform .75s var(--ease-soft),visibility 0s linear .75s}
+.menu-open .menu-scrim{opacity:1;visibility:visible;transition:opacity .6s var(--ease-out)}
+.side-menu.open{visibility:visible;transform:none;transition:transform .75s var(--ease-soft)}
+.sm-pane{position:absolute;inset:0;display:flex;flex-direction:column;overflow-y:auto;overscroll-behavior:contain;background:var(--canvas-2);padding:calc(22px + env(safe-area-inset-top, 0px)) clamp(24px,3.4vw,44px) calc(28px + env(safe-area-inset-bottom, 0px))}
+.sm-main{transition:transform .6s var(--ease-soft),opacity .45s var(--ease-out)}
+.side-menu.sub .sm-main{transform:translate3d(-14%,0,0);opacity:0}
+.sm-sub{visibility:hidden;transform:translate3d(100%,0,0);transition:transform .6s var(--ease-soft),visibility 0s linear .6s}
+.side-menu.sub .sm-sub{visibility:visible;transform:none;transition:transform .6s var(--ease-soft)}
+.sm-top{display:flex;align-items:center;padding-bottom:22px;border-bottom:1px solid var(--hair);margin-bottom:clamp(28px,5vh,52px);flex:none}
+.sm-close,.sm-back{all:unset;box-sizing:border-box;cursor:pointer;display:inline-flex;align-items:center;gap:16px;padding:6px 0;font:400 .7rem/1 var(--font);letter-spacing:.24em;text-transform:uppercase;color:var(--text-secondary);transition:color .35s var(--ease-out)}
+.sm-close:hover,.sm-back:hover{color:var(--text-primary)}
+.sm-close:focus-visible,.sm-back:focus-visible{outline:1px solid var(--accent);outline-offset:6px}
+.sm-close svg,.sm-back svg{width:14px;height:14px;flex:none}
+@media (pointer:coarse){.sm-close,.sm-back{min-height:44px}}
+.sm-list{list-style:none;margin:0;padding:0;display:grid;gap:clamp(2px,.8vh,8px)}
+.sm-list a,.sm-list button{all:unset;box-sizing:border-box;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:16px;width:100%;padding:9px 0;font:200 clamp(1.7rem,2.3vw,2.15rem)/1.2 var(--font);letter-spacing:-.005em;color:var(--text-primary);transition:color .35s var(--ease-out)}
+.sm-list a:hover,.sm-list button:hover{color:var(--accent)}
+.sm-list a:focus-visible,.sm-list button:focus-visible{outline:1px solid var(--accent);outline-offset:4px}
+.sm-list .chev{width:12px;height:12px;flex:none;opacity:.7;transition:transform .45s var(--ease-out)}
+.sm-list button:hover .chev{transform:translateX(4px)}
+.sm-small{list-style:none;margin:auto 0 0;padding:clamp(36px,6vh,64px) 0 0;display:grid;gap:16px}
+.sm-small a{text-decoration:none;transition:color .35s var(--ease-out)}
+.sm-small a:hover{color:var(--text-primary)}
+.sm-foot{margin-top:28px;padding-top:24px;border-top:1px solid var(--hair);flex:none}
+.sm-foot .btn{width:100%;justify-content:center}
+.sm-list + .sm-foot{margin-top:auto}
+/* the panel's contents arrive just behind it, one after another */
+.sm-in{opacity:0;transform:translate3d(-16px,0,0);transition:opacity .4s var(--ease-out),transform .4s var(--ease-out)}
+.open .sm-in{opacity:1;transform:none;transition:opacity .7s var(--ease-out),transform .9s var(--ease-out);transition-delay:calc(.22s + var(--i,0) * .05s)}
+.sm-sub h2{font:200 clamp(1.7rem,2.3vw,2.15rem)/1.2 var(--font);margin:0 0 clamp(22px,4vh,36px)}
+.sm-cols{list-style:none;margin:0;padding:0;display:grid;gap:18px}
+.sm-cols a{display:grid;grid-template-columns:132px minmax(0,1fr);gap:20px;align-items:center;text-decoration:none;color:inherit}
+.sm-cols a:focus-visible{outline:1px solid var(--accent);outline-offset:4px}
+.sm-thumb{position:relative;aspect-ratio:3/2;max-width:100%;overflow:hidden;background:var(--panel)}
+.sm-thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform 1.2s var(--ease-out)}
+.sm-thumb.cut img{object-fit:contain;padding:8% 0}
+.sm-thumb.empty{display:grid;place-items:center;border:1px solid var(--hair)}
+.sm-thumb.empty svg{width:46%;height:auto;overflow:visible}
+.sm-thumb.empty path{fill:none;stroke:var(--hair-strong);stroke-width:1;vector-effect:non-scaling-stroke}
+.sm-thumb.empty circle{fill:var(--accent);opacity:.6}
+.sm-cols a:hover .sm-thumb img{transform:scale(1.04)}
+.sm-cols h3{font:300 1.15rem/1.3 var(--font);letter-spacing:.02em;transition:color .35s var(--ease-out)}
+.sm-cols a:hover h3{color:var(--accent)}
+.sm-cols .label{margin-top:8px}
+.sm-all{align-self:flex-start;margin-top:clamp(28px,5vh,44px)}
+@media (max-width:420px){.sm-cols a{grid-template-columns:104px minmax(0,1fr);gap:16px}}
+
+/* search: a sheet from the top, the words typed large on a hairline, the pieces that match below */
+.search-panel{position:fixed;top:0;left:0;right:0;z-index:55;max-height:100%;display:flex;flex-direction:column;background:var(--canvas-2);border-bottom:1px solid var(--hair);color:var(--text-primary);visibility:hidden;transform:translate3d(0,-100%,0);transition:transform .7s var(--ease-soft),visibility 0s linear .7s}
+.search-panel.open{visibility:visible;transform:none;transition:transform .7s var(--ease-soft)}
+.sp-inner{overflow-y:auto;overscroll-behavior:contain;padding:calc(22px + env(safe-area-inset-top, 0px)) var(--gutter) clamp(36px,6vh,64px)}
+.sp-top{display:flex;align-items:center;justify-content:space-between;gap:24px}
+.sp-form{display:flex;align-items:center;gap:16px;margin-top:clamp(22px,4vh,44px);border-bottom:1px solid var(--hair-strong)}
+.sp-form input{all:unset;box-sizing:border-box;flex:1;min-width:0;padding:10px 0;font:200 clamp(1.9rem,3.6vw,3rem)/1.3 var(--font);color:var(--text-primary)}
+.sp-form input::placeholder{color:var(--text-secondary);opacity:.55}
+.sp-form input::-webkit-search-cancel-button{-webkit-appearance:none}
+.sp-form:focus-within{border-bottom-color:var(--accent)}
+.sp-go{all:unset;cursor:pointer;display:grid;place-items:center;width:44px;height:44px;color:var(--text-secondary);transition:color .35s var(--ease-out)}
+.sp-go:hover{color:var(--text-primary)}
+.sp-go:focus-visible{outline:1px solid var(--accent);outline-offset:2px}
+.sp-go svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.1}
+.sp-idle{display:flex;flex-wrap:wrap;align-items:baseline;gap:12px 28px;margin-top:28px}
+.sp-idle a{text-decoration:none;color:var(--text-secondary);transition:color .35s var(--ease-out)}
+.sp-idle a:hover{color:var(--text-primary)}
+.sp-results:not(:empty){margin-top:clamp(28px,5vh,48px)}
+.sp-results > .label{margin:0 0 18px}
+.sp-results > .label ~ .label{margin-top:36px}
+.sp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(176px,1fr));gap:36px 20px;list-style:none;margin:0;padding:0}
+.sp-grid .cl-meta{display:block;margin-top:12px}
+.sp-grid .cl-meta h2{font-size:1rem}
+.sp-grid .cl-meta .label{margin-top:6px}
+.sp-grid .sub{display:none}
+.sp-links{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:10px 28px}
+.sp-links a{text-decoration:none;font:300 1.15rem/1.3 var(--font);color:var(--text-primary);transition:color .35s var(--ease-out)}
+.sp-links a:hover{color:var(--accent)}
+.sp-none{color:var(--text-secondary)}
+.sp-all{display:inline-block;margin-top:32px}
+@media (max-width:600px){.sp-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:28px 14px}}
+
+/* favourites: the heart's panel from the right, kept in this browser */
+.fav-panel{position:fixed;top:0;bottom:0;right:0;z-index:55;width:min(440px,100%);overflow:hidden;background:var(--canvas-2);border-left:1px solid var(--hair);color:var(--text-primary);visibility:hidden;transform:translate3d(100%,0,0);transition:transform .75s var(--ease-soft),visibility 0s linear .75s}
+.fav-panel.open{visibility:visible;transform:none;transition:transform .75s var(--ease-soft)}
+.fp-top{justify-content:space-between}
+.fp-top h2{margin:0}
+.fp-list{list-style:none;margin:0;padding:0;display:grid;gap:18px}
+.fp-list li{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:12px}
+.fp-item{display:grid;grid-template-columns:84px minmax(0,1fr);gap:18px;align-items:center;text-decoration:none;color:inherit}
+.fp-item:focus-visible{outline:1px solid var(--accent);outline-offset:4px}
+.fp-thumb{position:relative;aspect-ratio:4/5;overflow:hidden;background:var(--panel)}
+.fp-thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;padding:10% 8%}
+.fp-item h3{font:300 1.05rem/1.3 var(--font);letter-spacing:.02em;transition:color .35s var(--ease-out)}
+.fp-item:hover h3{color:var(--accent)}
+.fp-sub{display:block;margin-top:4px;color:var(--text-secondary);font-size:.9rem;line-height:1.45}
+.fp-remove{all:unset;box-sizing:border-box;cursor:pointer;display:grid;place-items:center;width:40px;height:40px;color:var(--text-secondary);transition:color .35s var(--ease-out)}
+.fp-remove:hover{color:var(--text-primary)}
+.fp-remove:focus-visible{outline:1px solid var(--accent);outline-offset:2px}
+.fp-remove svg{width:13px;height:13px}
+.fp-empty{color:var(--text-secondary);max-width:32ch}
+
+/* a product as a card: its cut-out in the light and contact shadow of its page, or a photo filling it */
+.cl-card{position:relative;min-width:0}
+.cl-card a{display:block;text-decoration:none;color:inherit}
+.cl-card a:focus-visible{outline:1px solid var(--accent);outline-offset:6px}
+.cl-pic{position:relative;aspect-ratio:4/5;max-width:100%;overflow:hidden;background:var(--panel);isolation:isolate}
+.cl-pic::before{content:"";position:absolute;inset:0;z-index:-2;pointer-events:none;background:radial-gradient(52% 44% at 50% 52%,rgba(236,227,214,.085),rgba(236,227,214,0) 72%)}
+.cl-obj{position:absolute;left:50%;bottom:10%;height:78%;max-width:86%;aspect-ratio:var(--ar);translate:-50% 0;transform-origin:50% 100%;transition:transform 1.4s var(--ease-out)}
+.cl-obj img{display:block;width:100%;height:100%;object-fit:contain}
+.cl-obj::after{content:"";position:absolute;z-index:-1;left:var(--shadow-x,50%);top:98.4%;width:var(--shadow-w,0%);height:5%;translate:-50% -50%;background:radial-gradient(closest-side,rgba(4,3,2,.8),rgba(4,3,2,0))}
+.cl-card a:hover .cl-obj{transform:scale(1.035)}
+.cl-pic.photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform 1.4s var(--ease-out)}
+.cl-card a:hover .cl-pic.photo img{transform:scale(1.03)}
+.cl-meta{display:flex;justify-content:space-between;align-items:baseline;gap:16px;margin-top:20px}
+.cl-meta h2{font:300 1.15rem/1.3 var(--font);letter-spacing:.02em;min-width:0}
+.cl-meta .label{flex:none}
+.cl-card .sub{color:var(--text-secondary);font-size:.95rem;line-height:1.5;margin-top:6px}
+.cl-card .fav{position:absolute;top:8px;right:8px;z-index:2}
+
+/* collection and search pages: a heading, then the pieces as cards */
+.cl{padding:calc(118px + env(safe-area-inset-top, 0px)) var(--gutter) clamp(96px,13vh,150px)}
+.cl.tone{background:var(--canvas-2)}
+.cl .crumbs{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:clamp(28px,5vh,56px)}
+.cl .crumbs a{text-decoration:none;color:var(--text-secondary);transition:color .35s var(--ease-out)}
+.cl .crumbs a:hover{color:var(--text-primary)}
+.cl .crumbs [aria-current]{color:var(--text-primary)}
+.cl-head{display:flex;justify-content:space-between;align-items:end;gap:24px 48px;flex-wrap:wrap;margin-bottom:clamp(48px,8vh,88px)}
+.cl-head > div{min-width:0}
+.cl-head .lede{margin-top:22px}
+.cl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:clamp(48px,7vh,72px) 28px;list-style:none;margin:0;padding:0}
+.cl-empty{color:var(--text-secondary);font-size:clamp(1.05rem,1.25vw,1.2rem);max-width:44ch}
+.cl-empty .link{display:inline-block;margin-top:28px}
+.cl-pages{display:flex;justify-content:center;gap:40px;margin-top:clamp(56px,9vh,96px)}
+@media (max-width:600px){
+  .cl-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:40px 14px}
+  .cl-meta{display:block;margin-top:14px}
+  .cl-meta h2{font-size:1rem}
+  .cl-meta .label{margin-top:6px}
+  .cl-card .sub{font-size:.88rem}
+}
+.cl .sp-form{margin:0 0 clamp(40px,7vh,72px)}
+.cl-links{list-style:none;margin:clamp(40px,7vh,72px) 0 0;padding:0;display:grid;gap:14px}
+.cl-links a{text-decoration:none;font:300 1.15rem/1.3 var(--font);color:var(--text-primary);transition:color .35s var(--ease-out)}
+.cl-links a:hover{color:var(--accent)}
+
+/* the heart: an outline that fills with a quiet red once a piece is saved */
+.fav{all:unset;box-sizing:border-box;cursor:pointer;display:grid;place-items:center;width:40px;height:40px;color:var(--text-secondary);transition:color .35s var(--ease-out)}
+.fav svg{width:20px;height:20px;fill:transparent;stroke:currentColor;stroke-width:1.1;stroke-linejoin:round;transition:fill .35s var(--ease-out)}
+.fav:hover{color:var(--text-primary)}
+.fav:focus-visible{outline:1px solid var(--accent);outline-offset:2px}
+.fav[aria-pressed="true"]{color:var(--liked)}
+.fav[aria-pressed="true"] svg{fill:currentColor}
+.fav.beat svg{animation:beat .55s var(--ease-out)}
+@keyframes beat{40%{transform:scale(1.22)}}
+.buy-actions.has-fav{grid-template-columns:minmax(0,1fr) auto;align-items:stretch}
+.buy-actions .fav.big{width:58px;height:auto;min-height:56px;border:1px solid rgba(243,236,226,.55);color:var(--film-ink)}
+.buy-actions .fav.big[aria-pressed="true"]{color:var(--liked);border-color:var(--liked)}
 
 /* ---------- buttons: square, outlined, a line that reaches out on hover ---------- */
 .btn{display:inline-flex;align-items:center;gap:16px;text-decoration:none;font:400 .72rem/1 var(--font);letter-spacing:.26em;text-transform:uppercase;color:var(--film-ink);border:1px solid rgba(243,236,226,.55);padding:18px 26px 18px 30px;background:transparent;transition:background-color .45s var(--ease-out),color .45s var(--ease-out),border-color .45s var(--ease-out);text-shadow:none}
@@ -286,13 +469,15 @@ section.sec.tone{background:var(--canvas-2)}
 .ccard .cimg{position:relative;aspect-ratio:3/2;overflow:hidden;background:var(--panel)}
 .ccard .cimg img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform 1.4s var(--ease-out)}
 .ccard a:hover .cimg img{transform:scale(1.04)}
+.ccard .cimg.cut::before{content:"";position:absolute;inset:0;background:radial-gradient(50% 50% at 50% 52%,rgba(236,227,214,.085),rgba(236,227,214,0) 72%)}
+.ccard .cimg.cut img{object-fit:contain;padding:9% 0}
 .ccard .cimg.empty{display:grid;place-items:center;border:1px solid var(--hair)}
 .ccard .cimg.empty svg{width:42%;height:auto;overflow:visible}
 .ccard .cimg.empty path{fill:none;stroke:var(--hair-strong);stroke-width:1;vector-effect:non-scaling-stroke;transition:stroke .6s var(--ease-out)}
 .ccard .cimg.empty circle{fill:var(--accent);opacity:.6}
 .ccard a:hover .cimg.empty path{stroke:var(--accent)}
 .ccard .cmeta{display:flex;justify-content:space-between;align-items:baseline;gap:16px;margin-top:18px}
-.ccard h3{font:300 1.15rem/1.3 var(--font);letter-spacing:.02em}
+.ccard h2,.ccard h3{font:300 1.15rem/1.3 var(--font);letter-spacing:.02em}
 @media (max-width:860px){.feature{grid-template-columns:1fr}}
 @media (max-width:600px){.f-notes{grid-template-columns:1fr}}
 
@@ -473,14 +658,14 @@ body.paused *, body.paused *::before, body.paused *::after{animation-play-state:
   .seam{--d:1!important}
   .bubbles,.grain{display:none}
 }
-/* ---------- product page: the tap alone on the page, the choice beside it ---------- */
+/* ---------- product page, after Gessi's: the product alone with its name, colour and button beside it; the details below ---------- */
 .pdp{padding:calc(118px + env(safe-area-inset-top, 0px)) var(--gutter) clamp(96px,13vh,150px)}
 .crumbs{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:clamp(20px,3vh,36px)}
 .crumbs a{text-decoration:none;color:var(--text-secondary);transition:color .35s var(--ease-out)}
 .crumbs a:hover{color:var(--text-primary)}
 .crumbs [aria-current]{color:var(--text-primary)}
-.pdp-grid{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:clamp(40px,6vw,110px);align-items:start}
-.stage-col{position:sticky;top:92px;min-width:0}
+.pdp-grid{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);gap:clamp(40px,6vw,110px);align-items:center}
+.stage-col{min-width:0}
 .stage{position:relative;height:min(72vh,760px);min-height:420px;touch-action:pan-y;cursor:grab;user-select:none;-webkit-user-select:none;
   -webkit-mask-image:linear-gradient(90deg,transparent,#000 9%,#000 91%,transparent);mask-image:linear-gradient(90deg,transparent,#000 9%,#000 91%,transparent)}
 .stage.dragging{cursor:grabbing}
@@ -499,10 +684,11 @@ body.paused *, body.paused *::before, body.paused *::after{animation-play-state:
 .f-rail.live .bar i{transition:none}
 .f-rail .label{flex:none;font-variant-numeric:tabular-nums;letter-spacing:.2em}
 .f-rail .label b{font-weight:400;color:var(--text-primary)}
-.buy-col{min-width:0;padding-top:clamp(0px,3vh,40px)}
-.buy-col h1{font:200 clamp(2.4rem,4vw,3.9rem)/1.06 var(--font);letter-spacing:-.005em;margin-top:22px}
-.buy-col .lede{margin-top:14px;color:var(--text-secondary);font-size:1.12rem}
-.finish{margin-top:40px;padding-top:30px;border-top:1px solid var(--hair)}
+/* beside the product only its name, the colour and the button, so the eye stays on the piece */
+.buy-col{min-width:0;max-width:440px}
+.buy-col h1{font:200 clamp(2.2rem,3.3vw,3.3rem)/1.08 var(--font);letter-spacing:-.005em}
+.buy-col .price{margin-top:16px;font:300 1.15rem/1 var(--font);letter-spacing:.06em}
+.finish{margin-top:clamp(34px,6vh,60px)}
 .finish-h{font:400 clamp(1.3rem,1.8vw,1.65rem)/1.25 var(--font);color:var(--text-primary)}
 .finish-h span{font-weight:300;color:var(--text-secondary)}
 .finish-name{display:flex;align-items:baseline;gap:14px;margin-top:20px;font:400 1rem/1.4 var(--font);letter-spacing:.02em}
@@ -520,37 +706,44 @@ body.paused *, body.paused *::before, body.paused *::after{animation-play-state:
 .opt{display:grid;gap:10px}
 .opt select{font:300 1rem/1.4 var(--font);color:var(--text-primary);background:transparent;border:1px solid var(--hair-strong);padding:12px 14px;border-radius:0}
 .opt select:focus-visible{outline:1px solid var(--accent);outline-offset:3px}
-.buy-actions{display:grid;gap:14px;margin-top:34px}
+.buy-actions{display:grid;gap:14px;margin-top:clamp(32px,5vh,48px)}
 .buy-actions form{display:grid;gap:14px;margin:0}
-.buy-col .price{margin-top:18px;font:300 1.15rem/1 var(--font);letter-spacing:.06em}
-.buy-col .excerpt p + p{margin-top:1em}
 .buy-actions .btn{justify-content:center;cursor:pointer;font-family:var(--font)}
-.buy-note{min-height:1.6em;color:var(--text-secondary);font-size:.92rem;line-height:1.6}
-.buy-col .excerpt{margin-top:40px;color:var(--text-secondary);max-width:46ch}
-.buy-col .f-notes{margin-top:36px}
+.buy-note{grid-column:1 / -1;min-height:1.6em;color:var(--text-secondary);font-size:.92rem;line-height:1.6}
+/* the details, below the product: the tagline large, the description beside it, the notes across */
+.pdp-more{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);column-gap:clamp(40px,6vw,110px);margin-top:clamp(72px,11vh,130px);padding-top:clamp(56px,8vh,88px);border-top:1px solid var(--hair)}
+.more-head{display:contents}
+.more-head .label{grid-column:1 / -1}
+.more-head h2{min-width:0;font:200 clamp(2rem,3.4vw,3.2rem)/1.12 var(--font);letter-spacing:-.005em;max-width:18ch}
+.more-copy{grid-column:2;min-width:0;max-width:440px;color:var(--text-secondary);line-height:1.75;padding-top:6px}
+.more-copy > * + *{margin-top:1em}
+.more-copy ul,.more-copy ol{padding-left:1.1em}
+.more-copy li + li{margin-top:.45em}
+.more-copy strong,.more-copy b{font-weight:400;color:var(--text-primary)}
+.more-copy a{color:var(--text-primary)}
+.pdp-more .f-notes{grid-column:1 / -1;margin-top:clamp(48px,7vh,72px)}
 @media (max-width:860px){
   .pdp{padding-top:calc(94px + env(safe-area-inset-top, 0px))}
   .crumbs{display:none}
   .pdp-grid{grid-template-columns:1fr;row-gap:0}
   .buy-col{display:contents}
-  .buy-col > .label{order:0}
-  .buy-col h1{order:1;margin-top:12px}
-  .buy-col .lede{order:2;margin-top:6px}
-  .stage-col{order:3;position:static;margin-top:4px}
+  .buy-col h1{order:1}
+  .buy-col .price{order:2;margin-top:8px}
+  .stage-col{order:3;margin-top:4px}
   .stage{height:min(50vh,520px);min-height:280px}
-  .finish{order:4;margin-top:20px;padding-top:0;border-top:0}
+  .finish{order:4;margin-top:20px}
+  .opts{order:4}
   .buy-actions{order:5;margin-top:28px}
-  .buy-col .excerpt{order:6;margin-top:36px}
-  .buy-col .f-notes{order:7}
+  .pdp-more{grid-template-columns:1fr;margin-top:72px;padding-top:48px}
+  .more-copy{grid-column:auto;max-width:none;margin-top:24px;padding-top:0}
 }
 @media (max-width:600px){
   .pdp{padding-top:calc(84px + env(safe-area-inset-top, 0px))}
-  .buy-col > .label{display:none}
-  .buy-col h1{margin-top:0}
   .stage{height:min(44vh,440px);min-height:260px}
   .f-rail{margin-top:12px}
   .finish-name{margin-top:12px}
   .swatches{margin-top:8px}
+  .buy-actions{margin-top:22px}
 }
 </style>
 
@@ -559,18 +752,55 @@ body.paused *, body.paused *::before, body.paused *::after{animation-play-state:
 <div class="grain" aria-hidden="true"></div>
 
 <nav class="top" aria-label="Main">
-  <ul class="l">
-    <li><a href="https://claude.ai/artifact/VUaaH6Je53dopSGLQ8Hors#shop">Shop</a></li>
-    <li><a href="https://claude.ai/artifact/VUaaH6Je53dopSGLQ8Hors#waters">Five waters</a></li>
-    <li><a href="https://claude.ai/artifact/VUaaH6Je53dopSGLQ8Hors#safety">Safety</a></li>
-  </ul>
+  <div class="l"><button type="button" class="menu-btn" aria-expanded="false" aria-controls="side-menu" data-open="menu"><span class="bars" aria-hidden="true"><i></i><i></i></span><span class="mt">Menu</span></button></div>
   <a class="brand" href="https://claude.ai/artifact/VUaaH6Je53dopSGLQ8Hors" aria-label="Farless home">Farless</a>
-  <ul class="r">
-    <li><a href="https://claude.ai/artifact/VUaaH6Je53dopSGLQ8Hors#design">Design</a></li>
-    <li><a href="https://claude.ai/artifact/VUaaH6Je53dopSGLQ8Hors#questions">Questions</a></li>
-    <li class="keep"><a class="buy" href="https://claude.ai/artifact/VUaaH6Je53dopSGLQ8Hors#buy">Buy</a></li>
+  <ul class="r icons">
+    <li class="keep"><button type="button" class="ico" aria-label="Search" aria-expanded="false" aria-controls="search-panel" data-open="search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L21 21"/></svg></button></li>
+    <li class="keep"><a class="ico" href="https://claude.ai/artifact/VUaaH6Je53dopSGLQ8Hors" aria-label="Log in or sign up"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8.5" r="4"/><path d="M4 20.5c1.2-3.8 4.3-5.5 8-5.5s6.8 1.7 8 5.5"/></svg></a></li>
+    <li class="keep"><button type="button" class="ico" aria-label="Favourites" aria-expanded="false" aria-controls="fav-panel" data-open="favourites"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.3s-7.4-4.5-9.1-9.1C1.7 7.8 3.9 4.6 7.3 4.6c2 0 3.5 1 4.7 2.7 1.2-1.7 2.7-2.7 4.7-2.7 3.4 0 5.6 3.2 4.4 6.6-1.7 4.6-9.1 9.1-9.1 9.1z"/></svg><span class="count" data-fav-count hidden>0</span></button></li>
   </ul>
 </nav>
+<div class="menu-scrim" data-close aria-hidden="true"></div>
+<div class="side-menu" id="side-menu" data-panel="menu" role="dialog" aria-modal="true" aria-label="Menu">
+  <div class="sm-pane sm-main">
+    <div class="sm-top"><button type="button" class="sm-close" data-close><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><path d="M2 2l12 12M14 2L2 14"/></svg>Close</button></div>
+    <ul class="sm-list">
+      <li class="sm-in" style="--i:0"><a href="https://claude.ai/artifact/VUaaH6Je53dopSGLQ8Hors">Home</a></li>
+      <li class="sm-in" style="--i:1"><button type="button" aria-expanded="false" aria-controls="sm-collections" data-sub-open>Collections<svg class="chev" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><path d="M4 1.5L8.5 6 4 10.5"/></svg></button></li>
+      <li class="sm-in" style="--i:2"><a href="https://claude.ai/artifact/VUaaH6Je53dopSGLQ8Hors#waters">Five waters</a></li>
+      <li class="sm-in" style="--i:3"><a href="https://claude.ai/artifact/VUaaH6Je53dopSGLQ8Hors#safety">Safety</a></li>
+      <li class="sm-in" style="--i:4"><a href="https://claude.ai/artifact/VUaaH6Je53dopSGLQ8Hors#design">Design</a></li>
+      <li class="sm-in" style="--i:5"><a href="https://claude.ai/artifact/VUaaH6Je53dopSGLQ8Hors#questions">Questions</a></li>
+    </ul>
+    <ul class="sm-small">
+      <li class="sm-in" style="--i:6"><a class="label" href="https://claude.ai/artifact/VUaaH6Je53dopSGLQ8Hors#questions">5-year warranty</a></li>
+    </ul>
+  </div>
+  <div class="sm-pane sm-sub" id="sm-collections" role="group" aria-labelledby="sm-collections-h">
+    <div class="sm-top"><button type="button" class="sm-back" data-sub-close><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><path d="M10.5 2L4.5 8l6 6"/></svg>Back</button></div>
+    <h2 id="sm-collections-h">Collections</h2>
+    <ul class="sm-cols">
+      <li><a href="https://claude.ai/artifact/VUaaH6Je53dopSGLQ8Hors#shop"><span class="sm-thumb cut"><img src="assets/menu-multi-function.webp" alt="" width="300" height="460" loading="lazy"></span><span><h3>Multi Function Faucets</h3><span class="label">1 piece</span></span></a></li>
+      <li><a href="https://claude.ai/artifact/VUaaH6Je53dopSGLQ8Hors#shop"><span class="sm-thumb"><img src="assets/menu-filtered.jpg" alt="" width="600" height="400" loading="lazy"></span><span><h3>Filtered Faucets</h3><span class="label">5 pieces</span></span></a></li>
+    </ul>
+  </div>
+</div>
+<div class="search-panel" id="search-panel" data-panel="search" role="dialog" aria-modal="true" aria-label="Search" data-label-products="Pieces" data-label-collections="Collections" data-label-none="Nothing matches that yet." data-label-save="Save to favourites" data-label-sold="Sold out" data-label-colours="colours">
+  <div class="sp-inner"><div class="wrap">
+    <div class="sp-top"><span class="label">Search</span><button type="button" class="sm-close" data-close><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><path d="M2 2l12 12M14 2L2 14"/></svg>Close</button></div>
+    <form class="sp-form" role="search" data-search-form><label class="sr" for="sp-q">Search the pieces</label><input id="sp-q" type="search" name="q" placeholder="Search the pieces" autocomplete="off" spellcheck="false" data-autofocus><button type="submit" class="sp-go" aria-label="Search"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h15M14 7l5 5-5 5"/></svg></button></form>
+    <div class="sp-idle" data-search-idle><span class="label">Collections</span><a href="https://claude.ai/artifact/VUaaH6Je53dopSGLQ8Hors#shop">Multi Function Faucets</a><a href="https://claude.ai/artifact/VUaaH6Je53dopSGLQ8Hors#shop">Filtered Faucets</a></div>
+    <div class="sp-results" data-search-results aria-live="polite"></div>
+    <script type="application/json" data-search-local>[{"handle": "faucet", "title": "Farless 5-in-1 Tap", "sub": "Five waters. One tap.", "image": "assets/menu-multi-function.webp", "ar": 0.6522, "foot": 33.3, "colours": 4, "url": "https://claude.ai/artifact/VUaaH6Je53dopSGLQ8Hors#shop", "colour": "Polished Chrome", "colourKey": "polished-chrome"}, {"handle": "flex-duo-filter-tap", "title": "Farless Flex Duo Filter Tap", "sub": "Filtered water. Two levers. One tap.", "image": "assets/search-flex-duo-filter-tap.webp", "ar": 0.5816, "foot": 72.1, "colours": 1, "colour": "Polished Gold", "url": "https://claude.ai/artifact/VUaaH6Je53dopSGLQ8Hors#shop", "colourKey": "polished-gold"}, {"handle": "flex-square-filter-tap", "title": "Farless Flex Square Filter Tap", "sub": "Filtered water in brushed gold.", "image": "assets/search-flex-square-filter-tap.webp", "ar": 0.5079, "foot": 74.6, "colours": 1, "colour": "Brushed Gold", "url": "https://claude.ai/artifact/VUaaH6Je53dopSGLQ8Hors#shop", "colourKey": "brushed-gold"}, {"handle": "flex-angle-filter-tap", "title": "Farless Flex Angle Filter Tap", "sub": "Filtered water in rose gold.", "image": "assets/search-flex-angle-filter-tap.webp", "ar": 0.5289, "foot": 74.0, "colours": 1, "colour": "Rose Gold", "url": "https://claude.ai/artifact/VUaaH6Je53dopSGLQ8Hors#shop", "colourKey": "rose-gold"}, {"handle": "arc-duo-filter-tap", "title": "Farless Arc Duo Filter Tap", "sub": "Filtered water. Two levers. One arc.", "image": "assets/search-arc-duo-filter-tap.webp", "ar": 0.6105, "foot": 73.4, "colours": 1, "colour": "Brushed Steel", "url": "https://claude.ai/artifact/VUaaH6Je53dopSGLQ8Hors#shop", "colourKey": "brushed-steel"}, {"handle": "arc-filter-tap", "title": "Farless Arc Filter Tap", "sub": "Filtered water from one clean arc.", "image": "assets/search-arc-filter-tap.webp", "ar": 0.5211, "foot": 64.6, "colours": 1, "colour": "Brushed Steel", "url": "https://claude.ai/artifact/VUaaH6Je53dopSGLQ8Hors#shop", "colourKey": "brushed-steel"}]</script>
+  </div></div>
+</div>
+<div class="fav-panel" id="fav-panel" data-panel="favourites" role="dialog" aria-modal="true" aria-labelledby="fav-h">
+  <div class="sm-pane">
+    <div class="sm-top fp-top"><h2 class="label" id="fav-h">Favourites</h2><button type="button" class="sm-close" data-close><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><path d="M2 2l12 12M14 2L2 14"/></svg>Close</button></div>
+    <ul class="fp-list" data-fav-list data-remove-label="Remove" hidden></ul>
+    <p class="fp-empty" data-fav-empty>Nothing saved yet. Tap the heart on any piece to keep it here.</p>
+  </div>
+</div>
 
 <main id="main" class="pdp" tabindex="-1">
   <div class="wrap">
@@ -582,22 +812,28 @@ body.paused *, body.paused *::before, body.paused *::after{animation-play-state:
         </div>
       </div>
       <div class="buy-col">
-        <span class="label">Filtered tap</span>
         <h1>Farless Flex Duo Filter Tap</h1>
-        <p class="lede">Filtered water. Two levers. One tap.</p>
-        <div class="buy-actions">
+        <div class="buy-actions has-fav">
           <button class="btn solid" type="button" data-add data-title="Farless Flex Duo Filter Tap">Add to cart</button>
+          <button type="button" class="fav big" data-fav="flex-duo-filter-tap:polished-gold" data-fav-handle="flex-duo-filter-tap" data-fav-variant="polished-gold" data-fav-title="Farless Flex Duo Filter Tap" data-fav-url="#" data-fav-image="assets/flex-duo-filter-tap-gold.webp" data-fav-sub="Polished Gold" aria-pressed="false" aria-label="Save to favourites: Farless Flex Duo Filter Tap, Polished Gold"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.3s-7.4-4.5-9.1-9.1C1.7 7.8 3.9 4.6 7.3 4.6c2 0 3.5 1 4.7 2.7 1.2-1.7 2.7-2.7 4.7-2.7 3.4 0 5.6 3.2 4.4 6.6-1.7 4.6-9.1 9.1-9.1 9.1z"/></svg></button>
           <p class="buy-note" data-buy-note aria-live="polite"></p>
         </div>
-        <p class="excerpt">A filtered tap in polished gold with a matte black hose. The spray head lifts out of its arm to rinse the sink, and two levers sit on one quiet body.</p>
-        <ul class="f-notes">
-          <li><span class="label">Filtered</span>Clean drinking water, straight from the tap.</li>
-          <li><span class="label">Flexible hose</span>The spray head lifts out to rinse the sink.</li>
-          <li><span class="label">Polished gold</span>With a matte black hose and levers.</li>
-        </ul>
       </div>
     </div>
+    <section class="pdp-more" aria-label="Farless Flex Duo Filter Tap: details">
+      <div class="more-head">
+        <span class="label kicker">Filtered tap</span>
+        <h2>Filtered water. Two levers. One tap.</h2>
+      </div>
+      <div class="more-copy"><p>A filtered tap in polished gold with a matte black hose. The spray head lifts out of its arm to rinse the sink, and two levers sit on one quiet body.</p></div>
+      <ul class="f-notes">
+        <li><span class="label">Filtered</span>Clean drinking water, straight from the tap.</li>
+        <li><span class="label">Flexible hose</span>The spray head lifts out to rinse the sink.</li>
+        <li><span class="label">Polished gold</span>With a matte black hose and levers.</li>
+      </ul>
+    </section>
   </div>
+  <script type="application/json" data-colours>[{"key": "polished-gold", "name": "Polished Gold", "image": "assets/flex-duo-filter-tap-gold.webp"}]</script>
 </main>
 
 <footer>
@@ -625,6 +861,259 @@ body.paused *, body.paused *::before, body.paused *::after{animation-play-state:
   const onScroll = () => nav.classList.toggle('solid', scrollY > 8);
   addEventListener('scroll', onScroll, { passive: true });
   onScroll();
+
+  /* ---------- favourites: kept in this browser; every heart and the bar's count follow them ---------- */
+  const FAV_KEY = 'farless:favourites';
+  let favMem = null;
+  function favList(){
+    if (favMem) return favMem;
+    // each colour is its own favourite, keyed by product and variant; older entries are keyed by product alone
+    try { const v = JSON.parse(localStorage.getItem(FAV_KEY) || '[]'); favMem = Array.isArray(v) ? v.filter(x => x && x.handle).map(x => ({ ...x, key: x.key || x.handle })) : []; }
+    catch (err){ favMem = []; }
+    return favMem;
+  }
+  function favWrite(list){
+    favMem = list;
+    try { localStorage.setItem(FAV_KEY, JSON.stringify(list)); } catch (err){}
+    syncFavs();
+  }
+  const X_ICON = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><path d="M2 2l12 12M14 2L2 14"/></svg>';
+  function renderFavList(ul){
+    const list = favList();
+    const panel = ul.closest('[data-panel]');
+    const empty = panel && panel.querySelector('[data-fav-empty]');
+    if (empty) empty.hidden = list.length > 0;
+    ul.hidden = !list.length;
+    const removeLabel = ul.dataset.removeLabel || 'Remove';
+    ul.replaceChildren(...list.map(item => {
+      const li = document.createElement('li');
+      const a = document.createElement('a');
+      a.className = 'fp-item'; a.href = item.url || '#';
+      const thumb = document.createElement('span'); thumb.className = 'fp-thumb';
+      if (item.image){ const img = document.createElement('img'); img.src = item.image; img.alt = ''; img.loading = 'lazy'; thumb.append(img); }
+      const text = document.createElement('span');
+      const h = document.createElement('h3'); h.textContent = item.title; text.append(h);
+      if (item.sub){ const sub = document.createElement('span'); sub.className = 'fp-sub'; sub.textContent = item.sub; text.append(sub); }
+      a.append(thumb, text);
+      const rm = document.createElement('button');
+      rm.type = 'button'; rm.className = 'fp-remove'; rm.dataset.favRemove = item.key;
+      rm.setAttribute('aria-label', `${removeLabel}: ${item.title}${item.sub ? ', ' + item.sub : ''}`); rm.innerHTML = X_ICON;
+      li.append(a, rm);
+      return li;
+    }));
+  }
+  function syncFavs(){
+    const list = favList();
+    const saved = new Set(list.map(x => x.key));
+    document.querySelectorAll('[data-fav]').forEach(b => b.setAttribute('aria-pressed', saved.has(b.dataset.fav) ? 'true' : 'false'));
+    document.querySelectorAll('[data-fav-count]').forEach(c => { c.textContent = list.length; c.hidden = !list.length; });
+    document.querySelectorAll('[data-fav-list]').forEach(renderFavList);
+  }
+  document.addEventListener('click', e => {
+    const heart = e.target.closest('[data-fav]');
+    if (heart){
+      e.preventDefault();
+      const d = heart.dataset, list = favList();
+      favWrite(list.some(x => x.key === d.fav) ? list.filter(x => x.key !== d.fav)
+        : [{ key: d.fav, handle: d.favHandle || d.fav, variant: d.favVariant || '', title: d.favTitle || '', url: d.favUrl || '', image: d.favImage || '', sub: d.favSub || '' }, ...list]);
+      heart.classList.remove('beat'); void heart.offsetWidth; heart.classList.add('beat');
+      return;
+    }
+    const rm = e.target.closest('[data-fav-remove]');
+    if (rm){
+      const ul = rm.closest('[data-fav-list]');
+      const items = [...ul.querySelectorAll('[data-fav-remove]')];
+      const at = items.indexOf(rm);
+      favWrite(favList().filter(x => x.key !== rm.dataset.favRemove));
+      // keep focus in the list: the next piece's remove button, or the panel's close button once it is empty
+      const left = [...ul.querySelectorAll('[data-fav-remove]')];
+      (left[Math.min(at, left.length - 1)] || ul.closest('[data-panel]').querySelector('[data-close]'))?.focus({ preventScroll: true });
+    }
+  });
+  addEventListener('storage', e => { if (e.key === FAV_KEY){ favMem = null; syncFavs(); } });
+  // on the store, drop saved pieces and colours that are gone and pick up renamed ones
+  let favChecked = false;
+  async function refreshFavs(){
+    if (favChecked || !(window.Shopify && window.Shopify.routes)) return;
+    favChecked = true;
+    const root = window.Shopify.routes.root || '/';
+    const list = favList().slice();
+    let changed = false;
+    const gone = new Set();
+    await Promise.all([...new Set(list.map(x => x.handle))].map(async handle => {
+      try {
+        const r = await fetch(`${root}products/${encodeURIComponent(handle)}.js`);
+        if (r.status === 404){ list.forEach(x => { if (x.handle === handle) gone.add(x.key); }); changed = true; return; }
+        if (!r.ok) return;
+        const p = await r.json();
+        list.filter(x => x.handle === handle).forEach(item => {
+          if (item.variant && !(p.variants || []).some(v => String(v.id) === String(item.variant))){ gone.add(item.key); changed = true; return; }
+          if (p.title && p.title !== item.title){ item.title = p.title; changed = true; }
+        });
+      } catch (err){}
+    }));
+    if (changed) favWrite(list.filter(x => !gone.has(x.key)));
+  }
+
+  /* ---------- panels: the side menu (left), search (top) and favourites (right), one open at a time;
+     Close, the shade, Escape or a link close them, focus stays inside, the page behind is out of reach ---------- */
+  const HEART_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.3s-7.4-4.5-9.1-9.1C1.7 7.8 3.9 4.6 7.3 4.6c2 0 3.5 1 4.7 2.7 1.2-1.7 2.7-2.7 4.7-2.7 3.4 0 5.6 3.2 4.4 6.6-1.7 4.6-9.1 9.1-9.1 9.1z"/></svg>';
+  function initPanels(root){
+    const panels = [...root.querySelectorAll('[data-panel]')];
+    if (!panels.length) return null;
+    const html = document.documentElement;
+    let current = null, opener = null, shut = [];
+    const menu = root.querySelector('[data-panel="menu"]');
+    const main = menu && menu.querySelector('.sm-main'), sub = menu && menu.querySelector('.sm-sub'), subOpener = menu && menu.querySelector('[data-sub-open]');
+    const focusables = () => [...current.querySelectorAll('a[href],button,input,select,textarea')].filter(el => !el.disabled && !el.closest('[inert]') && el.getClientRects().length && getComputedStyle(el).visibility !== 'hidden');
+    function setSub(on, focus){
+      if (!sub) return;
+      menu.classList.toggle('sub', on);
+      if (subOpener) subOpener.setAttribute('aria-expanded', on ? 'true' : 'false');
+      main.inert = on;
+      sub.inert = !on;
+      if (focus) (on ? sub.querySelector('[data-sub-close]') : subOpener)?.focus({ preventScroll: true });
+    }
+    // quiet: opened by the theme editor, so focus stays with the editor and the page stays reachable
+    function open(name, from, quiet){
+      const panel = panels.find(p => p.dataset.panel === name);
+      if (!panel || panel === current) return;
+      if (current) close(false);
+      current = panel;
+      opener = from || root.querySelector(`[data-open="${name}"]`);
+      if (panel === menu) setSub(false);
+      panel.classList.add('open');
+      html.classList.add('menu-open');
+      root.querySelectorAll(`[data-open="${name}"]`).forEach(b => b.setAttribute('aria-expanded', 'true'));
+      if (name === 'favourites') refreshFavs();
+      if (quiet === true) return;
+      shut = [...document.body.children].filter(el => !el.contains(panel) && !el.inert && !el.matches('.menu-scrim'));
+      const bar = root.querySelector('nav.top');
+      if (bar && !bar.contains(panel)) shut.push(bar);
+      shut.forEach(el => { el.inert = true; });
+      const first = panel.querySelector('[data-autofocus]') || panel.querySelector('.sm-close');
+      setTimeout(() => first && first.focus({ preventScroll: true }), 60);
+    }
+    function close(returnFocus){
+      if (!current) return;
+      const name = current.dataset.panel, back = opener;
+      current.classList.remove('open');
+      html.classList.remove('menu-open');
+      root.querySelectorAll(`[data-open="${name}"]`).forEach(b => b.setAttribute('aria-expanded', 'false'));
+      shut.forEach(el => { el.inert = false; });
+      shut = []; current = null; opener = null;
+      if (returnFocus !== false && back) back.focus({ preventScroll: true });
+    }
+    function onClick(e){
+      const t = e.target.closest('[data-open],[data-close],[data-sub-open],[data-sub-close],[data-panel] a[href]');
+      if (!t || !root.contains(t)) return;
+      if (t.matches('[data-open]')){ e.preventDefault(); if (current && current.dataset.panel === t.dataset.open) close(); else open(t.dataset.open, t); }
+      else if (t.matches('[data-close]')) close();
+      else if (t.matches('[data-sub-open]')) setSub(true, true);
+      else if (t.matches('[data-sub-close]')) setSub(false, true);
+      else close(false);   // a link: the panel closes and the page follows it
+    }
+    function onKeyDown(e){
+      if (!current) return;
+      if (e.key === 'Escape'){
+        e.preventDefault();
+        if (current === menu && menu.classList.contains('sub')) setSub(false, true); else close();
+      } else if (e.key === 'Tab'){
+        const f = focusables();
+        if (!f.length) return;
+        const first = f[0], last = f[f.length - 1];
+        if (e.shiftKey && (document.activeElement === first || !current.contains(document.activeElement))){ e.preventDefault(); last.focus(); }
+        else if (!e.shiftKey && (document.activeElement === last || !current.contains(document.activeElement))){ e.preventDefault(); first.focus(); }
+      }
+    }
+    if (sub) sub.inert = true;
+    const stopSearch = initSearch(root.querySelector('[data-panel="search"]'));
+    root.addEventListener('click', onClick);
+    document.addEventListener('keydown', onKeyDown);
+    syncFavs();
+    return { open, close, destroy(){ close(false); stopSearch(); root.removeEventListener('click', onClick); document.removeEventListener('keydown', onKeyDown); } };
+  }
+
+  /* ---------- search: the pieces that match appear as you type; Enter opens the full results page ---------- */
+  function initSearch(panel){
+    if (!panel) return () => {};
+    const form = panel.querySelector('[data-search-form]'), input = form.querySelector('input[name="q"]');
+    const out = panel.querySelector('[data-search-results]'), idle = panel.querySelector('[data-search-idle]');
+    const local = panel.querySelector('[data-search-local]');
+    const items = local ? JSON.parse(local.textContent) : null;
+    const L = panel.dataset;
+    let timer = 0, ctrl = null, last = null;
+    const heading = text => { const p = document.createElement('p'); p.className = 'label'; p.textContent = text; return p; };
+    function card(it){
+      const li = document.createElement('li'); li.className = 'cl-card';
+      const a = document.createElement('a'); a.href = it.url;
+      const pic = document.createElement('div'); pic.className = 'cl-pic';
+      const obj = document.createElement('div'); obj.className = 'cl-obj';
+      obj.style.cssText = `--ar:${it.ar};--shadow-x:${it.foot}%;--shadow-w:34%`;
+      const img = document.createElement('img'); img.src = it.image; img.alt = ''; img.loading = 'lazy';
+      obj.append(img); pic.append(obj);
+      const meta = document.createElement('div'); meta.className = 'cl-meta';
+      const h = document.createElement('h2'); h.textContent = it.title; meta.append(h);
+      const lab = document.createElement('span'); lab.className = 'label';
+      lab.textContent = it.colours > 1 ? `${it.colours} ${L.labelColours || 'colours'}` : (L.labelSold || 'Sold out');
+      meta.append(lab);
+      a.append(pic, meta);
+      const fav = document.createElement('button');
+      fav.type = 'button'; fav.className = 'fav';
+      Object.assign(fav.dataset, { fav: `${it.handle}:${it.colourKey || ''}`, favHandle: it.handle, favTitle: it.title, favUrl: it.url, favImage: it.image, favSub: it.colour || '' });
+      fav.setAttribute('aria-label', `${L.labelSave || 'Save to favourites'}: ${it.title}${it.colour ? ', ' + it.colour : ''}`);
+      fav.innerHTML = HEART_ICON;
+      li.append(a, fav);
+      return li;
+    }
+    function show(nodes, q){
+      idle.hidden = true;
+      out.replaceChildren(...nodes);
+      if (!nodes.length){ const p = document.createElement('p'); p.className = 'sp-none'; p.textContent = L.labelNone || 'Nothing matches that yet.'; out.append(p); }
+      if (L.searchPage){
+        const all = document.createElement('a'); all.className = 'link sp-all';
+        all.href = `${L.searchPage}?q=${encodeURIComponent(q)}&type=product`; all.textContent = L.labelAll || 'See all results';
+        out.append(all);
+      }
+      // the words on fetched cards follow the menu bar's settings
+      if (L.labelSave) out.querySelectorAll('[data-fav]').forEach(f => f.setAttribute('aria-label', `${L.labelSave}: ${f.dataset.favTitle}${f.dataset.favSub ? ', ' + f.dataset.favSub : ''}`));
+      if (L.labelSold) out.querySelectorAll('[data-sold]').forEach(x => { x.textContent = L.labelSold; });
+      syncFavs();
+    }
+    async function run(){
+      const q = input.value.trim();
+      if (q === last) return;
+      last = q;
+      if (ctrl) ctrl.abort();
+      if (!q){ out.replaceChildren(); idle.hidden = false; return; }
+      if (items){
+        const words = q.toLowerCase().split(/\s+/);
+        const hits = items.filter(it => words.every(w => `${it.title} ${it.sub || ''} ${it.colour || ''}`.toLowerCase().includes(w)));
+        const nodes = [];
+        if (hits.length){ const ul = document.createElement('ul'); ul.className = 'sp-grid'; ul.append(...hits.map(card)); nodes.push(heading(L.labelProducts || 'Pieces'), ul); }
+        show(nodes, q);
+        return;
+      }
+      ctrl = new AbortController();
+      try {
+        const r = await fetch(`${L.suggestUrl}?q=${encodeURIComponent(q)}&resources[type]=product,collection&resources[limit]=8&resources[options][unavailable_products]=last&section_id=farless-predictive`, { signal: ctrl.signal });
+        const doc = new DOMParser().parseFromString(await r.text(), 'text/html');
+        const nodes = [];
+        const products = doc.querySelector('[data-results="products"]'), cols = doc.querySelector('[data-results="collections"]');
+        if (products){ nodes.push(heading(L.labelProducts || 'Pieces'), products); }
+        if (cols){ nodes.push(heading(L.labelCollections || 'Collections'), cols); }
+        show(nodes, q);
+      } catch (err){ if (err.name !== 'AbortError') show([], q); }
+    }
+    const onInput = () => { clearTimeout(timer); timer = setTimeout(run, 180); };
+    const onSubmit = e => {
+      if (!L.searchPage || !input.value.trim()){ e.preventDefault(); clearTimeout(timer); last = null; run(); }
+    };
+    input.addEventListener('input', onInput);
+    form.addEventListener('submit', onSubmit);
+    return () => { clearTimeout(timer); if (ctrl) ctrl.abort(); input.removeEventListener('input', onInput); form.removeEventListener('submit', onSubmit); };
+  }
+  initPanels(document.body);
 
   /* ---------- colour picker: the tap slides sideways to the chosen colour ---------- */
   const stage = root.querySelector('[data-stage]');
@@ -744,6 +1233,14 @@ body.paused *, body.paused *::before, body.paused *::after{animation-play-state:
     const chosen = document.querySelector('.swatches [aria-checked="true"]');
     note.textContent = `Preview only. In the shop this adds the ${add.dataset.title}${chosen ? ` in ${chosen.getAttribute('aria-label')}` : ''} to the cart.`;
   });
-  if (stage) stage.addEventListener('farless:colour', () => { note.textContent = ''; });
+  const heart = document.querySelector('.buy-actions [data-fav]');
+  const colours = JSON.parse(document.querySelector('[data-colours]').textContent);
+  if (stage) stage.addEventListener('farless:colour', e => {
+    note.textContent = '';
+    const c = colours[e.detail.index];
+    Object.assign(heart.dataset, { fav: `${heart.dataset.favHandle}:${c.key}`, favVariant: c.key, favImage: c.image, favSub: c.name });
+    heart.setAttribute('aria-label', `Save to favourites: ${heart.dataset.favTitle}, ${c.name}`);
+    syncFavs();
+  });
 })();
 </script>

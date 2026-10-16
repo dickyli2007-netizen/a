@@ -4,6 +4,9 @@
   Colours come from an option named Colour, Color or Finish; each colour shows its variant's image
   (a transparent cut-out). Product fields in the farless namespace carry the page copy:
   kicker, lede, notes (one per line, "Label | text") and foot_x (where the product's foot is, in %).
+  After Gessi's: beside the product only its name, the colour picker and the button; the small heading,
+  tagline, description and notes sit below the product. The description there leaves out an opening
+  paragraph that only repeats the tagline, since the tagline is the heading above it.
 {%- endcomment -%}
 {%- liquid
   assign current = product.selected_or_first_available_variant
@@ -42,6 +45,13 @@
       break
     endif
   endfor
+
+  assign full = product.description
+  assign opening = paras.first | strip_html | strip
+  if lede != blank and opening == lede
+    assign full = product.description | remove_first: paras.first | remove_first: '</p>' | strip
+  endif
+  assign notes = product.metafields.farless.notes.value | strip
 -%}
 {%- capture nl %}
 {% endcapture -%}
@@ -95,11 +105,7 @@
         {%- endif %}
       </div>
       <div class="buy-col">
-        <span class="label">{{ kicker | escape }}</span>
         <h1>{{ product.title | escape }}</h1>
-        {%- if lede != blank %}
-        <p class="lede">{{ lede | escape }}</p>
-        {%- endif -%}
         {%- if section.settings.show_prices %}
         <p class="price" data-price>{{ current.price | money }}</p>
         {%- endif -%}
@@ -165,25 +171,42 @@
           {%- endform -%}
           <button type="button" class="fav big" data-fav="{{ product.handle }}:{{ current.id }}" data-fav-handle="{{ product.handle }}" data-fav-variant="{{ current.id }}" data-fav-base="{{ product.url }}" data-fav-title="{{ product.title | escape }}" data-fav-url="{{ product.url }}?variant={{ current.id }}" data-fav-image="{{ heart_image }}" data-fav-sub="{{ heart_colour | escape }}" data-label-save="{{ section.settings.save_label | escape }}" aria-pressed="false" aria-label="{{ section.settings.save_label | escape }}: {{ product.title | escape }}{% if heart_colour != blank %}, {{ heart_colour | escape }}{% endif %}">{% render 'farless-heart' %}</button>
         </div>
-        {%- if excerpt != blank %}
-        <p class="excerpt">{{ excerpt | escape }}</p>
-        {%- endif -%}
-        {%- assign notes = product.metafields.farless.notes.value | strip -%}
-        {%- if notes != blank %}
-        <ul class="f-notes">
-          {%- assign lines = notes | split: nl -%}
-          {%- for line in lines -%}
-            {%- assign parts = line | split: '|' -%}
-            {%- assign note_label = parts.first | strip -%}
-            {%- assign note_text = parts | slice: 1, 9 | join: '|' | strip -%}
-            {%- if note_label != blank %}
-          <li><span class="label">{{ note_label | escape }}</span>{{ note_text | escape }}</li>
-            {%- endif -%}
-          {%- endfor %}
-        </ul>
-        {%- endif %}
       </div>
     </div>
+    {%- liquid
+      assign show_copy = false
+      if section.settings.description == 'full' and full != blank
+        assign show_copy = true
+      elsif section.settings.description == 'first' and excerpt != blank
+        assign show_copy = true
+      endif
+    -%}
+    {%- if lede != blank or show_copy or notes != blank %}
+    <section class="pdp-more" aria-label="{{ product.title | escape }}: {{ section.settings.details_label | escape }}">
+      <div class="more-head">
+        <span class="label kicker">{{ kicker | escape }}</span>
+        {%- if lede != blank %}
+        <h2>{{ lede | escape }}</h2>
+        {%- endif %}
+      </div>
+      {%- if show_copy %}
+      <div class="more-copy">{% if section.settings.description == 'full' %}{{ full }}{% else %}<p>{{ excerpt | escape }}</p>{% endif %}</div>
+      {%- endif -%}
+      {%- if notes != blank %}
+      <ul class="f-notes">
+        {%- assign lines = notes | split: nl -%}
+        {%- for line in lines -%}
+          {%- assign parts = line | split: '|' -%}
+          {%- assign note_label = parts.first | strip -%}
+          {%- assign note_text = parts | slice: 1, 9 | join: '|' | strip -%}
+          {%- if note_label != blank %}
+        <li><span class="label">{{ note_label | escape }}</span>{{ note_text | escape }}</li>
+          {%- endif -%}
+        {%- endfor %}
+      </ul>
+      {%- endif %}
+    </section>
+    {%- endif %}
   </div>
 </div>
 <script type="application/json" data-variants data-colour-pos="{{ colour_pos }}">[
@@ -202,6 +225,9 @@
     { "type": "paragraph", "content": "Each product fills this page by itself: its colours, its cut-out pictures and its Farless fields (Small heading, Tagline, Notes, Shadow position) in the product admin." },
     { "type": "text", "id": "kicker", "label": "Small heading", "default": "Farless", "info": "Used when the product has no Small heading field of its own." },
     { "type": "checkbox", "id": "show_prices", "default": false, "label": "Show prices" },
+    { "type": "header", "content": "Details below the product" },
+    { "type": "select", "id": "description", "label": "Description", "default": "first", "options": [ { "value": "first", "label": "Its first paragraph" }, { "value": "full", "label": "The whole description" }, { "value": "none", "label": "None" } ], "info": "The product's Small heading and Tagline head the details, and its Notes run across underneath. An opening paragraph that repeats the Tagline is left out." },
+    { "type": "text", "id": "details_label", "label": "Details, for screen readers", "default": "details" },
     { "type": "header", "content": "Colour picker" },
     { "type": "text", "id": "colour_heading", "label": "Heading", "default": "Colour." },
     { "type": "text", "id": "colour_subheading", "label": "Heading, second part", "default": "Pick your favourite." },

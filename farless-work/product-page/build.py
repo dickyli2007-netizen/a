@@ -1,9 +1,10 @@
 """The Farless product page template: every product gets a page built from this one design.
 
 Takes the head, styles, nav and footer from farless/index.html and builds a product page around
-them: the product cut out on its own on the page, sliding sideways to the chosen colour, with the
-colour picker in the column beside it. The colour picker lives on product pages only; the main
-page keeps its shop section as it is.
+them, after Gessi's: the product cut out on its own on the page, sliding sideways to the chosen
+colour, with only its name, the colour picker and the button in the column beside it, and the
+details (tagline, description, notes) below. The colour picker lives on product pages only; the
+main page keeps its shop section as it is.
 
 Each product is one file in products/<handle>.json (see products/faucet.json), with its cut-out
 images in assets/<handle>/ (make them with cutout.py). A product with one colour gets the same
@@ -16,6 +17,9 @@ Run from the repo root:
 Writes, per product:
   farless-work/product-page/pages/<handle>/index.html   full page, for local testing (serve it with assets/<handle> as assets/)
   farless-work/product-page/pages/<handle>/page.html    the same page without the document shell, for the artifact preview
+The bar's side menu, search and favourites come from the main page too, so their pictures (the
+menu-* and search-* files in farless/assets, listed in PANEL_ASSETS) go into assets/ beside the
+product's own.
 """
 import html
 import json
@@ -53,16 +57,22 @@ def link_home(html):
 head = src[src.index('<head>') + len('<head>'):src.index('</head>')]
 nav = link_home(cut(src, '<nav class="top"', '</nav>'))
 footer = link_home(cut(src, '<footer>', '</footer>'))
+# the bar's side menu, search sheet and favourites, with their script, so the bar works on the preview too;
+# their pictures are the main page's (farless/assets: PANEL_ASSETS), published beside the product's
+panels = link_home(src[src.index('<div class="menu-scrim"'):src.index('\n\n<header>')]).replace('"url": "#shop"', f'"url": "{SITE}#shop"')
+PANEL_ASSETS = sorted(set(re.findall(r'assets/((?:menu|search)-[\w.-]+)', panels)))
+JS_PANELS = src[src.index('  /* ---------- favourites:'):src.index('  initPanels(document.body);\n') + len('  initPanels(document.body);\n')]
+HEART = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.3s-7.4-4.5-9.1-9.1C1.7 7.8 3.9 4.6 7.3 4.6c2 0 3.5 1 4.7 2.7 1.2-1.7 2.7-2.7 4.7-2.7 3.4 0 5.6 3.2 4.4 6.6-1.7 4.6-9.1 9.1-9.1 9.1z"/></svg>'
 
 CSS = '''
-/* ---------- product page: the tap alone on the page, the choice beside it ---------- */
+/* ---------- product page, after Gessi's: the product alone with its name, colour and button beside it; the details below ---------- */
 .pdp{padding:calc(118px + env(safe-area-inset-top, 0px)) var(--gutter) clamp(96px,13vh,150px)}
 .crumbs{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:clamp(20px,3vh,36px)}
 .crumbs a{text-decoration:none;color:var(--text-secondary);transition:color .35s var(--ease-out)}
 .crumbs a:hover{color:var(--text-primary)}
 .crumbs [aria-current]{color:var(--text-primary)}
-.pdp-grid{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:clamp(40px,6vw,110px);align-items:start}
-.stage-col{position:sticky;top:92px;min-width:0}
+.pdp-grid{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);gap:clamp(40px,6vw,110px);align-items:center}
+.stage-col{min-width:0}
 .stage{position:relative;height:min(72vh,760px);min-height:420px;touch-action:pan-y;cursor:grab;user-select:none;-webkit-user-select:none;
   -webkit-mask-image:linear-gradient(90deg,transparent,#000 9%,#000 91%,transparent);mask-image:linear-gradient(90deg,transparent,#000 9%,#000 91%,transparent)}
 .stage.dragging{cursor:grabbing}
@@ -81,10 +91,11 @@ CSS = '''
 .f-rail.live .bar i{transition:none}
 .f-rail .label{flex:none;font-variant-numeric:tabular-nums;letter-spacing:.2em}
 .f-rail .label b{font-weight:400;color:var(--text-primary)}
-.buy-col{min-width:0;padding-top:clamp(0px,3vh,40px)}
-.buy-col h1{font:200 clamp(2.4rem,4vw,3.9rem)/1.06 var(--font);letter-spacing:-.005em;margin-top:22px}
-.buy-col .lede{margin-top:14px;color:var(--text-secondary);font-size:1.12rem}
-.finish{margin-top:40px;padding-top:30px;border-top:1px solid var(--hair)}
+/* beside the product only its name, the colour and the button, so the eye stays on the piece */
+.buy-col{min-width:0;max-width:440px}
+.buy-col h1{font:200 clamp(2.2rem,3.3vw,3.3rem)/1.08 var(--font);letter-spacing:-.005em}
+.buy-col .price{margin-top:16px;font:300 1.15rem/1 var(--font);letter-spacing:.06em}
+.finish{margin-top:clamp(34px,6vh,60px)}
 .finish-h{font:400 clamp(1.3rem,1.8vw,1.65rem)/1.25 var(--font);color:var(--text-primary)}
 .finish-h span{font-weight:300;color:var(--text-secondary)}
 .finish-name{display:flex;align-items:baseline;gap:14px;margin-top:20px;font:400 1rem/1.4 var(--font);letter-spacing:.02em}
@@ -102,37 +113,44 @@ CSS = '''
 .opt{display:grid;gap:10px}
 .opt select{font:300 1rem/1.4 var(--font);color:var(--text-primary);background:transparent;border:1px solid var(--hair-strong);padding:12px 14px;border-radius:0}
 .opt select:focus-visible{outline:1px solid var(--accent);outline-offset:3px}
-.buy-actions{display:grid;gap:14px;margin-top:34px}
+.buy-actions{display:grid;gap:14px;margin-top:clamp(32px,5vh,48px)}
 .buy-actions form{display:grid;gap:14px;margin:0}
-.buy-col .price{margin-top:18px;font:300 1.15rem/1 var(--font);letter-spacing:.06em}
-.buy-col .excerpt p + p{margin-top:1em}
 .buy-actions .btn{justify-content:center;cursor:pointer;font-family:var(--font)}
-.buy-note{min-height:1.6em;color:var(--text-secondary);font-size:.92rem;line-height:1.6}
-.buy-col .excerpt{margin-top:40px;color:var(--text-secondary);max-width:46ch}
-.buy-col .f-notes{margin-top:36px}
+.buy-note{grid-column:1 / -1;min-height:1.6em;color:var(--text-secondary);font-size:.92rem;line-height:1.6}
+/* the details, below the product: the tagline large, the description beside it, the notes across */
+.pdp-more{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);column-gap:clamp(40px,6vw,110px);margin-top:clamp(72px,11vh,130px);padding-top:clamp(56px,8vh,88px);border-top:1px solid var(--hair)}
+.more-head{display:contents}
+.more-head .label{grid-column:1 / -1}
+.more-head h2{min-width:0;font:200 clamp(2rem,3.4vw,3.2rem)/1.12 var(--font);letter-spacing:-.005em;max-width:18ch}
+.more-copy{grid-column:2;min-width:0;max-width:440px;color:var(--text-secondary);line-height:1.75;padding-top:6px}
+.more-copy > * + *{margin-top:1em}
+.more-copy ul,.more-copy ol{padding-left:1.1em}
+.more-copy li + li{margin-top:.45em}
+.more-copy strong,.more-copy b{font-weight:400;color:var(--text-primary)}
+.more-copy a{color:var(--text-primary)}
+.pdp-more .f-notes{grid-column:1 / -1;margin-top:clamp(48px,7vh,72px)}
 @media (max-width:860px){
   .pdp{padding-top:calc(94px + env(safe-area-inset-top, 0px))}
   .crumbs{display:none}
   .pdp-grid{grid-template-columns:1fr;row-gap:0}
   .buy-col{display:contents}
-  .buy-col > .label{order:0}
-  .buy-col h1{order:1;margin-top:12px}
-  .buy-col .lede{order:2;margin-top:6px}
-  .stage-col{order:3;position:static;margin-top:4px}
+  .buy-col h1{order:1}
+  .buy-col .price{order:2;margin-top:8px}
+  .stage-col{order:3;margin-top:4px}
   .stage{height:min(50vh,520px);min-height:280px}
-  .finish{order:4;margin-top:20px;padding-top:0;border-top:0}
+  .finish{order:4;margin-top:20px}
+  .opts{order:4}
   .buy-actions{order:5;margin-top:28px}
-  .buy-col .excerpt{order:6;margin-top:36px}
-  .buy-col .f-notes{order:7}
+  .pdp-more{grid-template-columns:1fr;margin-top:72px;padding-top:48px}
+  .more-copy{grid-column:auto;max-width:none;margin-top:24px;padding-top:0}
 }
 @media (max-width:600px){
   .pdp{padding-top:calc(84px + env(safe-area-inset-top, 0px))}
-  .buy-col > .label{display:none}
-  .buy-col h1{margin-top:0}
   .stage{height:min(44vh,440px);min-height:260px}
   .f-rail{margin-top:12px}
   .finish-name{margin-top:12px}
   .swatches{margin-top:8px}
+  .buy-actions{margin-top:22px}
 }
 '''
 
@@ -164,9 +182,30 @@ def render_main(prod, w, h):
     rail = (f'        <div class="f-rail" aria-hidden="true"><span class="bar"><i></i></span>'
             f'<span class="label"><b data-count>01</b> / {n:02d}</span></div>\n') if n > 1 else ''
     stage_attrs = f'aria-roledescription="carousel" aria-label="{e(title)} in {n} colours"' if n > 1 else f'aria-label="{e(title)}"'
-    notes = '\n'.join(f'          <li><span class="label">{e(k)}</span>{e(v)}</li>' for k, v in prod.get('notes', []))
-    notes = f'        <ul class="f-notes">\n{notes}\n        </ul>\n' if notes else ''
+    notes = '\n'.join(f'        <li><span class="label">{e(k)}</span>{e(v)}</li>' for k, v in prod.get('notes', []))
+    notes = f'      <ul class="f-notes">\n{notes}\n      </ul>\n' if notes else ''
     crumb = f'<a href="{SITE}#shop">{e(prod["collection"])}</a><span aria-hidden="true">/</span>' if prod.get('collection') else ''
+    # the details sit below the product: the small heading and tagline, the description, the notes
+    lede = prod.get('lede', '')
+    more_head = (
+        '      <div class="more-head">\n'
+        f'        <span class="label kicker">{e(prod.get("kicker", "Farless"))}</span>\n'
+        + (f'        <h2>{e(lede)}</h2>\n' if lede else '')
+        + '      </div>\n')
+    more_copy = f'      <div class="more-copy"><p>{e(prod["description"])}</p></div>\n' if prod.get('description') else ''
+    # each colour is its own favourite, as in the store; the heart follows the picker
+    slug = lambda t: re.sub(r'[^a-z0-9]+', '-', t.lower()).strip('-')
+    f0 = fins[0]
+    heart = (f'          <button type="button" class="fav big" data-fav="{e(prod["handle"])}:{slug(f0["name"])}" data-fav-handle="{e(prod["handle"])}" '
+             f'data-fav-variant="{slug(f0["name"])}" data-fav-title="{e(title)}" data-fav-url="{e(prod.get("preview", {}).get("url", "#"))}" '
+             f'data-fav-image="assets/{e(f0["image"])}" data-fav-sub="{e(f0["name"])}" aria-pressed="false" '
+             f'aria-label="Save to favourites: {e(title)}, {e(f0["name"])}">{HEART}</button>\n')
+    colours = json.dumps([{'key': slug(f['name']), 'name': f['name'], 'image': f'assets/{f["image"]}'} for f in fins])
+    more = (
+        f'    <section class="pdp-more" aria-label="{e(title)}: details">\n'
+        f'{more_head}{more_copy}{notes}'
+        '    </section>\n'
+    ) if lede or more_copy or notes else ''
     return (
         '<main id="main" class="pdp" tabindex="-1">\n'
         '  <div class="wrap">\n'
@@ -179,19 +218,18 @@ def render_main(prod, w, h):
         f'{rail}'
         '      </div>\n'
         '      <div class="buy-col">\n'
-        f'        <span class="label">{e(prod.get("kicker", "Farless"))}</span>\n'
         f'        <h1>{e(title)}</h1>\n'
-        f'        <p class="lede">{e(prod.get("lede", ""))}</p>\n'
         f'{picker}'
-        '        <div class="buy-actions">\n'
+        '        <div class="buy-actions has-fav">\n'
         f'          <button class="btn solid" type="button" data-add data-title="{e(title)}">Add to cart</button>\n'
+        f'{heart}'
         '          <p class="buy-note" data-buy-note aria-live="polite"></p>\n'
         '        </div>\n'
-        f'        <p class="excerpt">{e(prod.get("description", ""))}</p>\n'
-        f'{notes}'
         '      </div>\n'
         '    </div>\n'
+        f'{more}'
         '  </div>\n'
+        f'  <script type="application/json" data-colours>{colours.replace("<", "\\u003c")}</script>\n'
         '</main>'
     )
 
@@ -318,7 +356,15 @@ PREVIEW_JS = '''
     const chosen = document.querySelector('.swatches [aria-checked="true"]');
     note.textContent = `Preview only. In the shop this adds the ${add.dataset.title}${chosen ? ` in ${chosen.getAttribute('aria-label')}` : ''} to the cart.`;
   });
-  if (stage) stage.addEventListener('farless:colour', () => { note.textContent = ''; });
+  const heart = document.querySelector('.buy-actions [data-fav]');
+  const colours = JSON.parse(document.querySelector('[data-colours]').textContent);
+  if (stage) stage.addEventListener('farless:colour', e => {
+    note.textContent = '';
+    const c = colours[e.detail.index];
+    Object.assign(heart.dataset, { fav: `${heart.dataset.favHandle}:${c.key}`, favVariant: c.key, favImage: c.image, favSub: c.name });
+    heart.setAttribute('aria-label', `Save to favourites: ${heart.dataset.favTitle}, ${c.name}`);
+    syncFavs();
+  });
 '''
 
 JS_PREVIEW_HEAD = '''  const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
@@ -330,7 +376,7 @@ JS_PREVIEW_HEAD = '''  const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v)
 
 '''
 
-JS = "<script>\n(() => {\n  'use strict';\n" + JS_PREVIEW_HEAD + JS_PICKER + PREVIEW_JS + "})();\n</script>"
+JS = "<script>\n(() => {\n  'use strict';\n" + JS_PREVIEW_HEAD + JS_PANELS + '\n' + JS_PICKER + PREVIEW_JS + "})();\n</script>"
 
 
 def build(prod):
@@ -345,7 +391,7 @@ def build(prod):
         '<a class="skip" href="#main">Skip to content</a>',
         '<div class="env" aria-hidden="true"></div>',
         '<div class="grain" aria-hidden="true"></div>',
-        '', nav, '', render_main(prod, w, h), '', footer, '', JS,
+        '', nav, panels, '', render_main(prod, w, h), '', footer, '', JS,
     ])
     title = f'{prod["title"]} | Farless'
     style_end = head.rindex('</style>')
