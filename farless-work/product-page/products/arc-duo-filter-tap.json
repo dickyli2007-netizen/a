@@ -4,7 +4,7 @@
   "kicker": "Filtered tap",
   "lede": "Filtered water. Two levers. One arc.",
   "collection": "Filtered Faucets",
-  "description": "A filtered tap in brushed steel with a high arched spout and a ribbed spray head that pulls down. Two slim levers sit on one quiet body.",
+  "description": "A filtered tap with a high arched spout and a ribbed spray head that pulls down. Two slim levers sit on one quiet body.",
   "notes": [
     [
       "Filtered",
@@ -15,8 +15,8 @@
       "The ribbed head draws down on its hose."
     ],
     [
-      "Brushed steel",
-      "One clean arc."
+      "Two finishes",
+      "Brushed nickel or matte black."
     ]
   ],
   "shadow": {
@@ -25,11 +25,18 @@
   },
   "finishes": [
     {
-      "key": "steel",
-      "name": "Brushed Steel",
-      "image": "arc-duo-filter-tap-steel.webp",
-      "swatch": "linear-gradient(135deg,#fbfbfc 0%,#c3c6ca 38%,#eef0f2 56%,#8c9095 100%)"
+      "key": "nickel",
+      "name": "Brushed Nickel",
+      "image": "arc-duo-filter-tap-nickel.webp",
+      "stand_in": true
+    },
+    {
+      "key": "black",
+      "name": "Matte Black",
+      "image": "arc-duo-filter-tap-black.webp",
+      "stand_in": true
     }
   ],
-  "to_confirm": "Name, copy and price are working choices from the maker's photos; the owner confirms them."
+  "to_confirm": "Name, copy and price are working choices from the maker's photos; the owner confirms them.",
+  "stand_in_source": "arc-duo-filter-tap-steel.webp"
 }

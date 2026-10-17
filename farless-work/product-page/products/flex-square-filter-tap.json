@@ -2,9 +2,9 @@
   "handle": "flex-square-filter-tap",
   "title": "Farless Flex Square Filter Tap",
   "kicker": "Filtered tap",
-  "lede": "Filtered water in brushed gold.",
+  "lede": "Filtered water. One squared arm.",
   "collection": "Filtered Faucets",
-  "description": "A filtered tap in brushed gold with a squared spout arm and a matte black hose. The spray head lifts out to rinse the sink, and one lever runs the tap.",
+  "description": "A filtered tap with a squared spout arm and a flexible hose. The spray head lifts out to rinse the sink, and one lever runs the tap.",
   "notes": [
     [
       "Filtered",
@@ -15,8 +15,8 @@
       "The spray head lifts out to rinse the sink."
     ],
     [
-      "Brushed gold",
-      "With a matte black hose and lever."
+      "Two finishes",
+      "Brushed nickel or matte black."
     ]
   ],
   "shadow": {
@@ -25,11 +25,18 @@
   },
   "finishes": [
     {
-      "key": "brushed-gold",
-      "name": "Brushed Gold",
-      "image": "flex-square-filter-tap-brushed-gold.webp",
-      "swatch": "linear-gradient(135deg,#f6e4b0 0%,#c09a52 40%,#e3c682 58%,#7a5822 100%)"
+      "key": "nickel",
+      "name": "Brushed Nickel",
+      "image": "flex-square-filter-tap-nickel.webp",
+      "stand_in": true
+    },
+    {
+      "key": "black",
+      "name": "Matte Black",
+      "image": "flex-square-filter-tap-black.webp",
+      "stand_in": true
     }
   ],
-  "to_confirm": "Name, copy and price are working choices from the maker's photos; the owner confirms them."
+  "to_confirm": "Name, copy and price are working choices from the maker's photos; the owner confirms them.",
+  "stand_in_source": "flex-square-filter-tap-brushed-gold.webp"
 }

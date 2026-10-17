@@ -5,7 +5,8 @@ home page's collection card (3:2), so the card never crops a single cut-out.
   python3 farless-work/product-page/collection_image.py OUT.jpg HANDLE [HANDLE ...]
 
 Each HANDLE needs products/HANDLE.json (its first finish's image and shadow.x) and its cut-out in
-assets/HANDLE/.
+assets/HANDLE/. HANDLE@FINISH picks another finish by its key (faucet@black), so one product can stand
+in two finishes side by side.
 """
 import json
 import sys
@@ -31,9 +32,11 @@ def main():
     canvas = Image.fromarray(base.astype(np.uint8), 'RGB').convert('RGBA')
 
     pieces = []
-    for h in handles:
+    for spec in handles:
+        h, _, key = spec.partition('@')
         p = json.loads((HERE / 'products' / f'{h}.json').read_text())
-        im = Image.open(HERE / 'assets' / h / p['finishes'][0]['image']).convert('RGBA')
+        fin = next(f for f in p['finishes'] if f['key'] == key) if key else p['finishes'][0]
+        im = Image.open(HERE / 'assets' / h / fin['image']).convert('RGBA')
         pieces.append((im, p['shadow']['x'] / 100))
     tall = int(H * .5)
     floor = int(H * .77)

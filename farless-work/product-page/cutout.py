@@ -13,10 +13,12 @@ Options:
   --mask PATH          use a hand-fixed mask (white = product) instead of finding one; the first run
                        saves mask.png, so fix that in any editor and pass it back if an edge is wrong
   --floor ROW          treat everything below this pixel row as backdrop (drops floor reflections)
-  --recolour brass,copper,black
-                       also write stand-in finishes recoloured from this photo, named NAME-PREFIX-<finish>
-                       (tap-chrome -> tap-brass ...). Stand-ins are for previews only; real photos of
-                       each finish replace them before a product goes live.
+  --recolour nickel,black
+                       also write stand-in finishes recoloured from this photo, named PREFIX-<finish>
+                       (tap-chrome -> tap-nickel ...; known: nickel, black, brass, copper). Stand-ins stand
+                       in until real photos of each finish exist; the dark parts (a black hose) stay dark.
+  --prefix PREFIX      the start of the stand-ins' names (default: NAME without its last -word)
+  --only-recolour      write only the stand-ins, not the cut-out itself (to recolour an existing cut-out)
 
 Always look at the result on the dark page before using it: every photo is different, and
 manufacturer cut-outs (transparent PNGs) are better than any automatic cut when they exist.
@@ -33,6 +35,8 @@ HERE = Path(__file__).resolve().parent
 
 # gradient maps from the photo's brightness to each finish (dark -> light)
 FINISH_MAPS = {
+    # brushed nickel: a warm grey with soft, brushed reflections
+    'nickel': (1.4, [(0, '#121110'), (.16, '#2d2a27'), (.4, '#67625b'), (.6, '#958f86'), (.78, '#bab4aa'), (.92, '#d9d4cb'), (1, '#ece8e0')]),
     'brass': (0.8, [(0, '#1a1006'), (.18, '#3d2a12'), (.42, '#86642c'), (.62, '#b8924c'), (.8, '#dcbd7c'), (.93, '#f1dfab'), (1, '#fbf3d9')]),
     'copper': (0.8, [(0, '#170a06'), (.18, '#3b1c11'), (.42, '#7e4128'), (.62, '#b06c4c'), (.8, '#d69b7d'), (.93, '#ecc6b0'), (1, '#f9ebe1')]),
     'black': (3.0, [(0, '#0e0d0c'), (.3, '#181716'), (.55, '#252321'), (.75, '#3a3734'), (.9, '#615c57'), (1, '#9a948d')]),
@@ -114,6 +118,8 @@ def main():
     ap.add_argument('--floor', type=int)
     ap.add_argument('--recolour', default='')
     ap.add_argument('--pad', type=int, default=18)
+    ap.add_argument('--prefix')
+    ap.add_argument('--only-recolour', action='store_true')
     args = ap.parse_args()
 
     src = Image.open(args.photo)
@@ -130,7 +136,7 @@ def main():
     else:
         bgr = cv2.cvtColor(np.asarray(src.convert('RGB')), cv2.COLOR_RGB2BGR)
         M = cv2.imread(args.mask, 0) > 127 if args.mask else find_mask(bgr, args.floor)
-        if not args.mask:
+        if not args.mask and not args.only_recolour:
             cv2.imwrite(str(out / 'mask.png'), (M * 255).astype(np.uint8))
 
         im = cv2.cvtColor(bgr, cv2.COLOR_BGR2RGB).astype(np.float32) / 255
@@ -162,13 +168,14 @@ def main():
         Image.fromarray((rgba * 255 + .5).astype(np.uint8), 'RGBA').save(out / f'{name}.webp', quality=88, method=6)
         print('wrote', out / f'{name}.webp', f'{x1 - x0}x{y1 - y0}')
 
-    save(args.name, F)
+    if not args.only_recolour:
+        save(args.name, F)
     # the foot: the middle of the lowest solid rows, as a % of the cut-out's width
     rows = np.flatnonzero(M.any(1))
     base = M[max(rows[-1] - max(3, (rows[-1] - rows[0]) // 60), 0):rows[-1] + 1]
     fx = np.flatnonzero(base.any(0))
     print(f'foot at {((fx[0] + fx[-1]) / 2 - x0) / (x1 - x0) * 100:.1f}% of the width (shadow.x / Shadow position)')
-    prefix = args.name.rsplit('-', 1)[0] if '-' in args.name else args.name
+    prefix = args.prefix or (args.name.rsplit('-', 1)[0] if '-' in args.name else args.name)
     for fin in filter(None, args.recolour.split(',')):
         if fin not in FINISH_MAPS:
             raise SystemExit(f'no recolour map for {fin}; known: {", ".join(FINISH_MAPS)}')

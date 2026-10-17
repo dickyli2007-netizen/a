@@ -2,9 +2,9 @@
   "handle": "flex-angle-filter-tap",
   "title": "Farless Flex Angle Filter Tap",
   "kicker": "Filtered tap",
-  "lede": "Filtered water in rose gold.",
+  "lede": "Filtered water. One angled arm.",
   "collection": "Filtered Faucets",
-  "description": "A filtered tap in rose gold with an angled spout arm and a matte black hose. The spray head lifts out to rinse the sink, and one slim lever runs the tap.",
+  "description": "A filtered tap with an angled spout arm and a flexible hose. The spray head lifts out to rinse the sink, and one slim lever runs the tap.",
   "notes": [
     [
       "Filtered",
@@ -15,8 +15,8 @@
       "The spray head lifts out to rinse the sink."
     ],
     [
-      "Rose gold",
-      "With a matte black hose."
+      "Two finishes",
+      "Brushed nickel or matte black."
     ]
   ],
   "shadow": {
@@ -25,11 +25,18 @@
   },
   "finishes": [
     {
-      "key": "rose-gold",
-      "name": "Rose Gold",
-      "image": "flex-angle-filter-tap-rose-gold.webp",
-      "swatch": "linear-gradient(135deg,#f4d0bb 0%,#b5714f 40%,#dca184 58%,#6c3822 100%)"
+      "key": "nickel",
+      "name": "Brushed Nickel",
+      "image": "flex-angle-filter-tap-nickel.webp",
+      "stand_in": true
+    },
+    {
+      "key": "black",
+      "name": "Matte Black",
+      "image": "flex-angle-filter-tap-black.webp",
+      "stand_in": true
     }
   ],
-  "to_confirm": "Name, copy and price are working choices from the maker's photos; the owner confirms them."
+  "to_confirm": "Name, copy and price are working choices from the maker's photos; the owner confirms them.",
+  "stand_in_source": "flex-angle-filter-tap-rose-gold.webp"
 }
