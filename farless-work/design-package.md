@@ -134,3 +134,8 @@ the colour picker beside it ("Colour. Pick your favourite." with round swatches)
 between colours. The picker lives on product pages only; the main page's shop section stays as it is.
 It is the Shopify product page for every product (`sections/farless-product.liquid`). The template,
 its cut-out tool and the steps for adding a product are in `farless-work/product-page/` and `CLAUDE.md`.
+
+**Finishes (owner, confirmed):** every faucet is sold in two finishes only, Brushed Nickel and Matte
+Black, in that order. No other colours (the earlier chrome, brass, copper, gold and steel are gone).
+Until real photos of each finish exist, the pictures are stand-ins recoloured from each product's
+own photo.

@@ -5,7 +5,8 @@
 //   node render.js, serve site/ on 8083 (see render.js), then: node cart-test.js
 const { chromium, devices } = require('playwright');
 const BASE = 'http://localhost:8083';
-const VARIANTS = { 101: ['Polished Chrome', true], 102: ['Satin Brass', false], 103: ['Warm Copper', true], 104: ['Matte Black', true] };
+// the page's sample shows Matte Black as sold out; here it can be added, and 109 stands for a sold-out piece
+const VARIANTS = { 101: ['Brushed Nickel', true], 102: ['Matte Black', true], 109: ['Brushed Nickel', false] };
 let cart = [];   // [{ key, variant_id, quantity, properties }]
 const line = l => ({ key: l.key, variant_id: l.variant_id, quantity: l.quantity, properties: l.properties || {}, product_title: 'Farless 5-in-1 Tap',
   variant_title: VARIANTS[l.variant_id][0], image: `${BASE}/img/tap-${VARIANTS[l.variant_id][0].split(' ')[1].toLowerCase()}.webp`, url: `/products/faucet?variant=${l.variant_id}`, final_line_price: 89999 * l.quantity });
@@ -29,7 +30,7 @@ async function mock(ctx){
     }
     const id = (body.match(/name="id"\r\n\r\n(\d+)/) || [])[1];
     const added = add(id, 1);
-    return added ? r.fulfill({ json: added }) : r.fulfill({ status: 422, json: { status: 422, description: 'The Satin Brass tap is sold out.' } });
+    return added ? r.fulfill({ json: added }) : r.fulfill({ status: 422, json: { status: 422, description: 'This tap is sold out.' } });
   });
   await ctx.route('**/cart/change.js', r => { const { id, quantity } = JSON.parse(r.request().postData()); const l = cart.find(x => x.key === id); if (l) l.quantity = quantity; cart = cart.filter(x => x.quantity > 0); r.fulfill({ json: json() }); });
   await ctx.route('**/cart/update.js', r => { const { updates } = JSON.parse(r.request().postData()); for (const [k, q] of Object.entries(updates)){ const l = cart.find(x => x.key === k); if (l) l.quantity = q; } cart = cart.filter(x => x.quantity > 0); r.fulfill({ json: json() }); });
@@ -50,26 +51,27 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
   await p.evaluate(() => localStorage.clear());
   out.start = await st();
   await p.click('form.buy-form [data-add]'); await sleep(1200);
-  out.addedChrome = await st();
+  out.addedNickel = await st();
   await p.screenshot({ path: __dirname + '/shots/cart-1.png' });
   await p.keyboard.press('Escape'); await sleep(900);
-  await p.locator('.swatches [role=radio]').nth(2).click(); await sleep(1300);
+  await p.locator('.swatches [role=radio]').nth(1).click(); await sleep(1300);
+  await p.evaluate(() => { document.querySelector('form.buy-form [data-add]').disabled = false; });
   await p.click('form.buy-form [data-add]'); await sleep(1200);
-  out.addedCopper = await st();
+  out.addedBlack = await st();
   await p.click('.cart-panel .ct-line:nth-child(1) [data-step="1"]'); await sleep(500);
-  out.copperPlus = await st();
-  // untick chrome, check out the copper only
+  out.blackPlus = await st();
+  // untick the nickel, check out the black only
   await p.click('.cart-panel .ct-line:nth-child(2) .ct-pick'); await sleep(300);
-  out.untickedChrome = await st();
+  out.untickedNickel = await st();
   await Promise.all([p.waitForURL('**/checkout'), p.click('.cart-panel [data-ct-go]')]);
   out.checkoutPage = await p.textContent('#co');
   out.held = await p.evaluate(() => localStorage.getItem('farless:cart-held'));
-  // the shopper comes back without buying: everything is in the cart again, chrome still unticked
+  // the shopper comes back without buying: everything is in the cart again, the nickel still unticked
   await p.goto(BASE + '/products/faucet/', { waitUntil: 'networkidle' }); await sleep(800);
   await p.click('[data-open="cart"]'); await sleep(1000);
   out.backWithoutBuying = await st();
   out.heldAfter = await p.evaluate(() => localStorage.getItem('farless:cart-held'));
-  // check out the copper again, and this time the order goes through: Shopify empties the cart
+  // check out the black again, and this time the order goes through: Shopify empties the cart
   await Promise.all([p.waitForURL('**/checkout'), p.click('.cart-panel [data-ct-go]')]);
   out.checkoutAgain = await p.textContent('#co');
   cart = [];
@@ -79,7 +81,7 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
   await p.screenshot({ path: __dirname + '/shots/cart-2.png' });
   // a sold-out colour says so in the cart
   await p.keyboard.press('Escape'); await sleep(900);
-  await p.evaluate(() => { const f = document.querySelector('form.buy-form'); f.querySelector('[name=id]').value = '102'; f.querySelector('[data-add]').disabled = false; });
+  await p.evaluate(() => { const f = document.querySelector('form.buy-form'); f.querySelector('[name=id]').value = '109'; f.querySelector('[data-add]').disabled = false; });
   await p.click('form.buy-form [data-add]'); await sleep(1200);
   out.soldOut = await st();
   // the home page's shop section adds without leaving the page too

@@ -120,7 +120,9 @@
                 assign sw = '%%SW_NEUTRAL%%'
                 if value.swatch.color
                   assign sw = value.swatch.color
-                elsif key contains 'chrome' or key contains 'steel' or key contains 'nickel' or key contains 'silver'
+                elsif key contains 'nickel'
+                  assign sw = '%%SW_NICKEL%%'
+                elsif key contains 'chrome' or key contains 'steel' or key contains 'silver'
                   assign sw = '%%SW_CHROME%%'
                 elsif key contains 'brass' or key contains 'gold'
                   assign sw = '%%SW_BRASS%%'

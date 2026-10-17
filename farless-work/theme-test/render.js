@@ -62,11 +62,11 @@ engine.registerTag('paginate', PaginateTag);
 // ---------- sample store ----------
 const img = (name, w, h, alt) => ({ src: `/img/${name}`, width: w, height: h, aspect_ratio: +(w / h).toFixed(4), alt });
 const media = (id, image) => ({ id, alt: image.alt, preview_image: image });
-const photo = media(1, img('photo.jpg', 1200, 1608, 'The Farless 5-in-1 tap in polished chrome'));
+const photo = media(1, img('photo.jpg', 1200, 1608, 'The Farless 5-in-1 tap in brushed nickel'));
 const design = media(2, img('design.jpg', 880, 1080, 'A hand pushing and turning the Farless handle'));
 const ending = media(3, img('ending.jpg', 1920, 1080, 'Sparkling water pouring'));
 const desc = fs.readFileSync(path.join(__dirname, 'description.html'), 'utf8');
-const COLOURS = [['Polished Chrome', 'chrome', true], ['Satin Brass', 'brass', false], ['Warm Copper', 'copper', true], ['Matte Black', 'black', true]];
+const COLOURS = [['Brushed Nickel', 'nickel', true], ['Matte Black', 'black', false]];
 const variants = COLOURS.map(([n, key, av], i) => ({ id: 101 + i, title: n, options: [n], available: av, price: 89999, featured_media: media(11 + i, img(`tap-${key}.webp`, 924, 1416, '')) }));
 const sel = variants[0];
 const faucet = {
@@ -78,25 +78,27 @@ const faucet = {
   metafields: { farless: { kicker: { value: 'The tap' }, lede: { value: 'Five waters. One tap.' }, foot_x: { value: 33.3 },
     notes: { value: 'Five waters | Boiling, filtered, sparkling, hot and cold.\r\nPush and turn | Boiling only when you mean it.\r\n5-year warranty | On every Farless.' } } },
 };
-// the filtered taps, from their product files: one colour each, a cut-out as the colour's picture
+// the filtered taps, from their product files: each finish a variant, its cut-out as its picture
 const PP = path.join(REPO, 'farless-work', 'product-page');
 const FILTERED = ['flex-duo-filter-tap', 'flex-square-filter-tap', 'flex-angle-filter-tap', 'arc-duo-filter-tap', 'arc-filter-tap'];
 const filtered = FILTERED.map((h, i) => {
   const d = JSON.parse(fs.readFileSync(path.join(PP, 'products', `${h}.json`), 'utf8'));
-  const f = d.finishes[0];
-  const [w, hgt] = (() => { const b = fs.readFileSync(path.join(PP, 'assets', h, f.image)); return [b.readUIntLE(24, 3) + 1, b.readUIntLE(27, 3) + 1]; })();   // VP8X canvas size
-  const cut = media(200 + i, img(f.image, w, hgt, `The ${d.title} in ${f.name.toLowerCase()}`));
-  const v = { id: 300 + i, title: f.name, options: [f.name], available: false, price: 0, featured_media: cut };
+  const vs = d.finishes.map((f, k) => {
+    const [w, hgt] = (() => { const b = fs.readFileSync(path.join(PP, 'assets', h, f.image)); return [b.readUIntLE(24, 3) + 1, b.readUIntLE(27, 3) + 1]; })();   // VP8X canvas size
+    const cut = media(200 + i * 10 + k, img(f.image, w, hgt, `The ${d.title} in ${f.name.toLowerCase()}`));
+    return { id: 300 + i * 10 + k, title: f.name, options: [f.name], available: false, price: 0, featured_media: cut };
+  });
+  const v = vs[0], cut = v.featured_media;
   return { id: 20 + i, title: d.title, handle: h, url: `/products/${h}`, description: `<p>${d.lede}</p><p>${d.description}</p>`, featured_media: cut,
-    media: [cut], variants: [v], available: false, price: 0, has_only_default_variant: false, selected_or_first_available_variant: v,
-    options_with_values: [{ name: 'Colour', position: 1, values: [{ name: f.name, selected: true, swatch: null }] }],
+    media: vs.map(x => x.featured_media), variants: vs, available: false, price: 0, has_only_default_variant: false, selected_or_first_available_variant: v,
+    options_with_values: [{ name: 'Colour', position: 1, values: d.finishes.map((f, k) => ({ name: f.name, selected: k === 0, swatch: null })) }],
     collections: [{ handle: 'filtered-faucets', title: 'Filtered Faucets', url: '/collections/filtered-faucets' }],
     metafields: { farless: { kicker: { value: d.kicker }, lede: { value: d.lede }, foot_x: { value: d.shadow.x }, notes: { value: d.notes.map(n => n.join(' | ')).join('\r\n') } } } };
 });
 const COLLECTIONS = {
   // as on Shopify: image is the collection's own picture; featured_image falls back to the first product's photo
   'multi-function-faucets': { title: 'Multi Function Faucets', handle: 'multi-function-faucets', url: '/collections/multi-function-faucets', description: '', products_count: 1,
-    image: null, featured_image: photo.preview_image, products: [faucet] },
+    image: img('multi-function-faucets.jpg', 2400, 1600, 'Multi Function Faucets'), featured_image: img('multi-function-faucets.jpg', 2400, 1600, 'Multi Function Faucets'), products: [faucet] },
   'filtered-faucets': { title: 'Filtered Faucets', handle: 'filtered-faucets', url: '/collections/filtered-faucets', description: '', products_count: filtered.length,
     image: img('filtered-faucets.jpg', 2400, 1600, 'Filtered Faucets'), featured_image: img('filtered-faucets.jpg', 2400, 1600, 'Filtered Faucets'), products: filtered },
   'coming-soon': { title: 'Coming Soon', handle: 'coming-soon', url: '/collections/coming-soon', description: '<p>New pieces are on their way.</p>', products_count: 0, image: null, featured_image: null, products: [] },
@@ -169,13 +171,13 @@ async function page(file, templateFile, template, scope, designMode){
   fs.rmSync(OUT, { recursive: true, force: true });
   fs.mkdirSync(path.join(OUT, 'img'), { recursive: true });
   fs.mkdirSync(path.join(OUT, 'cdn'), { recursive: true });
-  for (const k of ['chrome', 'brass', 'copper', 'black']) fs.copyFileSync(`${REPO}/farless-work/product-page/assets/faucet/tap-${k}.webp`, `${OUT}/img/tap-${k}.webp`);
-  fs.copyFileSync(`${REPO}/farless/assets/product-1.jpg`, `${OUT}/img/photo.jpg`);
+  for (const k of ['nickel', 'black']) fs.copyFileSync(`${REPO}/farless-work/product-page/assets/faucet/tap-${k}.webp`, `${OUT}/img/tap-${k}.webp`);
+  fs.copyFileSync(`${REPO}/farless/assets/product-nickel.jpg`, `${OUT}/img/photo.jpg`);
   fs.copyFileSync(`${REPO}/farless/assets/design-faucet.jpg`, `${OUT}/img/design.jpg`);
   fs.copyFileSync(`${REPO}/farless/assets/hero-ending.jpg`, `${OUT}/img/ending.jpg`);
   for (const f of fs.readdirSync(`${THEME}/assets`)) fs.copyFileSync(`${THEME}/assets/${f}`, `${OUT}/cdn/${f}`);
-  for (const p of filtered) fs.copyFileSync(path.join(PP, 'assets', p.handle, p.featured_media.preview_image.src.split('/').pop()), `${OUT}/img/${p.featured_media.preview_image.src.split('/').pop()}`);
-  fs.copyFileSync(path.join(PP, 'assets', 'collections', 'filtered-faucets.jpg'), `${OUT}/img/filtered-faucets.jpg`);
+  for (const p of filtered) for (const v of p.variants){ const f = v.featured_media.preview_image.src.split('/').pop(); fs.copyFileSync(path.join(PP, 'assets', p.handle, f), `${OUT}/img/${f}`); }
+  for (const c of ['filtered-faucets', 'multi-function-faucets']) fs.copyFileSync(path.join(PP, 'assets', 'collections', `${c}.jpg`), `${OUT}/img/${c}.jpg`);
   const T = n => path.join(THEME, 'templates', n);
   await page('index.html', T('index.json'), { name: 'index', suffix: null }, {});
   await page('design/index.html', T('index.json'), { name: 'index', suffix: null }, {}, true);

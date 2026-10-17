@@ -36,6 +36,7 @@ src = (ROOT / 'farless' / 'index.html').read_text(encoding='utf-8')
 
 # swatch fills for the finishes we have used; a product file can give its own "swatch" instead
 SWATCHES = {
+    'nickel': 'linear-gradient(135deg,#f1eee8 0%,#aaa59d 40%,#d6d1c9 58%,#6e6962 100%)',
     'chrome': 'linear-gradient(135deg,#fbfbfc 0%,#c3c6ca 38%,#eef0f2 56%,#8c9095 100%)',
     'brass': 'linear-gradient(135deg,#f6e4b0 0%,#c09a52 40%,#e3c682 58%,#7a5822 100%)',
     'copper': 'linear-gradient(135deg,#f4d0bb 0%,#b5714f 40%,#dca184 58%,#6c3822 100%)',

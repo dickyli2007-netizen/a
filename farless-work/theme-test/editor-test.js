@@ -85,8 +85,8 @@ const BASE = 'http://localhost:8083';
     await sw.nth(1).click(); await sleep(1300);
     out.product = await prod.p.evaluate(() => ({ id: document.querySelector('form.buy-form [name=id]').value, btn: document.querySelector('[data-add]').textContent, disabled: document.querySelector('[data-add]').disabled, name: document.querySelector('[data-finish-name]').textContent,
       op: [...document.querySelectorAll('.tap')].map(t => +(+getComputedStyle(t).opacity).toFixed(2)).join(' '), pdpInMain: !!document.querySelector('main#main .pdp'), mains: document.querySelectorAll('main').length }));
-    await sw.nth(2).click(); await sleep(1300);
-    out.product.copper = await prod.p.evaluate(() => ({ id: document.querySelector('form.buy-form [name=id]').value, btn: document.querySelector('[data-add]').textContent }));
+    await sw.nth(0).click(); await sleep(1300);
+    out.product.nickel = await prod.p.evaluate(() => ({ id: document.querySelector('form.buy-form [name=id]').value, btn: document.querySelector('[data-add]').textContent }));
     out.product.errs = prod.errs;
     await prod.p.screenshot({ path: __dirname + '/shots/product-theme.png' });
     await prod.c.close();

@@ -104,10 +104,10 @@ Keep these, they are what the owner approved:
 The Shopify product page (`sections/farless-product.liquid`, used by `templates/product.json` for every
 product) builds itself from the product, so a new product needs no new code:
 1. Cut out a photo of each colour with `cutout.py` (below) and upload them to the product.
-2. Give the product an option named Colour (Color or Finish also work), one variant per colour, and set
-   each variant's image to its cut-out. The swatch fill comes from the colour's name (chrome, steel,
-   nickel, brass, gold, copper, rose, bronze, black, graphite, white), or from Shopify's own swatch colour
-   when one is set.
+2. Give the product an option named Colour (Color or Finish also work) with the two finishes Farless sells,
+   Brushed Nickel then Matte Black, one variant each, and set each variant's image to its cut-out. The
+   swatch fill comes from the colour's name (nickel, chrome, steel, brass, gold, copper, rose, bronze, black,
+   graphite, white), or from Shopify's own swatch colour when one is set.
 3. Fill in the product's Farless fields in the admin: Small heading, Tagline, Notes (one per line,
    "Label | text") and Shadow position (where the foot is, % from the left of the cut-out).
 4. The details below the product show the Tagline as their heading, then the description's first
@@ -140,21 +140,27 @@ select under the swatches.
    `search-*` files in `farless/assets`) also as `assets/*`, and record its URL under `"preview"` in the
    product file. The preview's menu, search and favourites work like the store's.
 
-Stand-in colours: `cutout.py --recolour brass,copper,black` makes recoloured stand-ins from one photo,
-for previews only. Mark them `"stand_in": true` and tell the owner. The Farless 5-in-1 Tap's brass,
-copper and black are stand-ins until real photos exist.
+Every faucet comes in two finishes only, the owner's choice: Brushed Nickel and Matte Black, in that order.
+Stand-in finishes: `cutout.py SOURCE HANDLE --name SOURCE-NAME --prefix HANDLE --only-recolour --recolour
+nickel,black` recolours an existing cut-out (the faucet's prefix is `tap`); dark parts such as a black hose
+stay dark. Mark them `"stand_in": true` and tell the owner. Every product's Brushed Nickel and Matte Black
+pictures are stand-ins until real photos exist; each product file names its source cut-out
+(`stand_in_source`, the maker's photo in its old finish, kept only as that source). The faucet's studio photo
+(`farless/assets/product-nickel.jpg`, first on the product in Shopify) is a nickel stand-in too, recoloured
+inside `assets/faucet/mask.png`. The film, the design picture and the hero's last frame still show the
+original chrome tap.
 
 ## Store
 
-- Shopify (farless.store), reached through the Shopify connector. Product "Farless 5-in-1 Tap" (handle
-  `faucet`) has a Colour option with four variants at the same price: Polished Chrome, Satin Brass,
-  Warm Copper, Matte Black. Brass, copper and black use the recoloured stand-in cut-outs until real
-  photos exist; all four have 0 stock, so they show Sold out. Collection "Multi Function Faucets".
+- Shopify (farless.store), reached through the Shopify connector. Every product has a Colour option with
+  two variants, Brushed Nickel and Matte Black, at the same price, each with its stand-in cut-out; all have
+  0 stock, so they show Sold out. Product "Farless 5-in-1 Tap" (handle `faucet`) is in the collection
+  "Multi Function Faucets", whose picture is the tap in both finishes (`collection_image.py OUT faucet
+  faucet@black`). The old finishes' pictures were taken off the products but stay in Settings > Files.
   Prices stay hidden on the site.
-- Collection "Filtered Faucets" (manual order, picture composed from the cut-outs) holds five filtered
-  taps from the maker's photos, one colour each: Farless Flex Duo Filter Tap (Polished Gold), Flex Square
-  (Brushed Gold), Flex Angle (Rose Gold), Arc Duo (Brushed Steel) and Arc (Brushed Steel); handles
-  `flex-duo-filter-tap` and so on, files in `farless-work/product-page/products/`. Their names and copy
+- Collection "Filtered Faucets" (manual order, picture composed from the nickel cut-outs) holds five filtered
+  taps from the maker's photos: Farless Flex Duo Filter Tap, Flex Square, Flex Angle, Arc Duo and Arc;
+  handles `flex-duo-filter-tap` and so on, files in `farless-work/product-page/products/`. Their names and copy
   are working choices from the photos (visible features only) and their price is a 0.00 placeholder until
   the owner gives real ones; all have 0 stock, so they show Sold out, and they are on the Online Store
   only, not Shop or Point of Sale.

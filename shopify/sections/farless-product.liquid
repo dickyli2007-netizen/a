@@ -208,7 +208,9 @@
                 assign sw = 'linear-gradient(135deg,#d8d1c7 0%,#8f877c 50%,#5e574f 100%)'
                 if value.swatch.color
                   assign sw = value.swatch.color
-                elsif key contains 'chrome' or key contains 'steel' or key contains 'nickel' or key contains 'silver'
+                elsif key contains 'nickel'
+                  assign sw = 'linear-gradient(135deg,#f1eee8 0%,#aaa59d 40%,#d6d1c9 58%,#6e6962 100%)'
+                elsif key contains 'chrome' or key contains 'steel' or key contains 'silver'
                   assign sw = 'linear-gradient(135deg,#fbfbfc 0%,#c3c6ca 38%,#eef0f2 56%,#8c9095 100%)'
                 elsif key contains 'brass' or key contains 'gold'
                   assign sw = 'linear-gradient(135deg,#f6e4b0 0%,#c09a52 40%,#e3c682 58%,#7a5822 100%)'
